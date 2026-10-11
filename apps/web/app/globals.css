@@ -102,10 +102,11 @@ table.data tr.total td { font-weight: 600; border-top: 2px solid var(--line); bo
   main { display: block !important; height: auto !important; overflow: visible !important; }
   main > div { padding: 0 !important; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  /* Report: cover, executive page and assumptions each get their own sheet; the appendix flows after them. */
-  .report-page { break-after: page; break-inside: auto; }
-  .report-cover, .report-exec { break-inside: avoid; }
-  .report-page:last-child { break-after: auto; }
+  /* Report: only the cover (full report) gets a sheet of its own. Everything else flows, and sections stay whole, so no page is left mostly empty. */
+  .report-page { break-after: auto; break-inside: auto; }
+  .report-cover { break-after: page; break-inside: avoid; }
+  .report-head { break-inside: avoid; }
+  .report-page + .report-page { margin-top: 6mm; }
   .report .break-inside-avoid { break-inside: avoid; }
   .report table.data tr { break-inside: avoid; }
   .report h2, .report h3 { break-after: avoid; }

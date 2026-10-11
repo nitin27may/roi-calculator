@@ -45,3 +45,4 @@ export * from "./lab.js";
 export { DEMO_PROJECTS, demoProjectJson, type DemoProject } from "./samples/demo/index.js";
 export * from "./report-audience.js";
 export * from "./breakeven.js";
+export * from "./checks.js";

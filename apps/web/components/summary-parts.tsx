@@ -1,7 +1,7 @@
 "use client";
 import type { ReactNode } from "react";
 import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
-import { LABOUR_EXCLUDED_TEXT, WIDE_RANGE_TEXT, breakEven, breakEvenSentences, formatIrr, irrBand, moneyBand, type AlertGroup, type Ledger, type Project, type Summary } from "@roi-calculator/engine";
+import { LABOUR_EXCLUDED_TEXT, WIDE_RANGE_TEXT, breakEven, breakEvenSentences, planChecks, type PlanCheck, formatIrr, irrBand, moneyBand, type AlertGroup, type Ledger, type Project, type Summary } from "@roi-calculator/engine";
 import { useMemo } from "react";
 import { catalog } from "@/lib/compute";
 import { Pill } from "@/components/ui";
@@ -134,6 +134,27 @@ export function AiAssistTile({ s, className = "px-3.5 pb-3.5" }: { s: Summary; c
 }
 
 /** Finance measures as label/value rows. IRR is capped in text and its range shows only when it is narrow. */
+/** The plan checks for a project, worked out once per change. */
+export function usePlanChecks(project: Project, ledger: Ledger, roi: Parameters<typeof planChecks>[2]): PlanCheck[] {
+  return useMemo(() => planChecks(project, ledger, roi), [project, ledger, roi]);
+}
+
+/** Things a careful reader would question, each a prompt to look rather than an error. Warnings come first. */
+export function ChecksList({ checks, limit, className = "" }: { checks: PlanCheck[]; limit?: number; className?: string }) {
+  const shown = limit === undefined ? checks : checks.slice(0, limit);
+  return (
+    <ul className={`flex flex-col gap-2 text-[12.5px] text-ink-2 ${className}`} data-testid="plan-checks">
+      {shown.map((c) => (
+        <li key={c.id} className="flex items-start gap-2">
+          <Pill tone={c.severity === "warn" ? "warn" : "n"}>{c.severity === "warn" ? "Check" : "Note"}</Pill>
+          <span className="min-w-0">{c.message}</span>
+        </li>
+      ))}
+      {limit !== undefined && checks.length > limit && <li className="text-xs text-muted">{checks.length - limit} more on the Summary page.</li>}
+    </ul>
+  );
+}
+
 /**
  * What must be true for NPV to just reach zero: how far benefits can fall, costs rise or go-live slip. Each is solved alone with the rest
  * as entered, so they are margins of safety and do not add up.

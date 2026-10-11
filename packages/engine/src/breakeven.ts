@@ -20,6 +20,8 @@ export interface BreakEven {
   delayMonths: number | null;
   /** The longest slip tried, so "null" can be said plainly. */
   maxDelay: number;
+  /** What one month's slip in go-live costs in NPV (a positive number), from moving go-live by one month; null when that cannot be worked out. */
+  delayCostPerMonth: number | null;
 }
 
 export const MAX_DELAY_MONTHS = 24;
@@ -65,12 +67,13 @@ export function breakEven(p: Project, ledger: Ledger, cat: Catalog): BreakEven {
       delay = lo;
     }
   }
-  return { npv, benefitPct: benefit === null ? null : benefit * 100, costPct: cost === null ? null : cost * 100, delayMonths: delay, maxDelay: MAX_DELAY_MONTHS };
+  const slipOne = (() => { try { return npv - npvOf(buildLedger(applyEdit(p, { kind: "shiftMonths", target: "golive", by: 1 }, cat), cat)); } catch { return null; } })();
+  return { delayCostPerMonth: slipOne, npv, benefitPct: benefit === null ? null : benefit * 100, costPct: cost === null ? null : cost * 100, delayMonths: delay, maxDelay: MAX_DELAY_MONTHS };
 }
 
 /** The three margins in plain sentences, worded for NPV above or at-or-below zero. */
-export function breakEvenSentences(b: BreakEven): { id: "benefit" | "cost" | "delay"; text: string }[] {
-  const out: { id: "benefit" | "cost" | "delay"; text: string }[] = [];
+export function breakEvenSentences(b: BreakEven): { id: "benefit" | "cost" | "delay" | "delayCost"; text: string }[] {
+  const out: { id: "benefit" | "cost" | "delay" | "delayCost"; text: string }[] = [];
   const pct = (x: number) => `${Math.round(x)}%`;
   const positive = b.npv > 0;
   if (b.benefitPct !== null) out.push({ id: "benefit", text: positive ? `Benefits can fall to ${pct(b.benefitPct)} of what is expected before NPV reaches zero.` : `Benefits would need to be ${pct(b.benefitPct)} of what is expected for NPV to reach zero.` });
@@ -80,5 +83,6 @@ export function breakEvenSentences(b: BreakEven): { id: "benefit" | "cost" | "de
   if (b.delayMonths === null) out.push({ id: "delay", text: `NPV stays above zero even if go-live slips ${b.maxDelay} months.` });
   else if (b.delayMonths === 0) out.push({ id: "delay", text: "NPV is already at or below zero, so a later go-live only makes it worse." });
   else out.push({ id: "delay", text: `Go-live can slip ${b.delayMonths} month${b.delayMonths === 1 ? "" : "s"} before NPV reaches zero.` });
+  if (b.delayCostPerMonth !== null && b.delayCostPerMonth > 0) out.push({ id: "delayCost", text: `Each month go-live slips costs about C$${Math.round(b.delayCostPerMonth).toLocaleString("en-CA")} of NPV.` });
   return out;
 }

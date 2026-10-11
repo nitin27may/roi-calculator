@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DEPLOYMENT_LABEL, LABOUR_EXCLUDED_TEXT, REPORT_AUDIENCES, infrastructureReport, isReportAudience, showsSection, teamPlan, benefitBySource, BENEFIT_SOURCES, type ReportAudience, WIDE_RANGE_TEXT, buildLabel, compareScenarios, computeAllocation, currentStateRows, evaluateLevers, moneyBand, pricesUsedRows, scorecardRows, steadyState } from "@roi-calculator/engine";
 import { CumulativeLine, Legend, RankedBars, StackedBars, Waterfall } from "@/components/charts";
 import { Field, TextInput } from "@/components/ui";
-import { AiAssistTile, BreakEvenTile, CurrentVsTargetTile, FinanceMeasures, HeadlineTiles, RiskSummary, VerdictChip, WATERFALL_COST_IDS, wideDrivers } from "@/components/summary-parts";
+import { AiAssistTile, BreakEvenTile, ChecksList, usePlanChecks, CurrentVsTargetTile, FinanceMeasures, HeadlineTiles, RiskSummary, VerdictChip, WATERFALL_COST_IDS, wideDrivers } from "@/components/summary-parts";
 import { catalog, useSummary } from "@/lib/compute";
 import { cad, fmt } from "@/lib/format";
 import { useStudio } from "@/lib/store";
@@ -25,9 +25,12 @@ ensureStorageMigrated();
 
 const AUTHOR_KEY = "roi-calculator:reportAuthor";
 const PAGE_TITLE: Record<ReportAudience, string> = {
-  all: "Assumptions and how sure we are", finance: "Assumptions and how sure we are", sponsor: "What it is worth and how sure we are",
+  onepage: "One-page summary", all: "Assumptions and how sure we are", finance: "Assumptions and how sure we are", sponsor: "What it is worth and how sure we are",
   tech: "Technical assumptions and workloads", delivery: "Planning assumptions", business: "What changes for the business",
 };
+/** Short column headings for the usual environments, so the infrastructure table keeps its width for the resource names. */
+const ENV_SHORT: Record<string, string> = { dev: "Dev", test: "Test", uat: "UAT", prod: "Prod", dr: "DR" };
+const APPENDIX_SECTIONS = ["team", "infrastructure", "monthly", "benefitSources", "cumulative", "build", "production", "byYear", "capability", "scenarios", "levers", "watchouts"] as const;
 const AUDIENCE_KEY = "roi-calculator:reportAudience";
 const BASIS_WORDS = { run: "running cost only", runMaint: "running cost and maintenance", full: "the full lifecycle" };
 
@@ -56,6 +59,9 @@ export default function Report() {
   };
   const show = (section: Parameters<typeof showsSection>[1]) => showsSection(audience, section);
   const audienceInfo = REPORT_AUDIENCES.find((a) => a.id === audience)!;
+  /** The one-page copy keeps the verdict, tiles, cost drivers, finance measures and what to watch; the charts and tables go. */
+  const compact = audience === "onepage";
+  const checks = usePlanChecks(p, ledger, roi);
   const changeAuthor = (v: string) => {
     setAuthor(v);
     try { localStorage.setItem(AUTHOR_KEY, v); } catch { /* ignore */ }
@@ -112,7 +118,8 @@ export default function Report() {
         <button type="button" className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-ink" onClick={() => window.print()}>Print or save as PDF</button>
       </div>
       <article className="report mx-auto min-w-0 flex max-w-[960px] flex-col gap-6 print:max-w-none print:gap-0">
-        {/* 1. Cover */}
+        {/* 1. Cover: a full page for the whole report; a compact title block on top of the first page for a single reader's copy. */}
+        {audience === "all" ? (
         <section className="report-page report-cover flex min-h-[560px] flex-col justify-between rounded-lg border border-line bg-surface p-5 sm:p-10 print:min-h-[250mm] print:rounded-none print:border-0 print:p-0">
           <div>
             <div className="text-xs uppercase tracking-[0.1em] text-muted">Cost and ROI estimate</div>
@@ -131,6 +138,20 @@ export default function Report() {
           </dl>
         </section>
 
+        ) : (
+          <section className="report-page report-head rounded-lg border border-line bg-surface p-4 sm:p-8 print:rounded-none print:border-0 print:p-0 print:pb-3" data-testid="report-head">
+            <div className="text-xs uppercase tracking-[0.1em] text-muted">Cost and ROI estimate · {audienceInfo.label}</div>
+            <h2 className="mt-1.5 text-2xl font-bold leading-tight sm:text-3xl">{p.name}</h2>
+            <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 border-t border-line pt-3 text-[12.5px] sm:grid-cols-4">
+              <div><dt className="text-muted">Prepared for</dt><dd className="text-ink" data-testid="report-prepared-for">{audienceInfo.label}</dd></div>
+              <div><dt className="text-muted">Prepared by</dt><dd className="text-ink">{author.trim() || "Not stated"}</dd></div>
+              <div><dt className="text-muted">Report date</dt><dd className="text-ink">{today || " "}</dd></div>
+              <div><dt className="text-muted">Starts · prices as of</dt><dd className="text-ink">{p.startDate} · {catalog.meta.asOf}</dd></div>
+            </dl>
+            <p className="mt-2 text-xs text-muted">All amounts in Canadian dollars. {fx ? `USD-only prices converted at ${fx.usdToCad} CAD per USD (Azure rate of ${fx.asOf}).` : "All prices are published in CAD."}</p>
+          </section>
+        )}
+
         {/* 2. Executive page */}
         {show("exec") && <section className="report-page report-exec flex flex-col gap-3.5 rounded-lg border border-line bg-surface p-4 sm:p-8 print:rounded-none print:border-0 print:p-0">
           <header>
@@ -143,22 +164,26 @@ export default function Report() {
           </header>
           <HeadlineTiles s={s} linkWide={false} />
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <section className="break-inside-avoid">
+            {!compact && <section className="break-inside-avoid">
               <h2 className="mb-1.5 text-[15px] font-bold">Build, run and benefit</h2>
               <Waterfall steps={s.waterfall} costIds={WATERFALL_COST_IDS} className="flex flex-col gap-1" />
-            </section>
+            </section>}
+            {compact && <section className="break-inside-avoid" data-testid="report-break-even">
+              <h2 className="mb-1.5 text-[15px] font-bold">What must be true</h2>
+              <BreakEvenTile project={p} ledger={ledger} className="" />
+            </section>}
             <section className="break-inside-avoid">
               <h2 className="mb-1.5 text-[15px] font-bold">Where the money goes</h2>
               <RankedBars rows={s.costDrivers} className="flex flex-col gap-1.5" />
             </section>
           </div>
-          {s.currentLineCount > 0 && (
+          {!compact && s.currentLineCount > 0 && (
             <section className="break-inside-avoid">
               <h2 className="mb-1.5 text-[15px] font-bold">Current vs target</h2>
               <CurrentVsTargetTile s={s} className="" />
             </section>
           )}
-          {s.aiAssist && (
+          {!compact && s.aiAssist && (
             <section className="break-inside-avoid">
               <h2 className="mb-1.5 text-[15px] font-bold">AI-assisted development</h2>
               <AiAssistTile s={s} className="" />
@@ -171,14 +196,15 @@ export default function Report() {
             </section>
             <section className="break-inside-avoid">
               <h2 className="mb-1.5 text-[15px] font-bold">What to watch</h2>
+              {checks.length > 0 && <ChecksList checks={checks} limit={compact ? 3 : 5} className="mb-2" />}
               <RiskSummary alerts={s.alerts.slice(0, 3)} compact />
               {s.alerts.length > 3 && <p className="mt-1 text-xs text-muted">{s.alerts.length - 3} more group{s.alerts.length - 3 === 1 ? "" : "s"} of notices are in the appendix.</p>}
             </section>
           </div>
-          <section className="break-inside-avoid" data-testid="report-break-even">
+          {!compact && <section className="break-inside-avoid" data-testid="report-break-even">
             <h2 className="mb-1.5 text-[15px] font-bold">What must be true</h2>
             <BreakEvenTile project={p} ledger={ledger} className="" />
-          </section>
+          </section>}
         </section>}
 
         {/* 3. Assumptions and how sure we are */}
@@ -229,7 +255,7 @@ export default function Report() {
               <p className="mb-1.5 max-w-[80ch] text-[12.5px] text-ink-2">Shown beside the financial figures. Only items marked as counted are in NPV and payback.</p>
               <table className="data [&_td.n]:whitespace-normal [&_td.n]:font-sans">
                 <thead><tr><th>Item</th><th>Measure</th><th className="n">Before</th><th className="n">After</th><th>Result</th><th className="n">Weight</th><th className="n">Confidence</th><th>In NPV</th></tr></thead>
-                <tbody>{scorecardRows(p).map((r) => <tr key={String(r.Item)}><td>{r.Item}</td><td>{r.Measure} ({r.Unit})</td><td className="n">{r.Before}</td><td className="n">{r.After}</td><td>{r.Direction}{typeof r["Improvement (%)"] === "number" ? ` ${r["Improvement (%)"]}%` : ""}</td><td className="n">{r["Weight (%)"]}%</td><td className="n">{r["Confidence (%)"]}%</td><td>{r["In NPV and payback"]}</td></tr>)}</tbody>
+                <tbody>{scorecardRows(p).map((r) => <tr key={String(r.Item)}><td>{r.Item}</td><td>{r.Measure} ({r.Unit})</td><td className="n">{r.Before}</td><td className="n">{r.After}</td><td>{r.Direction}{typeof r["Improvement (%)"] === "number" ? ` ${Math.abs(r["Improvement (%)"]) > 300 ? "by more than 300" : r["Improvement (%)"]}%` : ""}</td><td className="n">{r["Weight (%)"]}%</td><td className="n">{r["Confidence (%)"]}%</td><td>{r["In NPV and payback"]}</td></tr>)}</tbody>
               </table>
               <p className="mt-1 text-[12.5px] text-ink-2">Composite index: {s.scorecard.composite === null ? "no weights set" : `${Math.round(s.scorecard.composite * 10) / 10}%`}. Counted in NPV: {cad(s.scorecard.monetisedMonthly)} a month at full rollout.</p>
             </section>
@@ -257,7 +283,7 @@ export default function Report() {
         </section>}
 
         {/* 4. Appendix */}
-        <section className="report-page report-appendix flex flex-col gap-6 rounded-lg border border-line bg-surface p-8 print:gap-5 print:rounded-none print:border-0 print:p-0">
+        {APPENDIX_SECTIONS.some((x) => show(x)) && <section className="report-page report-appendix flex flex-col gap-6 rounded-lg border border-line bg-surface p-8 print:gap-5 print:rounded-none print:border-0 print:p-0">
           <h2 className="text-xl font-bold">{audience === "all" ? "Appendix: detail" : `Appendix: ${audienceInfo.label}`}</h2>
 
           {show("team") && (
@@ -266,10 +292,10 @@ export default function Report() {
               <PlanTimeline project={p} className="mb-3" />
               <p className="mb-1.5 max-w-[80ch] text-[12.5px] text-ink-2">Who is on the build, for which months, and what each line costs including contingency{p.build.aiAssist ? " and AI assistance" : ""}. {extra.team.peopleMonths.toLocaleString("en-CA", { maximumFractionDigits: 1 })} person-months in all.</p>
               <table className="data [&_td.n]:whitespace-normal [&_td.n]:font-sans">
-                <thead><tr><th>Person</th><th>Role</th><th className="n">FTE</th><th>Phase</th><th className="n">Months</th><th className="n">Cost</th></tr></thead>
+                <thead><tr><th>Person</th><th>Role</th><th className="n">FTE</th><th className="n">Months</th><th className="n">Cost</th></tr></thead>
                 <tbody>
-                  {extra.team.rows.map((r) => <tr key={r.seat}><td>{r.name}</td><td>{r.role}</td><td className="n">{r.fte}</td><td>{r.phase}</td><td className="n">{r.fromMonth}–{r.toMonth}</td><td className="n">{cad(r.cost)}</td></tr>)}
-                  <tr className="total"><td colSpan={5}>Build labour</td><td className="n">{cad(extra.team.total)}</td></tr>
+                  {extra.team.rows.map((r) => <tr key={r.seat}><td>{r.name}</td><td>{r.role}</td><td className="n">{r.fte}</td><td className="n">{r.fromMonth}–{r.toMonth}</td><td className="n">{cad(r.cost)}</td></tr>)}
+                  <tr className="total"><td colSpan={4}>Build labour</td><td className="n">{cad(extra.team.total)}</td></tr>
                 </tbody>
               </table>
               {(p.timeline.phases?.length ?? 0) > 0 && (
@@ -291,12 +317,12 @@ export default function Report() {
             <section className="break-inside-avoid" data-testid="report-infrastructure">
               <h3 className="mb-2 text-lg font-bold">Infrastructure by environment, per month</h3>
               <p className="mb-1.5 max-w-[80ch] text-[12.5px] text-ink-2">Azure resources at list price, each shown in the first month it is billed in an environment. Non-production runs at a reduced size and schedule; production and the second region run all month.</p>
-              <RankedBars className="mb-3 flex flex-col gap-1.5" rows={extra.infra.envs.map((e) => ({ label: `${e.label} (a month)`, value: extra.infra.envTotals[e.id] ?? 0, color: e.production ? "platform" as const : "devlab" as const })).filter((r) => r.value > 0).sort((a, b) => b.value - a.value)} />
+              <RankedBars className="mb-3 flex flex-col gap-1.5" rows={extra.infra.envs.map((e) => ({ label: e.label, value: extra.infra.envTotals[e.id] ?? 0, color: e.production ? "platform" as const : "devlab" as const })).filter((r) => r.value > 0).sort((a, b) => b.value - a.value)} />
               <table className="data [&_td.n]:whitespace-normal [&_td.n]:font-sans">
-                <thead><tr><th>Resource</th><th>SKU</th>{extra.infra.envs.map((e) => <th key={e.id} className="n">{e.label}</th>)}</tr></thead>
+                <thead><tr><th className="w-[42%]">Resource</th>{extra.infra.envs.map((e) => <th key={e.id} className="n" title={e.label}>{ENV_SHORT[e.id] ?? e.label}</th>)}</tr></thead>
                 <tbody>
-                  {extra.infra.rows.map((r) => <tr key={r.id}><td>{r.label}</td><td>{r.sku}</td>{extra.infra.envs.map((e) => <td key={e.id} className="n">{r.perEnv[e.id] === undefined ? "–" : cad(r.perEnv[e.id]!)}</td>)}</tr>)}
-                  <tr className="total"><td colSpan={2}>Total</td>{extra.infra.envs.map((e) => <td key={e.id} className="n">{cad(extra.infra.envTotals[e.id] ?? 0)}</td>)}</tr>
+                  {extra.infra.rows.map((r) => <tr key={r.id}><td>{r.label}<div className="text-xs text-muted">{r.sku}</div></td>{extra.infra.envs.map((e) => <td key={e.id} className="n">{r.perEnv[e.id] === undefined ? "–" : cad(r.perEnv[e.id]!)}</td>)}</tr>)}
+                  <tr className="total"><td>Total</td>{extra.infra.envs.map((e) => <td key={e.id} className="n">{cad(extra.infra.envTotals[e.id] ?? 0)}</td>)}</tr>
                 </tbody>
               </table>
             </section>
@@ -403,7 +429,12 @@ export default function Report() {
           <footer className="border-t border-line pt-3 text-xs text-muted">
             Prices in CAD from the Azure Retail Prices API, the Snowflake Credit Consumption Table and curated sources, as of {catalog.meta.asOf}.{fx && ` USD-only list prices converted at ${fx.usdToCad} CAD per USD (Azure rate, ${fx.asOf}).`} List prices, no discounts. Token volumes are estimates from documented heuristics; agent costs use the typical (P50) run.
           </footer>
-        </section>
+        </section>}
+        {compact && (
+          <p className="px-1 text-xs text-muted print:mt-3">
+            Prices in CAD from the Azure Retail Prices API and curated sources, as of {catalog.meta.asOf}. List prices, no discounts. For the assumptions, the detail behind each figure and the other readers' versions, use the report selector.
+          </p>
+        )}
       </article>
     </div>
   );

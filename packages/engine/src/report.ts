@@ -375,6 +375,54 @@ export function summaryRows(p: Project, ledger: Ledger, roi: RoiResult, cat: Cat
   ];
 }
 
+/** How a Summary value is written in a spreadsheet: money, a count (months, items, hours), a percentage, a date, or text. */
+export type SummaryKind = "money" | "count" | "pct" | "date" | "text";
+export type SummarySectionId = "Plan" | "Cost" | "Returns" | "Current state" | "Scorecard" | "AI-assisted development" | "Range";
+export interface SummaryEntry {
+  label: string;
+  /** Money and counts as numbers, percentages as fractions (0.26 for 26%), dates as ISO text, everything else as text. */
+  value: string | number;
+  kind: SummaryKind;
+}
+export interface SummarySection { id: SummarySectionId; entries: SummaryEntry[] }
+
+const COUNT_LABELS = /^(Build months|Plan length|Payback month|Scorecard items|AI-assisted development: build hours saved)/;
+const SECTION_OF: [RegExp, SummarySectionId][] = [
+  [/^(Project|Currency|First build month|Build months|Plan length|Build labour)/, "Plan"],
+  [/^(Build cost|Build \(|\s+of which|Year-1 run cost|Steady-state annual run|Total cost over plan)/, "Cost"],
+  [/^(Benefit per year|ROI measured against|Total benefit|Net \(|ROI \(|NPV at|Payback|IRR|Hurdle rate)/, "Returns"],
+  [/^(Current cost per month|Target run cost|Current-state saving|Dual-running)/, "Current state"],
+  [/^Scorecard/, "Scorecard"],
+  [/^AI-assisted development/, "AI-assisted development"],
+  [/low to high$/, "Range"],
+];
+const money = (v: string) => v.split(" to ").map((x) => `C$${Math.round(Number(x)).toLocaleString("en-CA")}`).join(" to ");
+
+/**
+ * The Summary figures grouped into sections and typed for a spreadsheet, so money, counts, percentages and dates are real values with the right
+ * format and no label has to be pattern-matched to decide how a cell looks. Same figures as `summaryRows`, which stays as it is. The verdict is
+ * returned separately so a sheet can put it first. Throws for a row nobody classified, which a test turns into a failure when a row is added.
+ */
+export function summarySections(p: Project, ledger: Ledger, roi: RoiResult, cat: Catalog, rows: Row[] = summaryRows(p, ledger, roi, cat)): { verdict: string; sections: SummarySection[] } {
+  const by = new Map<SummarySectionId, SummaryEntry[]>();
+  let verdict = "";
+  for (const r of rows) {
+    const label = String(r.Item), v = r.Value!;
+    if (label === "Verdict") { verdict = String(v); continue; }
+    const section = SECTION_OF.find(([re]) => re.test(label))?.[1];
+    if (!section) throw new Error(`Summary row "${label}" has no section: add it to SECTION_OF in report.ts`);
+    let entry: SummaryEntry;
+    if (typeof v === "string" && /^-?\d+(\.\d+)?%$/.test(v)) entry = { label, value: Number(v.slice(0, -1)) / 100, kind: "pct" };
+    else if (section === "Range" && typeof v === "string") entry = { label, value: money(v), kind: "text" };
+    else if (label === "First build month") entry = { label, value: String(v), kind: "date" };
+    else if (typeof v === "number") entry = { label, value: v, kind: COUNT_LABELS.test(label) ? "count" : "money" };
+    else entry = { label, value: v, kind: "text" };
+    by.set(section, [...(by.get(section) ?? []), entry]);
+  }
+  const order: SummarySectionId[] = ["Plan", "Cost", "Returns", "Current state", "Scorecard", "AI-assisted development", "Range"];
+  return { verdict, sections: order.filter((id) => by.has(id)).map((id) => ({ id, entries: by.get(id)! })) };
+}
+
 /** The catalogue prices the estimate actually used, with their source and confidence. */
 export function pricesUsedRows(ledger: Ledger, cat: Catalog): Row[] {
   const used = new Set(ledger.months.flatMap((m) => m.lines.map((l) => l.meter)));

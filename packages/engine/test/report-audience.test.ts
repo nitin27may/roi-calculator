@@ -10,12 +10,16 @@ describe("report audiences", () => {
     for (const s of SECTIONS) expect(showsSection("all", s)).toBe(true);
     for (const a of REPORT_AUDIENCES.filter((x) => x.id !== "all")) {
       const n = SECTIONS.filter((s) => showsSection(a.id, s)).length;
-      expect(n, a.id).toBeGreaterThan(1);
+      // The one-page summary is the executive page and nothing else; every other copy has several sections.
+      expect(n, a.id).toBeGreaterThan(a.id === "onepage" ? 0 : 1);
       expect(n, a.id).toBeLessThan(SECTIONS.length);
     }
   });
   it("every section reaches at least one named audience", () => {
     for (const s of SECTIONS) expect(REPORT_AUDIENCES.some((a) => a.id !== "all" && showsSection(a.id, s)), s).toBe(true);
+  });
+  it("the one-page summary is the executive page alone", () => {
+    expect(SECTIONS.filter((s) => showsSection("onepage", s))).toEqual(["exec"]);
   });
   it("only technology reads the infrastructure table and only delivery the team plan", () => {
     expect(REPORT_AUDIENCES.filter((a) => a.id !== "all" && showsSection(a.id, "infrastructure")).map((a) => a.id)).toEqual(["tech"]);

@@ -6,6 +6,17 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 ### Added
 
+- One-page summary: a report copy that is one A4 page (verdict, key figures, where the money goes, what must be true, finance measures, what to watch).
+- Check your case: cross-field checks a careful reader would raise (no build team, benefit many times the cost, the same people saved twice, payback inside the build, benefits before go-live, 100% adoption, unassumed decommissions, no discount rate or contingency, very high IRR, every benefit at 100% confidence). On the Summary and under What to watch in the report. They are prompts, not errors, and change no figure.
+- Cost of delay: what one month's slip in go-live costs in NPV, next to the break-even margins.
+
+### Changed
+
+- Report print layout: sections flow instead of each starting a new page, so pages are no longer left mostly empty (sponsor report 7 pages to 4, finance 8 to 6, technology 5 to 4); a single-reader copy starts with a compact title block instead of a full cover page; the infrastructure table folds the SKU under the resource name and uses short environment headings; the team table drops the phase column the timeline already shows; scorecard improvements above 300% read "by more than 300%".
+- Excel export: the Summary has a title, the verdict first and sections (Plan, Cost, Returns, Current state, Scorecard, Range) with real numbers, percentages and dates instead of text; every sheet has a styled header, tab colour and prints landscape one page wide with the header repeated (the AKS example prints in 53 pages, not 533); Months and ROI by capability have SUM totals; Line items has a filter, plain stream names and full-precision unit prices; negatives show in red; Prices used leads with the item and links open. CSV starts with a byte order mark so Excel reads it as UTF-8, and file names no longer end in a dash.
+
+### Added
+
 - What must be true (Summary, Value & ROI Sensitivity, Report for sponsors and finance): how far benefits can fall, costs rise or go-live slip before NPV reaches zero, each solved on its own.
 - Phases and team over time: a timeline of delivery phases and each costed person with go-live marked, on the Build page and in the Delivery report, with a table view.
 - Report charts: where the benefit comes from, by month and by source; cost by environment in the Technology report.
