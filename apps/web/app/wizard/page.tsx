@@ -202,7 +202,7 @@ function VolumeStep({ state, update }: StepProps) {
         <Card key={r.id}>
           <CardHead title={r.label} sub={r.description} />
           <div className="grid gap-3 px-3.5 pb-3.5 sm:grid-cols-2 lg:grid-cols-3">
-            {r.questions.map((q) => <QuestionField key={q.id} recipe={r} q={q} state={state} update={update} />)}
+            {r.questions.filter((q) => !q.when || q.when(recipeValues(state, r))).map((q) => <QuestionField key={q.id} recipe={r} q={q} state={state} update={update} />)}
           </div>
         </Card>
       ))}

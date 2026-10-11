@@ -185,6 +185,8 @@ export const ACTIVITY_SPECS: Record<string, Spec[]> = {
   tooling: [
     { key: "copilotSeatsPerDev", label: "Copilot seats per developer", type: "number", max: 2 },
     { key: "copilotPlan", label: "Copilot plan", type: "select", options: [{ value: "copilot-business", label: "Business" }, { value: "copilot-enterprise", label: "Enterprise" }] },
+    { key: "topUpPerDevPerMonthCad", label: "Top-up per developer, extra usage on top of the seat", type: "number", suffix: "C$ / month" },
+    { key: "noCodingTokens", label: "Leave out coding-agent tokens (seats and top-up only)", type: "toggle" },
     { key: "codingModelId", label: "Coding agent model", type: "model" },
     { key: "workingDays", label: "Working days / month", type: "number", max: 31 },
     { key: "monthFactors", label: "Intensity by month", type: "list", hint: "1 = full" },

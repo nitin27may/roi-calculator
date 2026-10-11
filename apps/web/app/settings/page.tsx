@@ -2,7 +2,7 @@
 import { InlineConfirm } from "@/components/cost-grid";
 import { useState } from "react";
 import Link from "next/link";
-import { LabourExcludeToggle } from "@/components/labour-excluded";
+import { DeliveryExcludeToggle, LabourExcludeToggle } from "@/components/labour-excluded";
 import { Card, CardHead, Field, NumberInput, Pill, Select, TextInput } from "@/components/ui";
 import { catalog } from "@/lib/compute";
 import { useStudio } from "@/lib/store";
@@ -69,7 +69,8 @@ export default function Settings() {
         <CardHead title="Build labour" sub="Whether the build team's cost is counted" />
         <div className="flex flex-col gap-2 px-3.5 pb-3.5">
           <LabourExcludeToggle />
-          <p className="text-xs text-muted">Use this when the team is already paid for elsewhere and only the AI spend is new money. The same setting is on the Build page.</p>
+          <DeliveryExcludeToggle />
+          <p className="text-xs text-muted">Use these when the team is already paid for elsewhere, or training and communications sit in a department&apos;s normal budget, so only the new money is counted. The same settings are on the Build page.</p>
         </div>
       </Card>
       <Card>

@@ -99,6 +99,10 @@ export const DevActivitySchema = z.discriminatedUnion("kind", [
     kind: z.literal("tooling"), id, label: z.string(), ...Scope, ...Overrides,
     copilotSeatsPerDev: n0, copilotPlan: z.enum(["copilot-business", "copilot-enterprise"]),
     codingModelId: id, codingTokensPerDevPerDay: z.object({ input: n0, cachedInput: n0, output: n0 }), workingDays: n0,
+    /** Flat extra spend per developer per month on top of the seat (premium requests, a usage allowance), in CAD. Absent means none. */
+    topUpPerDevPerMonthCad: n0.optional(),
+    /** When true, coding-agent token usage is not costed (seats and top-up only). Absent means costed. */
+    noCodingTokens: z.boolean().optional(),
     /** Intensity per month (1 = full); last value repeats. */
     monthFactors: z.array(n0).default([1]),
   }),
@@ -600,6 +604,8 @@ const ProjectObject = z.object({
     team: z.array(TeamLineSchema),
     /** When false, the team only drives Dev Lab volumes and no build labour is costed. */
     includeLabour: z.boolean().default(true),
+    /** When false, the one-off and monthly delivery costs (vendor work, training, communications, data migration) are left out. Absent means counted. */
+    includeDeliveryCosts: z.boolean().optional(),
     workstreams: z.array(WorkstreamSchema).default([]),
     /** Optional AI Dev Lab budget per experimenting person per month (CAD). */
     devBudgetPerMonth: n0.optional(),

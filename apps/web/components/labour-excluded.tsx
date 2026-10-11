@@ -24,6 +24,20 @@ export function LabourExcludedNote() {
   );
 }
 
+/** Leaves the delivery costs (vendor work, training, communications, data migration) out of every figure; the items are kept. */
+export function DeliveryExcludeToggle() {
+  const excluded = useStudio((s) => s.project.build.includeDeliveryCosts === false);
+  const edit = useStudio((s) => s.edit);
+  return (
+    <div className="flex items-start gap-1.5 text-[12.5px]">
+      <label className="flex items-start gap-2">
+        <input type="checkbox" className="mt-0.5" checked={excluded} onChange={(e) => edit((d) => { if (e.target.checked) d.build.includeDeliveryCosts = false; else delete d.build.includeDeliveryCosts; })} />
+        <span>Exclude all delivery costs <span className="text-muted">(vendor work, training, communications and data migration are left out of every figure, for when they sit in a department&apos;s normal budget; the items are kept and unticking brings them back)</span></span>
+      </label>
+    </div>
+  );
+}
+
 /** The one control for leaving build labour out. Build and Settings both render it, so they always agree (it edits `build.includeLabour`). */
 export function LabourExcludeToggle() {
   const excluded = useStudio((s) => !s.project.build.includeLabour);
