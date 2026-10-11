@@ -1183,6 +1183,20 @@
       ]
     },
     {
+      "id": "sc-discount",
+      "label": "Enterprise agreement: 12% off Azure list prices",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "settings",
+            "azureAdjustPct"
+          ],
+          "value": -12
+        }
+      ]
+    },
+    {
       "id": "sc-smaller",
       "label": "Smaller footprint (next size down)",
       "edits": [

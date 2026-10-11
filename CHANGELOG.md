@@ -6,6 +6,17 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 ### Added
 
+- What must be true (Summary, Value & ROI Sensitivity, Report for sponsors and finance): how far benefits can fall, costs rise or go-live slip before NPV reaches zero, each solved on its own.
+- Phases and team over time: a timeline of delivery phases and each costed person with go-live marked, on the Build page and in the Delivery report, with a table view.
+- Report charts: where the benefit comes from, by month and by source; cost by environment in the Technology report.
+- Scenarios: discount rate, usage growth, Azure price adjustment and leaving out a feature (new edit kind `dropFeature`).
+
+### Changed
+
+- Where the money goes groups what a reader would name: all build labour, all infrastructure and the sustaining team are one row each, so the "Other" slice no longer swallows most of the cost (on the AKS example it falls from C$4.76M to C$0.61M).
+
+### Added
+
 - Your own price for any catalogue unit price (Prices & sources, "Your price"): a negotiated rate, or a price for something the catalogue lacks such as a custom SaaS seat, which used to cost C$0 with no way to set a price. It applies to the project only, replaces the pay-as-you-go price, and is noted as a manual price.
 - Hybrid Benefit for SQL Database and SQL Managed Instance: turn it on and enter your own saving on compute, because Azure publishes no compute-only price to read it from.
 

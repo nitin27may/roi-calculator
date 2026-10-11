@@ -22,7 +22,7 @@ export type ReportAudience = (typeof REPORT_AUDIENCES)[number]["id"];
 export type ReportSection =
   | "exec" | "assumptions" | "workloads" | "currentState" | "scorecard" | "range"
   | "monthly" | "cumulative" | "build" | "production" | "byYear" | "capability" | "scenarios" | "levers" | "watchouts"
-  | "infrastructure" | "team";
+  | "infrastructure" | "team" | "benefitSources";
 
 /** Which audiences get which section. "all" gets every section. */
 const SECTION_AUDIENCES: Record<ReportSection, readonly ReportAudience[]> = {
@@ -43,6 +43,7 @@ const SECTION_AUDIENCES: Record<ReportSection, readonly ReportAudience[]> = {
   watchouts: ["tech", "delivery", "sponsor"],
   infrastructure: ["tech"],
   team: ["delivery"],
+  benefitSources: ["sponsor", "finance", "business"],
 };
 
 export const showsSection = (audience: ReportAudience, section: ReportSection): boolean => audience === "all" || SECTION_AUDIENCES[section].includes(audience);
@@ -87,4 +88,56 @@ export function infrastructureReport(p: Project, ledger: Ledger, cat: Catalog): 
   const envTotals: Record<string, number> = {};
   for (const e of envs) envTotals[e.id] = sum(rows.map((r) => r.perEnv[e.id] ?? 0));
   return { envs, rows, envTotals, total: sum(Object.values(envTotals)) };
+}
+
+export interface TimelineBar { id: string; label: string; sub: string; fromMonth: number; toMonth: number }
+export interface DeliveryTimeline {
+  /** Months shown: the build, plus any hypercare or team line that runs past it, cut at the plan horizon. */
+  span: number;
+  buildMonths: number;
+  phases: TimelineBar[];
+  people: TimelineBar[];
+}
+
+/**
+ * The delivery plan laid out over months: each delivery phase and each costed team line with the months it is billed.
+ * Go-live is the month after the last build month; hypercare and a team line that runs past it show after that.
+ */
+export function deliveryTimeline(p: Project): DeliveryTimeline {
+  const B = p.timeline.buildMonths;
+  const phases = (p.timeline.phases ?? []).map((x) => ({ id: x.id, label: x.label, sub: `Months ${x.fromMonth}–${x.toMonth}`, fromMonth: x.fromMonth, toMonth: x.toMonth }));
+  const people: TimelineBar[] = [];
+  p.build.team.forEach((t, i) => {
+    if (!p.build.includeLabour || t.costed === false) return;
+    const w = lineWindow(p, t);
+    if (w.to < w.from) return;
+    const role = p.rateCard.find((r) => r.id === t.roleId)?.label ?? t.roleId;
+    people.push({ id: `seat-${i}`, label: t.name ?? role, sub: `${role}, ${t.people} FTE`, fromMonth: w.from, toMonth: w.to });
+  });
+  const last = Math.max(B, ...phases.map((x) => x.toMonth), ...people.map((x) => x.toMonth));
+  return { span: Math.min(p.timeline.horizonMonths, last), buildMonths: B, phases, people };
+}
+
+export const BENEFIT_SOURCES = [
+  { key: "timeSaved", label: "Time saved" },
+  { key: "currentState", label: "Current-state savings" },
+  { key: "avoided", label: "Avoided costs" },
+  { key: "value", label: "Revenue, quality and risk" },
+  { key: "oneOff", label: "One-off benefits" },
+  { key: "scorecard", label: "Monetised scorecard items" },
+] as const;
+export type BenefitSourceKey = (typeof BENEFIT_SOURCES)[number]["key"];
+
+/** Benefit by month and in total, split by where it comes from. The six sources add up to the ledger's benefit in every month. */
+export function benefitBySource(ledger: Ledger): { rows: Record<BenefitSourceKey, number>[]; totals: Record<BenefitSourceKey, number> } {
+  const rows = ledger.months.map((m) => ({
+    timeSaved: sum(Object.values(m.benefitBy.capabilities)),
+    currentState: sum(Object.values(m.benefitBy.currentState)),
+    avoided: m.benefitBy.avoided,
+    value: sum(Object.values(m.benefitBy.value)),
+    oneOff: m.benefitBy.oneOff,
+    scorecard: sum(Object.values(m.benefitBy.scorecard)),
+  }));
+  const totals = Object.fromEntries(BENEFIT_SOURCES.map((s) => [s.key, sum(rows.map((r) => r[s.key]))])) as Record<BenefitSourceKey, number>;
+  return { rows, totals };
 }

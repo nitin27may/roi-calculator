@@ -148,21 +148,28 @@ const STREAM_WORD: Record<Stream, string> = { labour: "Building", devlab: "Build
 const STREAM_DRIVER_COLOR: Record<Stream, DriverColor> = { labour: "labour", devlab: "devlab", devenv: "devlab", run: "run", platform: "platform", maint: "maint", transition: "maint", env: "platform", delivery: "labour" };
 
 /**
- * Top 5 cost lines over the whole plan (by stream and label, summed across months) plus an
- * "Other" remainder. Each row is prefixed with its stream in plain words — the same line label
- * can otherwise read as, say, production cost when it is really the maintenance team. Build
- * labour lines already lead with their own delivery phase (e.g. "Build: Dev A (AI developer)"
- * from `teamLines()` in devlab.ts); that phase is dropped so the stream prefix doesn't double up.
+ * Top 5 cost drivers over the whole plan plus an "Other" remainder. A driver is what a reader would name, not a ledger line:
+ * all build and hypercare labour is one driver (otherwise a 20-person team is twenty small rows), all catalogue resources and their
+ * environments are one driver, the sustaining team is one driver, and every other line is a driver by stream and label. Each row is prefixed with its
+ * stream in plain words, because the same label can read as production cost when it is really the maintenance team.
+ * The infrastructure row says how many resources it holds; the Infrastructure page and the report break it down.
  */
 export function costDrivers(ledger: Ledger): CostDriverRow[] {
   const byKey = new Map<string, { label: string; value: number; color: DriverColor }>();
-  for (const mo of ledger.months) for (const l of mo.lines) {
-    const label = l.stream === "labour" ? l.label.replace(/^[^:]+:\s*/, "") : l.label;
-    const key = `${l.stream}:${label}`;
+  const resources = new Set<string>();
+  const add = (key: string, label: string, color: DriverColor, cost: number) => {
     const row = byKey.get(key);
-    if (row) row.value += l.cost;
-    else byKey.set(key, { label: `${STREAM_WORD[l.stream]}: ${label}`, value: l.cost, color: STREAM_DRIVER_COLOR[l.stream] });
+    if (row) row.value += cost;
+    else byKey.set(key, { label, value: cost, color });
+  };
+  for (const mo of ledger.months) for (const l of mo.lines) {
+    if (l.componentId.startsWith("resource:")) { resources.add(l.componentId); add("infrastructure", "Infrastructure", "platform", l.cost); }
+    else if (l.stream === "labour") add("labour", "Building: team labour", STREAM_DRIVER_COLOR.labour, l.cost);
+    else if (l.stream === "maint") add("maint", "Maintenance: sustaining team", STREAM_DRIVER_COLOR.maint, l.cost);
+    else add(`${l.stream}:${l.label}`, `${STREAM_WORD[l.stream]}: ${l.label}`, STREAM_DRIVER_COLOR[l.stream], l.cost);
   }
+  const infra = byKey.get("infrastructure");
+  if (infra) infra.label = `Infrastructure: ${resources.size} resource${resources.size === 1 ? "" : "s"}, all environments`;
   const sorted = [...byKey.values()].filter((r) => r.value > 0).sort((a, b) => b.value - a.value);
   const top = sorted.slice(0, 5);
   const other = sorted.slice(5).reduce((s, r) => s + r.value, 0);

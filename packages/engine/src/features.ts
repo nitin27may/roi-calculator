@@ -44,6 +44,44 @@ export function removeFeature(p: Project, id: string): void {
   for (const x of [...p.workloads, ...p.build.workstreams, ...p.build.activities, ...p.benefits.capabilities]) if (x.featureId === id) delete x.featureId;
 }
 
+/**
+ * The project without a feature and everything it owns: its workloads, resources, workstreams, AI experiments, benefit capabilities,
+ * value items, scorecard items and current-state lines. What no feature owns stays. A link that pointed at something removed is cleared,
+ * so the result is still a consistent project. Mutates `p`. Used by the "leave out a feature" scenario.
+ */
+export function dropFeature(p: Project, id: string): void {
+  const goneWorkloads = new Set(p.workloads.filter((w) => w.featureId === id).map((w) => w.id));
+  const goneStreams = new Set(p.build.workstreams.filter((w) => w.featureId === id).map((w) => w.id));
+  p.features = p.features.filter((f) => f.id !== id);
+  p.workloads = p.workloads.filter((w) => !goneWorkloads.has(w.id));
+  p.resources = (p.resources ?? []).filter((r) => r.featureId !== id);
+  p.build.workstreams = p.build.workstreams.filter((w) => !goneStreams.has(w.id));
+  p.build.activities = p.build.activities.filter((a) => !(a.featureId === id || (a.workstreamId !== undefined && goneStreams.has(a.workstreamId))));
+  for (const t of p.build.team) if (t.allocations) { t.allocations = t.allocations.filter((a) => !goneStreams.has(a.workstreamId)); if (t.allocations.length === 0) delete t.allocations; }
+  const goneCaps = new Set(p.benefits.capabilities.filter((c) => c.featureId === id).map((c) => c.id));
+  p.benefits.capabilities = p.benefits.capabilities.filter((c) => !goneCaps.has(c.id));
+  for (const c of p.benefits.capabilities) {
+    c.workloadIds = c.workloadIds.filter((w) => !goneWorkloads.has(w));
+    c.workstreamIds = c.workstreamIds.filter((w) => !goneStreams.has(w));
+    if (c.volumeFrom && goneWorkloads.has(c.volumeFrom)) delete c.volumeFrom;
+  }
+  p.benefits.value = p.benefits.value.filter((v) => v.featureId !== id);
+  for (const v of p.benefits.value) {
+    if (v.volumeFrom && goneWorkloads.has(v.volumeFrom)) delete v.volumeFrom;
+    if (v.capabilityId && goneCaps.has(v.capabilityId)) delete v.capabilityId;
+  }
+  p.benefits.avoidedCosts = p.benefits.avoidedCosts.filter((a) => !(a.capabilityId && goneCaps.has(a.capabilityId)));
+  if (p.benefits.scorecard) {
+    p.benefits.scorecard = p.benefits.scorecard.filter((s) => s.featureId !== id);
+    for (const s of p.benefits.scorecard) if (s.monetise?.volumeFrom && goneWorkloads.has(s.monetise.volumeFrom)) delete s.monetise.volumeFrom;
+  }
+  if (p.currentState) {
+    p.currentState.lines = p.currentState.lines.filter((l) => l.featureId !== id);
+    for (const l of p.currentState.lines) if (l.basis.kind === "perTransaction" && l.basis.volumeFrom && goneWorkloads.has(l.basis.volumeFrom)) delete l.basis.volumeFrom;
+  }
+  for (const w of p.workloads) if ((w.kind === "hosting" || w.kind === "seats" || w.kind === "transactionFee") && w.volumeFrom && goneWorkloads.has(w.volumeFrom)) delete w.volumeFrom;
+}
+
 /** Point a capability at every workload and workstream its feature owns (its benefit then carries their cost). */
 export function linkCapabilityToFeature(p: Project, capabilityId: string, featureId: string): void {
   const c = p.benefits.capabilities.find((x) => x.id === capabilityId);

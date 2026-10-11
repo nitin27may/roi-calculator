@@ -136,6 +136,7 @@ export function claimsReplatform(): Project {
     { id: "sc-late", label: "Go-live slips three months", edits: [{ kind: "shiftMonths", target: "golive", by: 3 }] },
     { id: "sc-keep-vms", label: "VM estate stays two extra quarters (decommission +6 months)", edits: [{ kind: "shiftMonths", target: "decommission", by: 6 }] },
     { id: "sc-rates", label: "Contractor rates 15% higher", edits: [{ kind: "scaleRates", factor: 1.15 }] },
+    { id: "sc-discount", label: "Enterprise agreement: 12% off Azure list prices", edits: [{ kind: "set", path: ["settings", "azureAdjustPct"], value: -12 }] },
     { id: "sc-smaller", label: "Smaller footprint (next size down)", edits: [{ kind: "lever", leverId: "skuDown" }] },
   ];
   return p;

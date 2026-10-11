@@ -7,12 +7,12 @@ import { BulletBar, CumulativeLine, RangeBar, RankedBars, ViewToggle, Waterfall 
 import { Story } from "@/components/story";
 import { MonthLegend } from "@/components/months";
 import { Dumbbell } from "@/components/charts-compare";
-import { AiAssistTile, CumulativeTable, CurrentVsTargetTile, DriversTable, FinanceMeasures, HeadlineTiles, RiskSummary, ScorecardTile, VerdictChip, WATERFALL_COST_IDS, WaterfallTable, wideDrivers } from "@/components/summary-parts";
+import { AiAssistTile, BreakEvenTile, CumulativeTable, CurrentVsTargetTile, DriversTable, FinanceMeasures, HeadlineTiles, RiskSummary, ScorecardTile, VerdictChip, WATERFALL_COST_IDS, WaterfallTable, wideDrivers } from "@/components/summary-parts";
 import { catalog, useSummary } from "@/lib/compute";
 import { cad, cadUnit } from "@/lib/format";
 
 export default function Summary() {
-  const { project, roi, summary: s } = useSummary();
+  const { project, ledger, roi, summary: s } = useSummary();
   const scenarios = useMemo(() => compareScenarios(project, catalog), [project]);
   const rangeRows = [
     { id: "cost", label: "Total cost", ...s.range.totalCost },
@@ -76,6 +76,10 @@ export default function Summary() {
         <Card>
           <CardHead title="Finance measures" sub="Return measures a CFO asks for. Set the hurdle rate and terminal value on the ROI page." />
           <FinanceMeasures s={s} />
+        </Card>
+        <Card>
+          <CardHead title="What must be true" sub="How far benefits, costs or the go-live date can move before NPV reaches zero." />
+          <BreakEvenTile project={project} ledger={ledger} />
         </Card>
       </div>
 

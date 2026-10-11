@@ -143,6 +143,7 @@ export function claimsIntakeAi(): Project {
   p.scenarios = [
     { id: "sc-mini", label: "Triage agent on the small model", edits: [{ kind: "set", path: ["workloads", "agent", "modelId"], value: "gpt-6-luna" }] },
     { id: "sc-lean", label: "Lean build: narrow bake-off, Batch regression", edits: [{ kind: "lever", leverId: "narrowBakeoff" }, { kind: "lever", leverId: "batchRegression" }] },
+    { id: "sc-no-assist", label: "Build only the intake agent (leave out the policy assistant)", edits: [{ kind: "dropFeature", featureId: "assist" }] },
     { id: "sc-volume", label: "Claim volume 25% higher", edits: [{ kind: "scaleUsage", factor: 1.25 }] },
   ];
   return p;

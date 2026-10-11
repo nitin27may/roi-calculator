@@ -1,6 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
+import { BreakEvenTile } from "@/components/summary-parts";
 import { COST_BASES, applicableLevers, LEVERS, leverEffect, applyScenario, buildLabel, avoidedMonthly, beforeAfter, capabilityFromBenchmark, capabilityVolume, workloadVolume, sensitivity, capabilityHours, compareScenarios, computeAllocation, linkCapabilityToFeature, ensureBenchmarkRole, roiAssumptions, type Capability, type ScenarioEdit } from "@roi-calculator/engine";
 import { Card, CardHead, Field, NumberInput, Pill, Seg, Select, TextInput, TrashButton } from "@/components/ui";
 import type { HelpId } from "@/lib/help";
@@ -148,8 +149,13 @@ function Tornado() {
   const pad = (hi - lo || 1) * 0.17;
   const x = (v: number) => ((v - (lo - pad)) / (hi - lo + 2 * pad || 1)) * 100;
   const top = rows[0];
+  const { ledger } = useLedger();
   return (
     <div className="flex flex-col gap-3">
+      <section aria-label="What must be true" className="rounded-md border border-line">
+        <h3 className="px-3 pt-2.5 text-sm font-semibold">What must be true for NPV to reach zero</h3>
+        <BreakEvenTile project={project} ledger={ledger} className="px-3 pb-2.5 pt-1.5" />
+      </section>
       <div className="rounded-r-md border-l-[3px] border-accent bg-accent-soft px-3 py-2 text-[12.5px]">
         NPV is <b>{cad(base)}</b>. Each bar moves one input to a low and a high value with everything else held. {top && <>The biggest lever is <b>{top.label.toLowerCase()}</b>: NPV runs from {cad(Math.min(top.low, top.high))} to {cad(Math.max(top.low, top.high))}.</>}
         {rows.some((r) => Math.min(r.low, r.high) < 0) && <> Inputs whose bar crosses zero can turn the case negative on their own.</>}
@@ -464,13 +470,14 @@ function Capabilities() {
   );
 }
 
-type EditKind = "model" | "scale" | "buildMonths" | "developers" | "lever" | "preset" | "rates" | "shift";
+type EditKind = "model" | "scale" | "buildMonths" | "developers" | "lever" | "preset" | "rates" | "shift" | "discount" | "growth" | "azurePrice" | "dropFeature";
 
 const monthsText = (n: number) => `${Math.abs(n)} month${Math.abs(n) === 1 ? "" : "s"} ${n < 0 ? "earlier" : "later"}`;
 
 /** One sentence for a scenario change, so a saved scenario can be read and a single change removed. */
 function describeEdit(e: ScenarioEdit, names: Map<string, string> = new Map()): string {
   switch (e.kind) {
+    case "dropFeature": return `Leave out ${names.get(e.featureId) ?? e.featureId}`;
     case "scaleUsage": return `Usage at ${Math.round(e.factor * 100)}%`;
     case "scaleRates": return `Labour rates at ${Math.round(e.factor * 100)}%${e.scope === "all" ? " (including the value of time saved)" : ""}`;
     case "shiftMonths": return e.target === "golive" ? `Go-live ${monthsText(e.by)}` : `Decommission ${monthsText(e.by)}`;
@@ -491,7 +498,7 @@ function ScenarioChanges({ id }: { id: string }) {
   const project = useStudio((s) => s.project);
   const edits = project.scenarios.find((x) => x.id === id)?.edits ?? [];
   // Item ids in a path read as the item's name: "SaaS CRM subscriptions" rather than "crm-seats".
-  const names = new Map<string, string>([...project.workloads, ...(project.currentState?.lines ?? []), ...project.benefits.value, ...project.benefits.capabilities].map((x) => [x.id, x.label] as [string, string]));
+  const names = new Map<string, string>([...project.features, ...project.workloads, ...(project.currentState?.lines ?? []), ...project.benefits.value, ...project.benefits.capabilities].map((x) => [x.id, x.label] as [string, string]));
   const edit = useStudio((s) => s.edit);
   return (
     <ul className="mt-0.5 flex flex-wrap gap-1" aria-label="Changes in this scenario">
@@ -519,6 +526,7 @@ function Scenarios() {
   const [wid, setWid] = useState(llmWorkloads[0]?.id ?? "");
   const [model, setModel] = useState("gpt-5.4-mini");
   const [num, setNum] = useState(50);
+  const [dropId, setDropId] = useState(project.features[0]?.id ?? "");
   const [shiftTarget, setShiftTarget] = useState<"golive" | "decommission">("golive");
   const levers = useMemo(() => applicableLevers(project, catalog), [project]);
   // Nothing is preselected: the lever and its setting start empty until the user picks a lever.
@@ -538,6 +546,10 @@ function Scenarios() {
       : kind === "buildMonths" ? { edit: { kind: "set", path: ["timeline", "buildMonths"], value: Math.round(num) }, text: `Build for ${Math.round(num)} months` }
       : kind === "developers" && devIdx >= 0 ? { edit: { kind: "set", path: ["build", "team", devIdx, "people"], value: num }, text: `${num} experimenting developers` }
       : kind === "lever" && picked ? { edit: { kind: "lever", leverId: picked.id, ...(leverSetting !== undefined ? { amount: leverSetting } : {}) }, text: leverText }
+      : kind === "discount" ? { edit: { kind: "set", path: ["roi", "discountRatePct"], value: Math.min(50, Math.max(0, num)) }, text: `Discount rate ${Math.min(50, Math.max(0, num))}%` }
+      : kind === "growth" ? { edit: { kind: "set", path: ["roi", "growthPctPerYear"], value: Math.min(500, Math.max(-50, num)) }, text: `Usage growth ${num}% a year` }
+      : kind === "azurePrice" ? { edit: { kind: "set", path: ["settings", "azureAdjustPct"], value: Math.min(200, Math.max(-90, num)) }, text: `Azure prices ${num >= 0 ? "+" : ""}${num}%` }
+      : kind === "dropFeature" && dropId ? { edit: { kind: "dropFeature", featureId: dropId }, text: `Leave out ${project.features.find((f) => f.id === dropId)?.label ?? dropId}` }
       : kind === "rates" ? { edit: { kind: "scaleRates", factor: num / 100 }, text: `Labour rates at ${num}%` }
       : kind === "shift" ? { edit: { kind: "shiftMonths", target: shiftTarget, by: Math.round(num) }, text: `${shiftTarget === "golive" ? "Go-live" : "Decommission"} ${monthsText(Math.round(num))}` }
       : kind === "preset" ? { edit: { kind: "set", path: ["roi", "benefitPreset"], value: preset }, text: `${preset} benefits` }
@@ -586,9 +598,13 @@ function Scenarios() {
       <div className="rounded-md border border-line p-3">
         <h3 className="mb-2 text-sm font-semibold">New scenario</h3>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] items-end gap-2.5">
-          <Field label="Change" help="scnChange"><Select value={kind} onChange={(v) => setKind(v as EditKind)} options={[{ value: "model", label: "Model for a workload" }, { value: "scale", label: "Usage volume (%)" }, { value: "buildMonths", label: "Build months" }, { value: "developers", label: "Experimenting developers" }, { value: "lever", label: "Apply a savings lever" }, { value: "rates", label: "Labour rates (%)" }, { value: "shift", label: "Move go-live or decommission date" }, { value: "preset", label: "Benefit preset" }]} /></Field>
+          <Field label="Change" help="scnChange"><Select value={kind} onChange={(v) => setKind(v as EditKind)} options={[{ value: "model", label: "Model for a workload" }, { value: "scale", label: "Usage volume (%)" }, { value: "buildMonths", label: "Build months" }, { value: "developers", label: "Experimenting developers" }, { value: "lever", label: "Apply a savings lever" }, { value: "rates", label: "Labour rates (%)" }, { value: "discount", label: "Discount rate (%)" }, { value: "growth", label: "Usage growth (% a year)" }, { value: "azurePrice", label: "Azure prices (% adjustment)" }, ...(project.features.length > 0 ? [{ value: "dropFeature" as const, label: "Leave out a feature" }] : []), { value: "shift", label: "Move go-live or decommission date" }, { value: "preset", label: "Benefit preset" }]} /></Field>
           {kind === "model" && <><Field label="Workload" help="scnWorkload"><Select value={wid} onChange={(v) => { setWid(v); setModel(modelChoices(v)[0]?.value ?? ""); }} options={llmWorkloads.map((w) => ({ value: w.id, label: w.label }))} /></Field><Field label="Model" help="scnModel"><Select value={modelChoices(wid).some((o) => o.value === model) ? model : (modelChoices(wid)[0]?.value ?? "")} onChange={setModel} options={modelChoices(wid)} /></Field></>}
           {(kind === "scale" || kind === "buildMonths" || kind === "developers") && <Field label={kind === "scale" ? "Percent of baseline" : kind === "buildMonths" ? "Months" : "People"} help="scnValue"><NumberInput value={num} min={kind === "scale" ? 1 : 1} max={kind === "scale" ? 1000 : 24} onChange={setNum} /></Field>}
+          {kind === "discount" && <Field label="Discount rate" help="scnValue"><NumberInput value={num} min={0} max={50} onChange={setNum} suffix="%" /></Field>}
+          {kind === "growth" && <Field label="Growth a year" help="scnValue"><NumberInput value={num} min={-50} max={500} onChange={setNum} suffix="%" /></Field>}
+          {kind === "azurePrice" && <Field label="Move every Azure price by" help="scnValue"><NumberInput value={num} min={-90} max={200} onChange={setNum} suffix="%" /></Field>}
+          {kind === "dropFeature" && <Field label="Feature to leave out" help="scnValue"><Select value={dropId} onChange={setDropId} options={project.features.map((f) => ({ value: f.id, label: f.label }))} /></Field>}
           {kind === "rates" && <Field label="Percent of today's rates" help="scnValue"><NumberInput value={num} min={10} max={300} onChange={setNum} suffix="%" /></Field>}
           {kind === "shift" && <><Field label="Date to move" help="scnValue"><Select value={shiftTarget} onChange={(v) => setShiftTarget(v as typeof shiftTarget)} options={[{ value: "golive", label: "Go-live (and what follows it)" }, { value: "decommission", label: "Decommission of current costs" }]} /></Field><Field label="Months later (negative is earlier)" help="scnValue"><NumberInput value={num} min={-12} max={24} onChange={setNum} suffix="months" /></Field></>}
           {kind === "lever" && <Field label="Lever" help="scnLever"><Select value={lever} onChange={(v) => { setLever(v); setLeverNum(null); }} options={[{ value: "", label: levers.length ? "Choose a lever" : "No lever applies to this project" }, ...levers.map((l) => ({ value: l.id, label: l.label }))]} /></Field>}
@@ -596,6 +612,7 @@ function Scenarios() {
           {kind === "preset" && <Field label="Preset" help="scnPreset"><Select value={preset} onChange={(v) => setPreset(v as typeof preset)} options={[{ value: "conservative", label: "Conservative" }, { value: "typical", label: "Typical" }, { value: "optimistic", label: "Optimistic" }]} /></Field>}
           <button type="button" className="flex h-[30px] w-fit items-center gap-1.5 rounded-md border border-line px-2.5 text-xs font-medium hover:bg-surface-2 disabled:opacity-50" disabled={kind === "lever" && !picked} onClick={addEdit}><Plus size={14} />Add change</button>
         </div>
+        {kind === "dropFeature" && <p className="mt-2 max-w-[70ch] text-xs text-muted">Removes the feature's workloads, resources, AI experiments, benefits, scorecard items and current-state lines. The build team and delivery costs are shared by the whole project and stay as they are; use "Build months" or "Experimenting developers" to change those.</p>}
         {kind === "lever" && picked && effect && (
           <div className="mt-2 rounded-r-md border-l-[3px] border-accent bg-accent-soft px-3 py-2 text-[12.5px]" data-testid="lever-detail">
             <div>{picked.detail}</div>

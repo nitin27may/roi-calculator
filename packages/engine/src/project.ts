@@ -421,6 +421,8 @@ export const ScenarioEditSchema = z.discriminatedUnion("kind", [
   /** `amount` is the lever's own setting (a percent or a number of months, see `LeverParam` in levers.ts); absent means the lever's default. */
   z.object({ kind: z.literal("lever"), leverId: id, amount: z.number().optional() }),
   z.object({ kind: z.literal("scaleUsage"), factor: z.number().positive() }),
+  /** Leave a feature and everything it owns out of the project (see `dropFeature`). */
+  z.object({ kind: z.literal("dropFeature"), featureId: id }),
   /**
    * Scale labour rates by `factor`. `scope` "delivery" (default) moves build and maintenance team rates only, so the value of
    * an hour saved and current-state people costs stay put; "all" also moves benefit value and current-state people cost.

@@ -1,7 +1,9 @@
 "use client";
 import type { ReactNode } from "react";
 import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
-import { LABOUR_EXCLUDED_TEXT, WIDE_RANGE_TEXT, formatIrr, irrBand, moneyBand, type AlertGroup, type Summary } from "@roi-calculator/engine";
+import { LABOUR_EXCLUDED_TEXT, WIDE_RANGE_TEXT, breakEven, breakEvenSentences, formatIrr, irrBand, moneyBand, type AlertGroup, type Ledger, type Project, type Summary } from "@roi-calculator/engine";
+import { useMemo } from "react";
+import { catalog } from "@/lib/compute";
 import { Pill } from "@/components/ui";
 import { cad, fmt } from "@/lib/format";
 
@@ -132,6 +134,22 @@ export function AiAssistTile({ s, className = "px-3.5 pb-3.5" }: { s: Summary; c
 }
 
 /** Finance measures as label/value rows. IRR is capped in text and its range shows only when it is narrow. */
+/**
+ * What must be true for NPV to just reach zero: how far benefits can fall, costs rise or go-live slip. Each is solved alone with the rest
+ * as entered, so they are margins of safety and do not add up.
+ */
+export function BreakEvenTile({ project, ledger, className = "px-3.5 pb-3.5" }: { project: Project; ledger: Ledger; className?: string }) {
+  const b = useMemo(() => breakEven(project, ledger, catalog), [project, ledger]);
+  return (
+    <div className={className} data-testid="break-even">
+      <ul className="flex flex-col gap-1.5 text-[12.5px] text-ink-2">
+        {breakEvenSentences(b).map((x) => <li key={x.id} data-testid={`break-even-${x.id}`}>{x.text}</li>)}
+      </ul>
+      <p className="mt-2 text-xs text-muted">Each line changes one thing and keeps the rest as entered, at a {project.roi.discountRatePct}% discount rate on {project.roi.basis === "full" ? "the full lifecycle cost" : project.roi.basis === "runMaint" ? "running cost and maintenance" : "running cost only"}. They do not add up.</p>
+    </div>
+  );
+}
+
 export function FinanceMeasures({ s, className = "px-3.5 pb-3.5" }: { s: Summary; className?: string }) {
   const irr = irrBand(s.range.irrPct);
   const irrNote = s.range.irrPct

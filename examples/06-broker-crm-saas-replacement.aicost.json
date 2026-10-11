@@ -772,6 +772,20 @@
       ]
     },
     {
+      "id": "sc-hurdle",
+      "label": "Finance applies a 12% discount rate",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "roi",
+            "discountRatePct"
+          ],
+          "value": 12
+        }
+      ]
+    },
+    {
       "id": "sc-price",
       "label": "Vendor price 15% higher at renewal",
       "edits": [

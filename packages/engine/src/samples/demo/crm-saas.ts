@@ -96,6 +96,7 @@ export function crmSaas(): Project {
   p.scenarios = [
     { id: "sc-seats", label: "300 seats instead of 420 (contractors and part-timers share a lighter licence)", edits: [{ kind: "set", path: ["workloads", "crm-seats", "seats"], value: 300 }] },
     { id: "sc-late", label: "Cutover slips three months (legacy contracts renewed for a quarter)", edits: [{ kind: "shiftMonths", target: "golive", by: 3 }, { kind: "shiftMonths", target: "decommission", by: 3 }] },
+    { id: "sc-hurdle", label: "Finance applies a 12% discount rate", edits: [{ kind: "set", path: ["roi", "discountRatePct"], value: 12 }] },
     { id: "sc-price", label: "Vendor price 15% higher at renewal", edits: [{ kind: "set", path: ["workloads", "crm-seats", "cadPerSeat"], value: 158.7 }] },
   ];
   return p;

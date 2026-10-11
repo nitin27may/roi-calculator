@@ -105,6 +105,7 @@ export function claimsNotesSnowflake(): Project {
   p.scenarios = [
     { id: "sc-credit", label: "AI credit at the list price (no negotiated rate)", edits: [{ kind: "set", path: ["settings", "snowflake", "aiCreditCad"], value: 3.1 }] },
     { id: "sc-mini", label: "Summaries on the smaller model", edits: [{ kind: "set", path: ["workloads", "summary", "modelId"], value: "sf:openai-gpt-5-mini" }] },
+    { id: "sc-no-fraud", label: "Notes intelligence only (leave out fraud-signal triage)", edits: [{ kind: "dropFeature", featureId: "fraud" }] },
     { id: "sc-volume", label: "Note volume 30% higher", edits: [{ kind: "scaleUsage", factor: 1.3 }] },
   ];
   return p;
