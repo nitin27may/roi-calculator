@@ -4,7 +4,8 @@ import { catalog, ensureResources } from "./compute";
 import { buildWorkbook, chartMonths } from "./workbook";
 import { renderMonthlyChartPng } from "./xlsx-chart";
 
-const slug = (p: Project) => p.name.replace(/[^\w-]+/g, "-").toLowerCase();
+/** File-name part from the project name: lower case, runs of other characters become one dash, no dash at either end. */
+export const slug = (p: Pick<Project, "name">) => p.name.replace(/[^\w-]+/g, "-").replace(/-{2,}/g, "-").replace(/^-+|-+$/g, "").toLowerCase() || "project";
 
 export function download(name: string, data: BlobPart, type: string) {
   const a = document.createElement("a");
@@ -15,7 +16,8 @@ export function download(name: string, data: BlobPart, type: string) {
 }
 
 export function exportCsv(p: Project, ledger: Ledger) {
-  download(`${slug(p)}-line-items.csv`, toCsv(lineItemRows(ledger)), "text/csv");
+  // A byte order mark makes Excel on Windows read the file as UTF-8, so "×" and "→" in the formulas show correctly.
+  download(`${slug(p)}-line-items.csv`, `\uFEFF${toCsv(lineItemRows(ledger))}`, "text/csv;charset=utf-8");
 }
 
 /** Downloads the workbook (see buildWorkbook for what is in it). */

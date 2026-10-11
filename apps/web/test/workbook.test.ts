@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { loadCatalog } from "@roi-calculator/catalog";
 import { ProjectSchema, blankProject, buildLedger, computeRoi, meetingIntelligence, roiOptions, type Project } from "@roi-calculator/engine";
-import { buildWorkbook, chartMonths, rangeTableRows } from "../lib/workbook";
+import { MONEY, MONEY0, buildWorkbook, chartMonths, rangeTableRows } from "../lib/workbook";
 import { CHART_SERIES, axisLabel, drawMonthlyChart, niceMax, type Ctx2D } from "../lib/xlsx-chart";
 
 const catalog = loadCatalog();
@@ -111,11 +111,12 @@ describe("Summary sheet number formats (QA)", () => {
     ws.eachRow((row) => { if (typeof row.getCell(2).value === "number") fmt.set(String(row.getCell(1).value), row.getCell(2).numFmt); });
     const money = [...fmt].filter(([k]) => /cost|benefit|NPV|saving|labour/i.test(k) && !/months|^Payback/i.test(k));
     expect(money.length).toBeGreaterThan(5);
-    for (const [k, f] of money) expect(f, k).toBe('"C$"#,##0.00');
-    expect(fmt.get("Build months")).not.toBe('"C$"#,##0.00');
-    expect(fmt.get("Plan length (months)")).not.toBe('"C$"#,##0.00');
+    // Summary figures carry cents; the whole-dollar table of the three cases carries none. Either is money, neither is a count.
+    for (const [k, f] of money) expect([MONEY, MONEY0], k).toContain(f);
+    expect(fmt.get("Build months")).not.toBe(MONEY);
+    expect(fmt.get("Plan length (months)")).not.toBe(MONEY);
     expect([...fmt.keys()].find((k) => k.startsWith("Payback month"))).toBeDefined();
-    for (const [k, f] of fmt) if (/^Payback/.test(k)) expect(f).not.toBe('"C$"#,##0.00');
+    for (const [k, f] of fmt) if (/^Payback/.test(k)) expect(f).not.toBe(MONEY);
   });
 
   it("names the lab row by what it is in a project with no AI", async () => {
@@ -127,5 +128,14 @@ describe("Summary sheet number formats (QA)", () => {
     expect(items).toContain("  of which engineering tools & lab");
     expect(items).not.toContain("  of which AI Dev Lab");
     expect(summaryRows(p, ledger, roi, catalog).map((r) => r.Item)).toContain("  of which AI Dev Lab");
+  });
+});
+
+describe("export file names", () => {
+  it("never end or start with a dash, and never repeat one", async () => {
+    const { slug } = await import("../lib/export");
+    expect(slug({ name: "Claims intake and triage agent (AI)" })).toBe("claims-intake-and-triage-agent-ai");
+    expect(slug({ name: "  Quote -- funnel / automation!! " })).toBe("quote-funnel-automation");
+    expect(slug({ name: "???" })).toBe("project");
   });
 });

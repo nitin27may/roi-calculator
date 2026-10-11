@@ -42,11 +42,12 @@ describe("break-even", () => {
   });
 
   for (const d of DEMO_PROJECTS) {
-    it(`${d.label}: three sentences, each with a sensible number`, () => {
+    it(`${d.label}: sentences with sensible numbers`, () => {
       const p = ProjectSchema.parse(d.make());
       const b = breakEven(p, buildLedger(p, cat), cat);
       const s = breakEvenSentences(b);
-      expect(s.map((x) => x.id)).toEqual(["benefit", "cost", "delay"]);
+      expect(s.map((x) => x.id).slice(0, 3)).toEqual(["benefit", "cost", "delay"]);
+      if (b.delayCostPerMonth !== null && b.delayCostPerMonth > 0) expect(s.at(-1)!.id).toBe("delayCost");
       for (const x of s) expect(x.text).not.toMatch(/NaN|undefined|Infinity/);
       if (b.npv > 0) { expect(b.benefitPct!).toBeLessThan(100); expect(b.costPct!).toBeGreaterThan(100); }
     }, 60_000);

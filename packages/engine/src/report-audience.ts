@@ -11,6 +11,7 @@ import { resourceCostRows } from "./infrastructure.js";
  */
 export const REPORT_AUDIENCES = [
   { id: "all", label: "Full report", detail: "Every section, for the project file" },
+  { id: "onepage", label: "One-page summary", detail: "Verdict, key figures, what must be true and what to watch, on one page" },
   { id: "sponsor", label: "Executive sponsor", detail: "The decision: verdict, cost, return, what could change it" },
   { id: "finance", label: "Finance (CFO)", detail: "Cash flow, NPV, IRR, ranges, scenarios and assumptions" },
   { id: "tech", label: "Technology and architecture", detail: "Infrastructure by environment, run cost by workload, prices, risks" },
@@ -26,10 +27,10 @@ export type ReportSection =
 
 /** Which audiences get which section. "all" gets every section. */
 const SECTION_AUDIENCES: Record<ReportSection, readonly ReportAudience[]> = {
-  exec: ["sponsor", "finance", "business"],
+  exec: ["onepage", "sponsor", "finance", "business"],
   assumptions: ["finance", "tech", "delivery"],
   workloads: ["tech"],
-  currentState: ["sponsor", "finance", "business"],
+  currentState: ["finance", "business"],
   scorecard: ["sponsor", "business"],
   range: ["sponsor", "finance"],
   monthly: ["finance", "delivery"],
@@ -43,7 +44,7 @@ const SECTION_AUDIENCES: Record<ReportSection, readonly ReportAudience[]> = {
   watchouts: ["tech", "delivery", "sponsor"],
   infrastructure: ["tech"],
   team: ["delivery"],
-  benefitSources: ["sponsor", "finance", "business"],
+  benefitSources: ["finance", "business"],
 };
 
 export const showsSection = (audience: ReportAudience, section: ReportSection): boolean => audience === "all" || SECTION_AUDIENCES[section].includes(audience);
