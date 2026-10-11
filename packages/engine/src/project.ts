@@ -469,6 +469,12 @@ export const ResourceSchema = z.object({
   term: z.enum(["payg", "ri1", "ri3"]).default("payg"),
   /** Azure Hybrid Benefit: bring an existing Windows or SQL licence. */
   ahb: z.boolean().default(false),
+  /**
+   * Your own Hybrid Benefit saving, in percent of the compute price, for a type the catalogue cannot price it for (SQL Database and SQL
+   * Managed Instance: the Retail API lists the vCore rate with the licence included and no compute-only meter). Used only when `ahb` is
+   * on and the type has no Hybrid Benefit price. Absent or 0 means no saving is taken.
+   */
+  ahbSavingPct: z.number().min(0).max(90).optional(),
   envIds: z.array(id).optional(),
 });
 export type Resource = z.infer<typeof ResourceSchema>;
@@ -558,6 +564,8 @@ const ProjectObject = z.object({
     pricingModel: z.enum(["payg", "ptu"]).optional(),
     /** Percent added to every Azure list price: negative for a negotiated discount (-12 is 12% off), positive for an uplift. Absent or 0 means list price. Manual prices and Snowflake credit prices are not adjusted. */
     azureAdjustPct: z.number().min(-90).max(200).optional(),
+    /** Your own price for a catalogue unit price, by id (see Prices & sources), in the catalogue's unit. Replaces the pay-as-you-go price only and is not moved by `azureAdjustPct`. Absent means list prices. */
+    priceOverrides: z.record(z.string(), z.number().nonnegative()).optional(),
     /** Default text language for token counts (heuristics.tokens.language); a workload can override it. */
     language: z.string().default("en"),
     /** Which percentile the AI Dev Lab agent runs are priced at. Absent means P50. */

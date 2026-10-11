@@ -259,7 +259,7 @@ export type RetailBlock = z.infer<typeof RetailBlock>;
 /**
  * Azure Hybrid Benefit per type. `linux-twin`: a Windows SKU takes the Linux price of the same size and a Linux SKU has no
  * Hybrid Benefit. `licence-free`: the licence meter costs 0 when you bring your own licence. `unavailable`: the Retail API
- * has no compute-only meter, so the type declares no "ahb" option; add a manual price if you hold one.
+ * has no compute-only meter, so the type declares no "ahb" option; the resource states its own saving (`ahbSavingPct`) instead.
  */
 export const AhbRule = z.object({
   kind: z.enum(["linux-twin", "licence-free", "unavailable"]),

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { Card, CardHead, Pill, Seg, Select } from "@/components/ui";
+import { Card, CardHead, NumberInput, Pill, Seg, Select } from "@/components/ui";
+import { setPriceOverride } from "@/lib/infrastructure";
 import { availableIn, DEPLOYMENT_LABEL, type AzureDeployment } from "@roi-calculator/engine";
 import { catalog, useResourcesReady, useResourceVersion } from "@/lib/compute";
 import { useStudio } from "@/lib/store";
@@ -16,6 +17,8 @@ interface Row {
   via?: string;
   /** Shown under the source: a manual price says so and why. */
   note?: string;
+  /** The catalogue price of a service, in its own unit, when you can set your own price for it. */
+  list?: number;
 }
 
 const tone = (c: string) => (c === "verified" ? "ok" : c === "cross-checked" ? "n" : "warn") as "ok" | "n" | "warn";
@@ -36,6 +39,8 @@ export default function Prices() {
   const [offered, setOffered] = useState<"all" | AzureDeployment>(deployment);
   // The project loads after the first render, so follow its deployment rather than keep the first value.
   useEffect(() => setOffered(deployment), [deployment]);
+  const overrides = useStudio((s) => s.project.settings.priceOverrides);
+  const edit = useStudio((s) => s.edit);
   const [kind, setKind] = useState("all");
   const [vendor, setVendor] = useState("all");
   const [status, setStatus] = useState("all");
@@ -68,6 +73,7 @@ export default function Prices() {
     ...catalog.searchTiers.map((t) => ({ id: t.id, label: `AI Search ${t.label}`, platform: "azure", kind: "Search tier", vendor: "Azure", status: "ga",
       ...both({}, `${cad(t.perSUMonth, 2)} /SU-month`), source: t.source.kind, confidence: t.confidence, url: t.source.url, retrievedAt: t.source.retrievedAt })),
     ...catalog.unitPrices.map((u) => ({ id: u.id, label: u.label, platform: u.platform, kind: "Service", vendor: u.platform === "snowflake" ? "snowflake" : "Azure", status: u.lifecycle?.status ?? "ga",
+      list: u.platform === "snowflake" ? undefined : u.manual?.price ?? u.price,
       ...both({}, u.manual ? `${cad(u.manual.price, 4)} /${u.unit}` : u.price !== undefined ? `${cad(u.price, 4)} /${u.unit}` : `${u.credits} ${u.creditType} credits /${u.unit}`),
       source: u.manual ? "manual" : u.source.kind, note: u.manual ? `${u.manual.note} (replaces the refreshed price)` : undefined, confidence: u.confidence, url: u.manual ? undefined : u.source.url, retrievedAt: u.manual ? u.manual.retrievedAt : u.source.retrievedAt })),
   ], [resourceVersion]);
@@ -98,7 +104,7 @@ export default function Prices() {
         <div className="min-h-0 flex-1 overflow-auto scroll-hint px-3.5 pb-3.5">
           <table className="data">
             <caption className="caption-bottom pt-2 text-left text-xs text-muted">Model prices are CAD per 1M tokens: input / cached input / output.</caption>
-            <thead><tr><th>Item</th><th>Type</th><th>Global (CAD)</th><th>Canada Regional (CAD)</th><th>US Data Zone (CAD)</th><th>Source</th><th>Confidence</th></tr></thead>
+            <thead><tr><th>Item</th><th>Type</th><th>Global (CAD)</th><th>Canada Regional (CAD)</th><th>US Data Zone (CAD)</th><th>Source</th><th>Confidence</th><th>Your price (CAD)</th></tr></thead>
             <tbody>
               {shown.map((r) => (
                 <tr key={`${r.kind}:${r.id}`}>
@@ -109,6 +115,12 @@ export default function Prices() {
                   <td className="num">{r.dataZone ?? <span className="text-muted">not offered</span>}</td>
                   <td>{r.url ? <a className="underline decoration-line underline-offset-2" href={r.url} target="_blank" rel="noreferrer">{r.source}</a> : r.source}<div className="text-xs text-muted">{r.retrievedAt}</div>{r.note && <div className="text-xs text-muted">{r.note}</div>}</td>
                   <td><Pill tone={tone(r.confidence)}>{r.confidence}</Pill></td>
+                  <td className="min-w-[150px]">{r.kind === "Service" && r.list !== undefined ? (
+                    <div className="flex flex-col gap-1">
+                      <NumberInput label={`Your price for ${r.label}`} value={overrides?.[r.id] ?? r.list} step={0.0001} onChange={(v) => edit((d) => { setPriceOverride(d, r.id, v, r.list!); })} />
+                      {overrides?.[r.id] !== undefined && <button type="button" className="w-fit rounded-md border border-line px-2 py-0.5 text-xs hover:bg-surface-2" aria-label={`Reset ${r.label} to the catalogue price`} onClick={() => edit((d) => { setPriceOverride(d, r.id, r.list!, r.list!); })}>Reset to catalogue</button>}
+                    </div>
+                  ) : <span className="text-muted">–</span>}</td>
                 </tr>
               ))}
             </tbody>

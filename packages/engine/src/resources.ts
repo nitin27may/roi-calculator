@@ -91,6 +91,11 @@ function meterLine(r: Resource, type: ResourceType, meter: ResourceType["meters"
   let option: PricingOption = "payg";
   let price = payg;
   let note = "";
+  /** Explains how the price was reached; shown in the formula, not raised as a notice. */
+  let info = "";
+  // Types the catalogue cannot price Hybrid Benefit for take the saving the project states, on the compute meter only.
+  const ownSaving = r.ahb && type.ahb?.kind === "unavailable" && meter.id === "compute" ? r.ahbSavingPct ?? 0 : 0;
+  const ownSavingInfo = `Hybrid Benefit at your own saving of ${ownSaving}% on compute (the catalogue has no Hybrid Benefit price for this type)`;
   const reserved = r.term === "payg" ? undefined : r.term;
   if (reserved) {
     const ri = type.options.includes(reserved) ? book.optionPrice(unitPriceId, reserved) : undefined;
@@ -103,9 +108,23 @@ function meterLine(r: Resource, type: ResourceType, meter: ResourceType["meters"
   } else if (r.ahb) {
     const ahb = type.options.includes("ahb") ? book.optionPrice(unitPriceId, "ahb") : undefined;
     if (ahb !== undefined) { option = "ahb"; price = ahb; }
+    else if (type.ahb?.kind === "unavailable" && meter.id !== "compute") { /* Hybrid Benefit only ever applies to compute: storage and the like stay at the listed price, which is not a problem to report. */ }
+    else if (ownSaving > 0) { option = "ahb"; price = payg * (1 - ownSaving / 100); info = ownSavingInfo; }
     else note = String(unit.attrs?.["fallback.ahb"] ?? "no Hybrid Benefit price, pay-as-you-go used");
   }
-  if (reserved && r.ahb && option === reserved) note = "Hybrid Benefit not added on top of a reserved price";
+  if (reserved && r.ahb && option === reserved && ownSaving > 0) {
+    price = price * (1 - ownSaving / 100);
+    info = ownSavingInfo;
+  } else if (reserved && r.ahb && option === reserved) {
+    // A reserved Windows price is the Linux reservation plus the Windows licence at pay-as-you-go (recorded in the price's note), and the licence part is
+    // exactly pay-as-you-go minus the Hybrid Benefit (Linux) price. Hybrid Benefit removes that part, which is how the two are combined on a bill.
+    const ahb = type.ahb?.kind === "linux-twin" && type.options.includes("ahb") ? book.optionPrice(unitPriceId, "ahb") : undefined;
+    if (ahb !== undefined && ahb < payg) {
+      const licence = payg - ahb;
+      price = Math.max(0, price - licence);
+      info = `Hybrid Benefit on top of the reserved price: the Windows licence part (${cad(licence, 2)}) is removed`;
+    } else note = "Hybrid Benefit not added on top of a reserved price";
+  }
 
   // Reserved capacity bills the full month; pay-as-you-go and Hybrid Benefit hourly meters follow the hours.
   const hourFactor = meter.hourly && (option === "payg" || option === "ahb" || option === "devtest") ? hours / HOURS_PER_MONTH : 1;
@@ -118,7 +137,7 @@ function meterLine(r: Resource, type: ResourceType, meter: ResourceType["meters"
   const envPart = opts.env ? ` · ${opts.env.label}` : "";
   const hoursPart = meter.hourly ? ` × ${hourFactor === 1 ? `${HOURS_PER_MONTH}/${HOURS_PER_MONTH}` : `${hours}/${HOURS_PER_MONTH}`} h` : "";
   const sizePart = size === 1 ? "" : ` × size ${size}`;
-  const formula = `${quantity} × ${cad(price, 2)}${hoursPart}${sizePart} · ${OPTION_LABEL[option]}${note ? `; ${note}` : ""}`;
+  const formula = `${quantity} × ${cad(price, 2)}${hoursPart}${sizePart} · ${OPTION_LABEL[option]}${info ? `; ${info}` : ""}${note ? `; ${note}` : ""}`;
   if (note) book.alert(`resource:${r.id}:${meter.id}:${option}${opts.env ? `:${opts.env.id}` : ""}`, { kind: "resource", message: `${r.label}${envPart}: ${note}` });
   return line({
     id: `resource:${r.id}:${meter.id}${opts.env ? `:${opts.env.id}` : ""}`,

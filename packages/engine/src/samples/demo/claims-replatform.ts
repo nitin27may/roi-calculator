@@ -67,7 +67,8 @@ export function claimsReplatform(): Project {
     res("acr", "Azure Container Registry Premium with geo-replica", "container-registry", "premium", { registries: 2, extraStorageGB: 600 }, { feature: F, envs: ["prod"] }),
     res("agw", "Application Gateway WAF v2 (broker and adjuster ingress)", "app-gateway", "waf-v2", { gateways: 1, cus: 12 }, { feature: F, envs: ["uat", "prod", "dr"] }),
     // Data and messaging
-    res("mi", "Azure SQL Managed Instance, General Purpose, 16 vCores", "sql-mi", "gp-gen5", { vcores: 16, storageGB: 2048 }, { feature: F, envs: ALL }),
+    // Existing SQL Server licences with Software Assurance move across. The catalogue has no Hybrid Benefit price for Managed Instance, so the 40% saving on compute is an assumption (Microsoft quotes up to 55%).
+    { ...res("mi", "Azure SQL Managed Instance, General Purpose, 16 vCores (Hybrid Benefit, assumed 40% off compute)", "sql-mi", "gp-gen5", { vcores: 16, storageGB: 2048 }, { feature: F, envs: ALL, ahb: true }), ahbSavingPct: 40 },
     res("redis", "Azure Cache for Redis Premium P1", "redis-cache", "premium-p1", { caches: 1 }, { feature: F, envs: ["uat", "prod", "dr"] }),
     res("sb", "Service Bus Premium, 1 messaging unit", "service-bus", "premium", { namespaces: 1, mus: 1, opsM: 120 }, { feature: F, envs: PRD }),
     res("sb-np", "Service Bus Standard", "service-bus", "standard", { namespaces: 1, opsM: 30 }, { feature: F, envs: NP }),

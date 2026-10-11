@@ -49,10 +49,14 @@ export function claimsMigration(): Project {
   p.environments = envs(B, { devTest: true, uat: false, dr: false });
   const NP = ["dev", "test"], PRD = ["prod"];
   p.resources = [
-    // 33 Windows VMs with Hybrid Benefit (existing Windows Server and SQL Server licences with Software Assurance).
-    res("vm-app", "Application tier (19 x D4s v5, Windows, Hybrid Benefit)", "vm", "d4s-v5-windows", { count: 19 }, { feature: F, envs: [...NP, ...PRD], ahb: true }),
-    res("vm-batch", "Batch and integration tier (4 x D8s v5, Windows, Hybrid Benefit)", "vm", "d8s-v5-windows", { count: 4 }, { feature: F, envs: [...NP, ...PRD], ahb: true }),
-    res("vm-sql", "SQL Server virtual machines (6 x E8s v5, Windows, Hybrid Benefit)", "vm", "e8s-v5-windows", { count: 6 }, { feature: F, envs: [...NP, ...PRD], ahb: true }),
+    // 33 Windows VMs. Production: a 1-year reservation with Hybrid Benefit on top (existing Windows Server and SQL Server licences with Software
+    // Assurance), a one-year term because the next project modernises the application. Dev and test use the dev/test rate instead.
+    res("vm-app", "Application tier, production (19 x D4s v5, Windows, 1-year reserved + Hybrid Benefit)", "vm", "d4s-v5-windows", { count: 19 }, { feature: F, envs: PRD, term: "ri1", ahb: true }),
+    res("vm-app-np", "Application tier, non-production (19 x D4s v5, Windows)", "vm", "d4s-v5-windows", { count: 19 }, { feature: F, envs: NP }),
+    res("vm-batch", "Batch and integration tier, production (4 x D8s v5, Windows, 1-year reserved + Hybrid Benefit)", "vm", "d8s-v5-windows", { count: 4 }, { feature: F, envs: PRD, term: "ri1", ahb: true }),
+    res("vm-batch-np", "Batch and integration tier, non-production (4 x D8s v5, Windows)", "vm", "d8s-v5-windows", { count: 4 }, { feature: F, envs: NP }),
+    res("vm-sql", "SQL Server virtual machines, production (6 x E8s v5, Windows, 1-year reserved + Hybrid Benefit)", "vm", "e8s-v5-windows", { count: 6 }, { feature: F, envs: PRD, term: "ri1", ahb: true }),
+    res("vm-sql-np", "SQL Server virtual machines, non-production (6 x E8s v5, Windows)", "vm", "e8s-v5-windows", { count: 6 }, { feature: F, envs: NP }),
     res("vm-util", "Utility servers: jump hosts, schedulers (4 x B4ms, Linux)", "vm", "b4ms-linux", { count: 4 }, { feature: F, envs: PRD }),
     res("disk-os", "OS disks (Premium SSD P10)", "disk-premium-ssd", "p10", { disks: 33 }, { feature: F, envs: [...NP, ...PRD] }),
     res("disk-data", "SQL and file data disks (Premium SSD P30, 1 TiB)", "disk-premium-ssd", "p30", { disks: 40 }, { feature: F, envs: PRD }),

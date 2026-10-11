@@ -608,7 +608,7 @@
     },
     {
       "id": "mi",
-      "label": "Azure SQL Managed Instance, General Purpose, 16 vCores",
+      "label": "Azure SQL Managed Instance, General Purpose, 16 vCores (Hybrid Benefit, assumed 40% off compute)",
       "featureId": "claims-core",
       "typeId": "sql-mi",
       "skuId": "gp-gen5",
@@ -617,7 +617,8 @@
         "storageGB": 2048
       },
       "term": "payg",
-      "ahb": false,
+      "ahb": true,
+      "ahbSavingPct": 40,
       "envIds": [
         "dev",
         "test",

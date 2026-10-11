@@ -45,6 +45,12 @@ export interface PricingSettings {
    * Snowflake has its own credit prices. Absent or 0 changes nothing.
    */
   azureAdjustPct?: number;
+  /**
+   * Your own price for a catalogue unit price, by id, in the unit the catalogue uses (see Prices & sources): a negotiated rate, or a price for
+   * something the catalogue has no price for. It replaces the pay-as-you-go price only (reserved and Hybrid Benefit prices stay as listed), is
+   * not moved by `azureAdjustPct`, and is noted in the estimate as a manual price.
+   */
+  priceOverrides?: Record<string, number>;
   snowflake: {
     /** Global routing (ANY_REGION / *_GLOBAL) or regional (AZURE_US / AZURE_EU / DISABLED). */
     routing: "global" | "regional";
@@ -310,6 +316,11 @@ export class PriceBook {
   unitPrice(id: string): number {
     const u = this.unit(id);
     if (u.confidence === "unverified") this.note(`unverified:${u.id}`, { kind: "unverified", message: `${u.label} price is unverified` });
+    const own = this.settings.priceOverrides?.[u.id];
+    if (own !== undefined) {
+      this.note(`override:${u.id}`, { kind: "manual", message: `${u.label}: your price ${own} per ${u.unit} replaces the catalogue price` });
+      return own;
+    }
     if (u.manual) {
       this.note(`manual:${u.id}`, { kind: "manual", message: `${u.label}: manual price ${u.manual.price} (${u.manual.note}, ${u.manual.retrievedAt}) replaces the refreshed price` });
       return u.manual.price;
