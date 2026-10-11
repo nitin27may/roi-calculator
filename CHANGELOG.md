@@ -19,6 +19,7 @@ Example projects and reports for each reader.
 
 - Infrastructure: the environments table shows Cost / month next to the name so it is never scrolled out of view; empty month fields say "default".
 - Phones: the top bar shows only build cost and payback and the page intro is hidden, so the page starts on the first screen; larger touch targets on the view switchers; Excel export shows "Preparing Excel…".
+- Number fields show a grouped copy (36,000) next to values of 10,000 or more; long project names in the sidebar have full-name tooltips.
 - Prices defaults to the project's deployment once it loads, the token calculator starts on a model that deployment offers, and the "pnpm prices" developer text is gone from the app.
 - The Build page opened on an empty "Engineering tools & lab" chart for projects with no AI experiments; it now says so. The one-time "cache writes and reasoning tokens" notice and the "engineering tools" line in the top bar no longer show for projects that have none of that. Before / after and By capability explain what they cover.
 - Opening a project that prices a build tool, seat or fee from a resource category (for example GitHub or Power Automate seats) crashed the app until the lazy price files had loaded. The pages now wait for them.

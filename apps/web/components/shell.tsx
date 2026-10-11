@@ -124,7 +124,7 @@ export function Shell({ children }: { children: ReactNode }) {
     return (
       <Link key={href} href={href} aria-current={here ? "page" : undefined} title={label} onClick={onClick}
         className={cn("flex items-center justify-between gap-2 rounded-md px-2 py-1.5 font-medium", here ? "bg-accent-soft text-ink" : "text-ink-2 hover:bg-surface-2")}>
-        <span className="flex min-w-0 items-center gap-2"><Icon size={15} aria-hidden className="flex-none" /><span className="nav-label truncate">{label}</span></span>
+        <span className="flex min-w-0 items-center gap-2"><Icon size={15} aria-hidden className="flex-none" /><span className="nav-label truncate" title={label}>{label}</span></span>
         {small && <small className="num nav-label text-xs text-muted">{small}</small>}
       </Link>
     );
@@ -171,7 +171,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <button ref={menuButton} type="button" aria-label="Open menu" aria-expanded={drawerOpen} aria-controls="main-nav" onClick={() => (drawerOpen ? closeDrawer(false) : openDrawer())}
               className="grid h-9 w-9 flex-none place-items-center rounded-md border border-line bg-surface text-ink-2 hover:bg-surface-2 lg:hidden"><Menu size={18} aria-hidden /></button>
             <div className="min-w-0">
-              <div className="truncate text-xs text-muted">{isProject && hasProject ? project.name : path === "/tokens" || path === "/wizard" ? "Quick tools" : path === "/projects" ? "Library" : path === "/glossary" ? "Help" : "Data"}</div>
+              <div className="truncate text-xs text-muted" title={isProject && hasProject ? project.name : undefined}>{isProject && hasProject ? project.name : path === "/tokens" || path === "/wizard" ? "Quick tools" : path === "/projects" ? "Library" : path === "/glossary" ? "Help" : "Data"}</div>
               <h1 className="text-xl font-bold sm:text-[21px]">{TITLES[path] ?? "Overview"}</h1>
             </div>
           </div>
@@ -217,7 +217,7 @@ function ProjectNode({ row, rail, path, B, H, link }: { row: ProjectRow; rail: b
     <div className={cn("flex flex-col gap-px", !row.active && "lg:group-data-[collapsed=true]:hidden")} data-testid="project-row" data-project-id={row.id} data-active={row.active}>
       <button type="button" id={`${pid}-toggle`} aria-expanded={expanded} aria-controls={`${pid}-pages`} onClick={toggle} title={row.name}
         className="flex items-center justify-between gap-2 rounded-md px-2 py-1 text-left text-xs uppercase tracking-[0.08em] text-muted hover:bg-surface-2 lg:group-data-[collapsed=true]:hidden">
-        <span className={cn("nav-label truncate", row.active && "font-semibold text-ink-2")}>{row.name}</span>
+        <span title={row.name} className={cn("nav-label truncate", row.active && "font-semibold text-ink-2")}>{row.name}</span>
         <ChevronDown size={14} aria-hidden className={cn("flex-none transition-transform duration-200 motion-reduce:transition-none", !expanded && "-rotate-90")} />
       </button>
       <div aria-hidden className="nav-rule mx-2 hidden border-t border-line" />
