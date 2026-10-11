@@ -358,7 +358,22 @@
   "resources": [
     {
       "id": "vm-app",
-      "label": "Application tier (19 x D4s v5, Windows, Hybrid Benefit)",
+      "label": "Application tier, production (19 x D4s v5, Windows, 1-year reserved + Hybrid Benefit)",
+      "featureId": "claims-estate",
+      "typeId": "vm",
+      "skuId": "d4s-v5-windows",
+      "inputs": {
+        "count": 19
+      },
+      "term": "ri1",
+      "ahb": true,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "vm-app-np",
+      "label": "Application tier, non-production (19 x D4s v5, Windows)",
       "featureId": "claims-estate",
       "typeId": "vm",
       "skuId": "d4s-v5-windows",
@@ -366,16 +381,30 @@
         "count": 19
       },
       "term": "payg",
-      "ahb": true,
+      "ahb": false,
       "envIds": [
         "dev",
-        "test",
-        "prod"
+        "test"
       ]
     },
     {
       "id": "vm-batch",
-      "label": "Batch and integration tier (4 x D8s v5, Windows, Hybrid Benefit)",
+      "label": "Batch and integration tier, production (4 x D8s v5, Windows, 1-year reserved + Hybrid Benefit)",
+      "featureId": "claims-estate",
+      "typeId": "vm",
+      "skuId": "d8s-v5-windows",
+      "inputs": {
+        "count": 4
+      },
+      "term": "ri1",
+      "ahb": true,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "vm-batch-np",
+      "label": "Batch and integration tier, non-production (4 x D8s v5, Windows)",
       "featureId": "claims-estate",
       "typeId": "vm",
       "skuId": "d8s-v5-windows",
@@ -383,16 +412,30 @@
         "count": 4
       },
       "term": "payg",
-      "ahb": true,
+      "ahb": false,
       "envIds": [
         "dev",
-        "test",
-        "prod"
+        "test"
       ]
     },
     {
       "id": "vm-sql",
-      "label": "SQL Server virtual machines (6 x E8s v5, Windows, Hybrid Benefit)",
+      "label": "SQL Server virtual machines, production (6 x E8s v5, Windows, 1-year reserved + Hybrid Benefit)",
+      "featureId": "claims-estate",
+      "typeId": "vm",
+      "skuId": "e8s-v5-windows",
+      "inputs": {
+        "count": 6
+      },
+      "term": "ri1",
+      "ahb": true,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "vm-sql-np",
+      "label": "SQL Server virtual machines, non-production (6 x E8s v5, Windows)",
       "featureId": "claims-estate",
       "typeId": "vm",
       "skuId": "e8s-v5-windows",
@@ -400,11 +443,10 @@
         "count": 6
       },
       "term": "payg",
-      "ahb": true,
+      "ahb": false,
       "envIds": [
         "dev",
-        "test",
-        "prod"
+        "test"
       ]
     },
     {

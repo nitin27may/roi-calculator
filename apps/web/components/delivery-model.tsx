@@ -1,4 +1,5 @@
 "use client";
+import { PlanTimeline } from "@/components/plan-timeline";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { DELIVERY_COST_KINDS, HYPERCARE_ID, addDeliveryCost, applyStandardPhases, isDeliveryCategory, removeDeliveryCost, type DeliveryPhase } from "@roi-calculator/engine";
@@ -66,6 +67,10 @@ export function PhasesPanel() {
         <>
           <PhaseStrip phases={phases} buildMonths={B} selected={sel} onSelect={(id) => { setSel(id); setConfirm(null); }} />
           <p className="text-xs text-muted">Months shaded grey are after go-live. Click a phase to change its name or months.</p>
+          <details className="rounded-md border border-line px-2.5 py-1.5">
+            <summary className="cursor-pointer text-sm font-medium">Phases and team over time</summary>
+            <PlanTimeline project={project} className="pt-2" />
+          </details>
           {cur && (
             <div className="flex flex-col gap-2 rounded-md border border-line p-2.5">
               <div className="flex flex-wrap items-end gap-2.5">

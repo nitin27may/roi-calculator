@@ -1,6 +1,7 @@
 import type { Catalog } from "@roi-calculator/catalog";
 import { ProjectSchema, type Project, type Scenario, type ScenarioEdit } from "./project.js";
 import { LEVERS, leverApplies } from "./levers.js";
+import { dropFeature } from "./features.js";
 import { scaleRatesBy, shiftDecommission, shiftGoLive } from "./transforms.js";
 import { buildLedger, type Ledger } from "./ledger.js";
 import { computeRoi, roiOptions, type RoiResult } from "./roi.js";
@@ -29,6 +30,7 @@ export function applyEdit(p: Project, e: ScenarioEdit, cat: Catalog): Project {
     return leverApplies(l, p, cat) ? l.apply(p, cat, e.amount) : p;
   }
   const q = structuredClone(p);
+  if (e.kind === "dropFeature") { dropFeature(q, e.featureId); return q; }
   if (e.kind === "scaleRates") return scaleRatesBy(q, e.factor, e.scope ?? "delivery");
   if (e.kind === "shiftMonths") return e.target === "decommission" ? shiftDecommission(q, e.by) : shiftGoLive(q, e.by);
   if (e.kind === "set") setPath(q, e.path, e.value);

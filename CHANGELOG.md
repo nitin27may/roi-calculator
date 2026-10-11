@@ -6,6 +6,26 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 ### Added
 
+- What must be true (Summary, Value & ROI Sensitivity, Report for sponsors and finance): how far benefits can fall, costs rise or go-live slip before NPV reaches zero, each solved on its own.
+- Phases and team over time: a timeline of delivery phases and each costed person with go-live marked, on the Build page and in the Delivery report, with a table view.
+- Report charts: where the benefit comes from, by month and by source; cost by environment in the Technology report.
+- Scenarios: discount rate, usage growth, Azure price adjustment and leaving out a feature (new edit kind `dropFeature`).
+
+### Changed
+
+- Where the money goes groups what a reader would name: all build labour, all infrastructure and the sustaining team are one row each, so the "Other" slice no longer swallows most of the cost (on the AKS example it falls from C$4.76M to C$0.61M).
+
+### Added
+
+- Your own price for any catalogue unit price (Prices & sources, "Your price"): a negotiated rate, or a price for something the catalogue lacks such as a custom SaaS seat, which used to cost C$0 with no way to set a price. It applies to the project only, replaces the pay-as-you-go price, and is noted as a manual price.
+- Hybrid Benefit for SQL Database and SQL Managed Instance: turn it on and enter your own saving on compute, because Azure publishes no compute-only price to read it from.
+
+### Fixed
+
+- A Windows VM on a reserved term with Hybrid Benefit now takes both (reserved price less the Windows licence part) instead of dropping Hybrid Benefit. The claims migration example moves from C$61,010 to C$57,412 a month and pays back in month 28.
+
+### Added
+
 Example projects and reports for each reader.
 
 - Eight worked example projects in `examples/` (a fictional Canadian insurer): claims datacentre migration, claims replatforming to AKS, quote funnel automation, a claims self-service portal, straight-through processing, a SaaS CRM replacement, an AI intake agent on Azure and an AI notes analytics example on Snowflake Cortex. Named contributors, phases, environments, catalogue resources (AKS, Key Vault, Blob Storage and more), current-state savings, scorecards and what-if scenarios. Open them with "Open file as new project"; `pnpm examples` regenerates them and a test keeps them in step with their source.

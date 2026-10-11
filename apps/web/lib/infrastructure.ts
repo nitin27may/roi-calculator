@@ -88,6 +88,22 @@ export const TERM_LABEL: Record<"payg" | "ri1" | "ri3", string> = { payg: "Pay-a
 /** Whether the type declares Azure Hybrid Benefit. */
 export const supportsAhb = (type: ResourceType): boolean => type.options.includes("ahb" as PricingOption);
 
+/**
+ * Sets your own price for a catalogue unit price. A value equal to the catalogue price removes the override, and an empty list is dropped,
+ * so a project with no overrides keeps the shape it had. Mutates `p`.
+ */
+export function setPriceOverride(p: { settings: { priceOverrides?: Record<string, number> } }, id: string, price: number, list: number): void {
+  if (Math.abs(price - list) < 1e-12) {
+    if (p.settings.priceOverrides) delete p.settings.priceOverrides[id];
+    if (p.settings.priceOverrides && Object.keys(p.settings.priceOverrides).length === 0) delete p.settings.priceOverrides;
+    return;
+  }
+  (p.settings.priceOverrides ??= {})[id] = price;
+}
+
+/** Whether the type is one Hybrid Benefit applies to but the catalogue cannot price (SQL Database, Managed Instance): the user enters their own saving. */
+export const ownAhbSaving = (type: ResourceType): boolean => type.ahb?.kind === "unavailable";
+
 /** A new resource for a chosen SKU. Inputs start empty (counted as 0), pay-as-you-go, no Hybrid Benefit, all environments. */
 export function newResource(type: ResourceType, skuId: string, existing: readonly { id: string; label: string }[]): Resource {
   const same = existing.filter((r) => r.label === type.label || r.label.startsWith(`${type.label} `)).length;

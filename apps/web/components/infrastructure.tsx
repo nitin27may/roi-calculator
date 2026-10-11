@@ -11,7 +11,7 @@ import { catalog, useLedger, useResourcesReady, useResourceVersion } from "@/lib
 import { cad, cn } from "@/lib/format";
 import {
   CATEGORY_LABEL, ENV_QUICK_ADDS, TERM_LABEL, filterSkus, newEnvironment, newResource, pickerCategories, removeEnvironment, resourceEnvIds, setMonthBound,
-  setResourceSku, setScheduleMode, supportsAhb, termOptions, toggleResourceEnv,
+  ownAhbSaving, setResourceSku, setScheduleMode, supportsAhb, termOptions, toggleResourceEnv,
 } from "@/lib/infrastructure";
 import { useStudio } from "@/lib/store";
 
@@ -241,10 +241,15 @@ function ResourceCard({ r }: { r: Resource }) {
       </div>
 
       <div className="flex flex-wrap items-start gap-x-8 gap-y-2">
-        {type && supportsAhb(type) && (
+        {type && (supportsAhb(type) || ownAhbSaving(type)) && (
           <label className="flex items-center gap-1.5 text-[13px] text-ink-2">
             <input type="checkbox" checked={r.ahb} onChange={(e) => upd((x) => { x.ahb = e.target.checked; })} />Azure Hybrid Benefit<HelpTip id="resourceAhb" label="Azure Hybrid Benefit" />
           </label>
+        )}
+        {type && ownAhbSaving(type) && r.ahb && (
+          <div className="w-56">
+            <Field label="Your Hybrid Benefit saving on compute" help="resourceAhbSaving"><NumberInput value={r.ahbSavingPct ?? 0} min={0} max={90} suffix="%" onChange={(v) => upd((x) => { if (v > 0) x.ahbSavingPct = v; else delete x.ahbSavingPct; })} /></Field>
+          </div>
         )}
         {envs.length > 0 ? (
           <fieldset className="min-w-0">

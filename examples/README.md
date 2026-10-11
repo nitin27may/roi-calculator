@@ -28,8 +28,8 @@ Computed by the engine with the bundled price catalogue. Regenerate with `pnpm e
 <!-- results:start -->
 | Project | Type | Build (months) | Build cost | Run per month | Benefit per month | Payback | NPV at 8% | IRR |
 |---|---|---|---|---|---|---|---|---|
-| Claims datacentre migration to Azure | replatform | 9 | C$1.88M | C$61,010 | C$109,440 | month 30 | C$1.02M | 46% |
-| Claims replatforming to AKS | replatform | 14 | C$3.81M | C$80,728 | C$203,423 | month 46 | C$0.85M | 18% |
+| Claims datacentre migration to Azure | replatform | 9 | C$1.88M | C$57,412 | C$109,440 | month 28 | C$1.17M | 51% |
+| Claims replatforming to AKS | replatform | 14 | C$3.81M | C$78,915 | C$203,423 | month 45 | C$0.92M | 19% |
 | Quote funnel automation | automation | 5 | C$0.54M | C$20,455 | C$89,509 | month 15 | C$2.48M | 196% |
 | Policyholder and broker claims portal | newApp | 10 | C$2.67M | C$69,895 | C$183,735 | month 41 | C$1.26M | 26% |
 | Claims straight-through processing | enhancement | 7 | C$1.03M | C$55,545 | C$125,988 | month 26 | C$1.77M | 72% |

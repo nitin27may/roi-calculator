@@ -1212,6 +1212,16 @@
       ]
     },
     {
+      "id": "sc-no-assist",
+      "label": "Build only the intake agent (leave out the policy assistant)",
+      "edits": [
+        {
+          "kind": "dropFeature",
+          "featureId": "assist"
+        }
+      ]
+    },
+    {
       "id": "sc-volume",
       "label": "Claim volume 25% higher",
       "edits": [

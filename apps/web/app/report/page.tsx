@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { DEPLOYMENT_LABEL, LABOUR_EXCLUDED_TEXT, REPORT_AUDIENCES, infrastructureReport, isReportAudience, showsSection, teamPlan, type ReportAudience, WIDE_RANGE_TEXT, buildLabel, compareScenarios, computeAllocation, currentStateRows, evaluateLevers, moneyBand, pricesUsedRows, scorecardRows, steadyState } from "@roi-calculator/engine";
+import { DEPLOYMENT_LABEL, LABOUR_EXCLUDED_TEXT, REPORT_AUDIENCES, infrastructureReport, isReportAudience, showsSection, teamPlan, benefitBySource, BENEFIT_SOURCES, type ReportAudience, WIDE_RANGE_TEXT, buildLabel, compareScenarios, computeAllocation, currentStateRows, evaluateLevers, moneyBand, pricesUsedRows, scorecardRows, steadyState } from "@roi-calculator/engine";
 import { CumulativeLine, Legend, RankedBars, StackedBars, Waterfall } from "@/components/charts";
 import { Field, TextInput } from "@/components/ui";
-import { AiAssistTile, CurrentVsTargetTile, FinanceMeasures, HeadlineTiles, RiskSummary, VerdictChip, WATERFALL_COST_IDS, wideDrivers } from "@/components/summary-parts";
+import { AiAssistTile, BreakEvenTile, CurrentVsTargetTile, FinanceMeasures, HeadlineTiles, RiskSummary, VerdictChip, WATERFALL_COST_IDS, wideDrivers } from "@/components/summary-parts";
 import { catalog, useSummary } from "@/lib/compute";
 import { cad, fmt } from "@/lib/format";
 import { useStudio } from "@/lib/store";
 import { calendarMonth } from "@/lib/months";
+import { PlanTimeline } from "@/components/plan-timeline";
 
 const STREAMS = [
   { key: "labour", label: "Build labour", color: "var(--build-2)" },
@@ -67,6 +68,7 @@ export default function Report() {
     prices: pricesUsedRows(ledger, catalog),
     team: teamPlan(p, ledger),
     infra: infrastructureReport(p, ledger, catalog),
+    benefitSrc: benefitBySource(ledger),
   }), [p, ledger]);
   const t = ledger.totals, B = p.timeline.buildMonths;
   const rows = ledger.months.map((m) => ({ labour: m.byStream.labour, devlab: m.byStream.devlab + m.byStream.devenv, run: m.byStream.run, platform: m.byStream.platform, env: m.byStream.env ?? 0, delivery: m.byStream.delivery ?? 0, maint: m.byStream.maint + m.byStream.transition, benefit: m.benefit }));
@@ -173,6 +175,10 @@ export default function Report() {
               {s.alerts.length > 3 && <p className="mt-1 text-xs text-muted">{s.alerts.length - 3} more group{s.alerts.length - 3 === 1 ? "" : "s"} of notices are in the appendix.</p>}
             </section>
           </div>
+          <section className="break-inside-avoid" data-testid="report-break-even">
+            <h2 className="mb-1.5 text-[15px] font-bold">What must be true</h2>
+            <BreakEvenTile project={p} ledger={ledger} className="" />
+          </section>
         </section>}
 
         {/* 3. Assumptions and how sure we are */}
@@ -257,6 +263,7 @@ export default function Report() {
           {show("team") && (
             <section className="break-inside-avoid" data-testid="report-team">
               <h3 className="mb-2 text-lg font-bold">Team and delivery plan</h3>
+              <PlanTimeline project={p} className="mb-3" />
               <p className="mb-1.5 max-w-[80ch] text-[12.5px] text-ink-2">Who is on the build, for which months, and what each line costs including contingency{p.build.aiAssist ? " and AI assistance" : ""}. {extra.team.peopleMonths.toLocaleString("en-CA", { maximumFractionDigits: 1 })} person-months in all.</p>
               <table className="data [&_td.n]:whitespace-normal [&_td.n]:font-sans">
                 <thead><tr><th>Person</th><th>Role</th><th className="n">FTE</th><th>Phase</th><th className="n">Months</th><th className="n">Cost</th></tr></thead>
@@ -284,6 +291,7 @@ export default function Report() {
             <section className="break-inside-avoid" data-testid="report-infrastructure">
               <h3 className="mb-2 text-lg font-bold">Infrastructure by environment, per month</h3>
               <p className="mb-1.5 max-w-[80ch] text-[12.5px] text-ink-2">Azure resources at list price, each shown in the first month it is billed in an environment. Non-production runs at a reduced size and schedule; production and the second region run all month.</p>
+              <RankedBars className="mb-3 flex flex-col gap-1.5" rows={extra.infra.envs.map((e) => ({ label: `${e.label} (a month)`, value: extra.infra.envTotals[e.id] ?? 0, color: e.production ? "platform" as const : "devlab" as const })).filter((r) => r.value > 0).sort((a, b) => b.value - a.value)} />
               <table className="data [&_td.n]:whitespace-normal [&_td.n]:font-sans">
                 <thead><tr><th>Resource</th><th>SKU</th>{extra.infra.envs.map((e) => <th key={e.id} className="n">{e.label}</th>)}</tr></thead>
                 <tbody>
@@ -299,6 +307,22 @@ export default function Report() {
             <Legend items={[...streams.map((x) => ({ label: x.label, color: x.color })), { label: "Benefit", color: "var(--ink)", line: true }]} />
             <StackedBars rows={rows} series={streams} line={{ key: "benefit", label: "Benefit", color: "var(--ink)" }} xLabel={(i) => `M${i + 1}`} className="relative mt-2 h-[260px] w-[688px] max-w-full" />
           </section>}
+
+          {show("benefitSources") && (() => {
+            const colors = ["var(--s1)", "var(--s3)", "var(--platform)", "var(--s6)", "var(--s7)", "var(--maint)"];
+            const used = BENEFIT_SOURCES.map((x, i) => ({ key: x.key, label: x.label, color: colors[i]! })).filter((x) => extra.benefitSrc.totals[x.key] > 0);
+            return used.length === 0 ? null : (
+              <section className="break-inside-avoid" data-testid="report-benefit-sources">
+                <h3 className="mb-2 text-lg font-bold">Where the benefit comes from</h3>
+                <Legend items={used.map((x) => ({ label: x.label, color: x.color }))} />
+                <StackedBars rows={extra.benefitSrc.rows} series={used} xLabel={(i) => `M${i + 1}`} className="relative mt-2 h-[220px] w-[688px] max-w-full" />
+                <table className="data mt-2 [&_td.n]:whitespace-normal [&_td.n]:font-sans">
+                  <thead><tr><th>Source</th><th className="n">Over the plan</th><th className="n">Share</th></tr></thead>
+                  <tbody>{used.map((x) => <tr key={x.key}><td>{x.label}</td><td className="n">{cad(extra.benefitSrc.totals[x.key])}</td><td className="n">{fmt((extra.benefitSrc.totals[x.key] / Math.max(1, roi.totalBenefit)) * 100)}%</td></tr>)}</tbody>
+                </table>
+              </section>
+            );
+          })()}
 
           {show("cumulative") && <section className="break-inside-avoid">
             <h3 className="mb-2 text-lg font-bold">Cumulative position</h3>

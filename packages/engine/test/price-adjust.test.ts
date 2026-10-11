@@ -33,3 +33,25 @@ describe("Azure price adjustment", () => {
     expect(ProjectSchema.safeParse({ ...p, settings: { ...p.settings, azureAdjustPct: -12 } }).success).toBe(true);
   });
 });
+
+describe("your own price for a catalogue unit price", () => {
+  const withOverride = (priceOverrides?: Record<string, number>, azureAdjustPct?: number) => new PriceBook(cat, { ...settings(azureAdjustPct), ...(priceOverrides ? { priceOverrides } : {}) });
+  it("replaces the catalogue price, is not moved by the Azure adjustment, and leaves other prices alone", () => {
+    const list = withOverride();
+    const own = withOverride({ "di-layout": 7.25 }, -20);
+    expect(own.unitPrice("di-layout")).toBe(7.25);
+    expect(own.unitPrice("di-read")).toBeCloseTo(list.unitPrice("di-read") * 0.8, 6);
+  });
+  it("gives a placeholder price (the custom SaaS seat) a real cost", () => {
+    expect(withOverride().unitPrice("saas-seat-custom-seats")).toBe(0);
+    expect(withOverride({ "saas-seat-custom-seats": 42 }).unitPrice("saas-seat-custom-seats")).toBe(42);
+    const p = ProjectSchema.parse({ ...DEMO_PROJECTS[0]!.make(), resources: [{ id: "s", label: "Tool", typeId: "saas-seat", skuId: "custom", inputs: { seats: 10 }, term: "payg", ahb: false }] });
+    const run = (o?: Record<string, number>) => buildLedger({ ...p, settings: { ...p.settings, ...(o ? { priceOverrides: o } : {}) } }, cat).months[p.timeline.buildMonths + 1]!.lines.filter((l) => l.componentId === "resource:s").reduce((t, l) => t + l.cost, 0);
+    expect(run()).toBe(0);
+    expect(run({ "saas-seat-custom-seats": 42 })).toBeGreaterThan(0);
+  });
+  it("is refused when negative", () => {
+    const p = ProjectSchema.parse(DEMO_PROJECTS[0]!.make());
+    expect(ProjectSchema.safeParse({ ...p, settings: { ...p.settings, priceOverrides: { "di-layout": -1 } } }).success).toBe(false);
+  });
+});

@@ -834,6 +834,16 @@
       ]
     },
     {
+      "id": "sc-no-fraud",
+      "label": "Notes intelligence only (leave out fraud-signal triage)",
+      "edits": [
+        {
+          "kind": "dropFeature",
+          "featureId": "fraud"
+        }
+      ]
+    },
+    {
       "id": "sc-volume",
       "label": "Note volume 30% higher",
       "edits": [
