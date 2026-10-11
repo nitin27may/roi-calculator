@@ -1,0 +1,1074 @@
+{
+  "schema": "roi-calculator/project",
+  "version": 6,
+  "name": "Claims datacentre migration to Azure (rehost)",
+  "startDate": "2027-02-01",
+  "settings": {
+    "azureDeployment": "regional",
+    "language": "en",
+    "snowflake": {
+      "routing": "global",
+      "edition": "enterprise"
+    }
+  },
+  "timeline": {
+    "buildMonths": 9,
+    "horizonMonths": 60,
+    "adoptionRampMonths": 3,
+    "phases": [
+      {
+        "id": "discovery",
+        "label": "Discovery",
+        "fromMonth": 1,
+        "toMonth": 1
+      },
+      {
+        "id": "design",
+        "label": "Design",
+        "fromMonth": 2,
+        "toMonth": 3
+      },
+      {
+        "id": "build",
+        "label": "Build",
+        "fromMonth": 4,
+        "toMonth": 6
+      },
+      {
+        "id": "test",
+        "label": "Test",
+        "fromMonth": 7,
+        "toMonth": 8
+      },
+      {
+        "id": "migration",
+        "label": "Migration and cutover",
+        "fromMonth": 9,
+        "toMonth": 9
+      },
+      {
+        "id": "deploy",
+        "label": "Deploy",
+        "fromMonth": 9,
+        "toMonth": 9
+      },
+      {
+        "id": "hypercare",
+        "label": "Hypercare",
+        "fromMonth": 10,
+        "toMonth": 11
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "claims-estate",
+      "label": "Claims estate migration",
+      "description": "Move 33 claims virtual machines from the leased datacentre to Azure in three waves, stand up the network and DR, and exit the datacentre.",
+      "types": [
+        "replatform"
+      ]
+    }
+  ],
+  "rateCard": [
+    {
+      "id": "pm",
+      "label": "Project manager",
+      "hourlyRate": 110
+    },
+    {
+      "id": "ba",
+      "label": "Business analyst",
+      "hourlyRate": 95
+    },
+    {
+      "id": "architect",
+      "label": "Solution architect",
+      "hourlyRate": 145
+    },
+    {
+      "id": "devops",
+      "label": "DevOps / platform engineer",
+      "hourlyRate": 115
+    },
+    {
+      "id": "dba",
+      "label": "Database administrator",
+      "hourlyRate": 110
+    },
+    {
+      "id": "security",
+      "label": "Security engineer",
+      "hourlyRate": 125
+    },
+    {
+      "id": "network",
+      "label": "Network engineer",
+      "hourlyRate": 118
+    },
+    {
+      "id": "qa",
+      "label": "QA / test engineer",
+      "hourlyRate": 85
+    },
+    {
+      "id": "change",
+      "label": "Change and training",
+      "hourlyRate": 85
+    },
+    {
+      "id": "sysadmin",
+      "label": "Systems administrator",
+      "hourlyRate": 78
+    }
+  ],
+  "harnesses": [],
+  "build": {
+    "team": [
+      {
+        "roleId": "pm",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Marcus Tremblay",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 9
+      },
+      {
+        "roleId": "architect",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Priya Raman",
+        "phase": "Discovery to Migration and cutover",
+        "fromMonth": 1,
+        "toMonth": 9
+      },
+      {
+        "roleId": "ba",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Aisha Khan (application owners, cutover plans)",
+        "phase": "Discovery to Test",
+        "fromMonth": 1,
+        "toMonth": 8
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel (landing zone, automation)",
+        "phase": "Design to Deploy",
+        "fromMonth": 2,
+        "toMonth": 9
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Kenji Watanabe (migration waves)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 4,
+        "toMonth": 9
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Fatima Rahman (backup and DR)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 4,
+        "toMonth": 9
+      },
+      {
+        "roleId": "network",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Luc Bouchard (ExpressRoute, firewall)",
+        "phase": "Design to Test",
+        "fromMonth": 2,
+        "toMonth": 8
+      },
+      {
+        "roleId": "dba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Tomás Silva (SQL Server VMs)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 9
+      },
+      {
+        "roleId": "security",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Chloé Gagnon",
+        "phase": "Design to Test",
+        "fromMonth": 2,
+        "toMonth": 8
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Grace Kim (wave testing)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 4,
+        "toMonth": 9
+      },
+      {
+        "roleId": "change",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Jennifer Wu",
+        "phase": "Test to Deploy",
+        "fromMonth": 7,
+        "toMonth": 9
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 10,
+        "toMonth": 11
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Kenji Watanabe (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 10,
+        "toMonth": 11
+      },
+      {
+        "roleId": "dba",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Tomás Silva (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 10,
+        "toMonth": 11
+      }
+    ],
+    "includeLabour": true,
+    "workstreams": [],
+    "contingencyPct": 15,
+    "contingencyScope": "labour",
+    "activities": [],
+    "environment": [
+      {
+        "id": "migrate",
+        "label": "Azure Migrate appliance and replication tooling",
+        "amountCad": 1800,
+        "cadence": "monthly"
+      },
+      {
+        "id": "script",
+        "label": "Infrastructure-as-code and policy scanning licences",
+        "amountCad": 1400,
+        "cadence": "monthly"
+      }
+    ],
+    "deliveryCosts": [
+      {
+        "id": "d-partner",
+        "label": "Migration partner: discovery, dependency mapping and wave execution",
+        "amountCad": 210000,
+        "cadence": "once",
+        "month": 4,
+        "category": "vendor"
+      },
+      {
+        "id": "d-network",
+        "label": "ExpressRoute circuit provisioning and carrier cross-connects",
+        "amountCad": 24000,
+        "cadence": "once",
+        "month": 3,
+        "category": "vendor"
+      },
+      {
+        "id": "d-databox",
+        "label": "Offline transfer of the 60 TB file archive (Azure Data Box)",
+        "amountCad": 32000,
+        "cadence": "once",
+        "month": 6,
+        "category": "dataMigration"
+      },
+      {
+        "id": "d-exit",
+        "label": "Datacentre exit: decommissioning, secure data destruction, asset disposal",
+        "amountCad": 85000,
+        "cadence": "once",
+        "month": 10,
+        "category": "other"
+      },
+      {
+        "id": "d-training",
+        "label": "Azure operations training for the infrastructure team",
+        "amountCad": 25000,
+        "cadence": "once",
+        "month": 7,
+        "category": "training"
+      },
+      {
+        "id": "d-comms",
+        "label": "Application owner and business communications for the cutover weekends",
+        "amountCad": 8000,
+        "cadence": "once",
+        "month": 8,
+        "category": "comms"
+      }
+    ]
+  },
+  "workloads": [
+    {
+      "kind": "contract",
+      "id": "support",
+      "label": "Azure support plan (share allocated to claims)",
+      "featureId": "claims-estate",
+      "amountCad": 3600,
+      "cadence": "monthly"
+    },
+    {
+      "kind": "contract",
+      "id": "msp",
+      "label": "Managed service: patching, monitoring and backup checks (after hypercare)",
+      "featureId": "claims-estate",
+      "startMonth": 12,
+      "amountCad": 7800,
+      "cadence": "monthly"
+    }
+  ],
+  "resources": [
+    {
+      "id": "vm-app",
+      "label": "Application tier (19 x D4s v5, Windows, Hybrid Benefit)",
+      "featureId": "claims-estate",
+      "typeId": "vm",
+      "skuId": "d4s-v5-windows",
+      "inputs": {
+        "count": 19
+      },
+      "term": "payg",
+      "ahb": true,
+      "envIds": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    {
+      "id": "vm-batch",
+      "label": "Batch and integration tier (4 x D8s v5, Windows, Hybrid Benefit)",
+      "featureId": "claims-estate",
+      "typeId": "vm",
+      "skuId": "d8s-v5-windows",
+      "inputs": {
+        "count": 4
+      },
+      "term": "payg",
+      "ahb": true,
+      "envIds": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    {
+      "id": "vm-sql",
+      "label": "SQL Server virtual machines (6 x E8s v5, Windows, Hybrid Benefit)",
+      "featureId": "claims-estate",
+      "typeId": "vm",
+      "skuId": "e8s-v5-windows",
+      "inputs": {
+        "count": 6
+      },
+      "term": "payg",
+      "ahb": true,
+      "envIds": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    {
+      "id": "vm-util",
+      "label": "Utility servers: jump hosts, schedulers (4 x B4ms, Linux)",
+      "featureId": "claims-estate",
+      "typeId": "vm",
+      "skuId": "b4ms-linux",
+      "inputs": {
+        "count": 4
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "disk-os",
+      "label": "OS disks (Premium SSD P10)",
+      "featureId": "claims-estate",
+      "typeId": "disk-premium-ssd",
+      "skuId": "p10",
+      "inputs": {
+        "disks": 33
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    {
+      "id": "disk-data",
+      "label": "SQL and file data disks (Premium SSD P30, 1 TiB)",
+      "featureId": "claims-estate",
+      "typeId": "disk-premium-ssd",
+      "skuId": "p30",
+      "inputs": {
+        "disks": 40
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "disk-data-np",
+      "label": "SQL and file data disks, non-production (Premium SSD P30)",
+      "featureId": "claims-estate",
+      "typeId": "disk-premium-ssd",
+      "skuId": "p30",
+      "inputs": {
+        "disks": 8
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test"
+      ]
+    },
+    {
+      "id": "disk-dr",
+      "label": "Replica disks in the second region (Standard SSD E30)",
+      "featureId": "claims-estate",
+      "typeId": "disk-standard-ssd",
+      "skuId": "e30",
+      "inputs": {
+        "disks": 22
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-archive",
+      "label": "File and claim-image archive (Blob, cool, GRS, 60 TB)",
+      "featureId": "claims-estate",
+      "typeId": "blob-storage",
+      "skuId": "cool-grs",
+      "inputs": {
+        "storageGB": 60000,
+        "writeOps10k": 120,
+        "readOps10k": 400,
+        "retrievalGB": 1200
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-diag",
+      "label": "Diagnostics, scripts and migration staging (Blob, hot, LRS)",
+      "featureId": "claims-estate",
+      "typeId": "blob-storage",
+      "skuId": "hot-lrs",
+      "inputs": {
+        "storageGB": 2000,
+        "writeOps10k": 400,
+        "readOps10k": 600,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "bkp-vm",
+      "label": "Azure Backup: virtual machines (27) ",
+      "featureId": "claims-estate",
+      "typeId": "backup-instance",
+      "skuId": "azure-vm",
+      "inputs": {
+        "instances": 27
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "bkp-sql",
+      "label": "Azure Backup: SQL Server in VMs (6)",
+      "featureId": "claims-estate",
+      "typeId": "backup-instance",
+      "skuId": "sql-in-vm",
+      "inputs": {
+        "instances": 6
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "bkp-store",
+      "label": "Backup storage (GRS vault)",
+      "featureId": "claims-estate",
+      "typeId": "backup-storage",
+      "skuId": "grs",
+      "inputs": {
+        "gb": 14000
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "asr",
+      "label": "Site Recovery replication to the second region (22 servers)",
+      "featureId": "claims-estate",
+      "typeId": "site-recovery",
+      "skuId": "to-azure",
+      "inputs": {
+        "instances": 22
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "er",
+      "label": "ExpressRoute circuits: 2 x 1 Gbps metered (diverse paths)",
+      "featureId": "claims-estate",
+      "typeId": "expressroute-circuit",
+      "skuId": "standard-metered-1gbps",
+      "inputs": {
+        "circuits": 2
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "er-gw",
+      "label": "ExpressRoute gateway (ErGw1AZ)",
+      "featureId": "claims-estate",
+      "typeId": "expressroute-gateway",
+      "skuId": "ergw1az",
+      "inputs": {
+        "gateways": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "fw",
+      "label": "Azure Firewall Standard (hub)",
+      "featureId": "claims-estate",
+      "typeId": "azure-firewall",
+      "skuId": "standard",
+      "inputs": {
+        "firewalls": 1,
+        "dataGB": 9000
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "bastion",
+      "label": "Azure Bastion Standard",
+      "featureId": "claims-estate",
+      "typeId": "bastion",
+      "skuId": "standard",
+      "inputs": {
+        "hosts": 1,
+        "extra": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "pip",
+      "label": "Public IP addresses",
+      "featureId": "claims-estate",
+      "typeId": "public-ip",
+      "skuId": "standard-static",
+      "inputs": {
+        "ips": 3
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "pe",
+      "label": "Private endpoints (storage, Key Vault, backup)",
+      "featureId": "claims-estate",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 6,
+        "inGB": 800,
+        "outGB": 500
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "egress",
+      "label": "Data transfer out",
+      "featureId": "claims-estate",
+      "typeId": "internet-egress",
+      "skuId": "internet-100gb-10tb",
+      "inputs": {
+        "outGB": 1500
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "kv",
+      "label": "Key Vault Standard (disk encryption keys, TDE, certificates)",
+      "featureId": "claims-estate",
+      "typeId": "key-vault",
+      "skuId": "standard",
+      "inputs": {
+        "ops10k": 60,
+        "advanced10k": 4,
+        "hsmKeys": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "def-servers",
+      "label": "Defender for Servers Plan 2 (33 servers)",
+      "featureId": "claims-estate",
+      "typeId": "defender-plan",
+      "skuId": "servers-p2",
+      "inputs": {
+        "units": 33
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law",
+      "label": "Log Analytics ingestion: security and performance logs",
+      "featureId": "claims-estate",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 420,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law-keep",
+      "label": "Log Analytics: 12-month retention for audit",
+      "featureId": "claims-estate",
+      "typeId": "log-analytics-retention",
+      "skuId": "interactive",
+      "inputs": {
+        "gb": 3000
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "alerts",
+      "label": "Azure Monitor alert rules",
+      "featureId": "claims-estate",
+      "typeId": "monitor-alerts",
+      "skuId": "log-5min",
+      "inputs": {
+        "rules": 45
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "dev",
+      "label": "Development",
+      "production": false,
+      "sizeFactor": 0.25,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "devtest"
+    },
+    {
+      "id": "test",
+      "label": "Test and performance",
+      "production": false,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "devtest"
+    },
+    {
+      "id": "prod",
+      "label": "Production",
+      "production": true,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    }
+  ],
+  "maintenance": {
+    "mode": "team",
+    "team": [
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Cloud operations engineer"
+      }
+    ]
+  },
+  "benefits": {
+    "capabilities": [],
+    "avoidedCosts": [],
+    "value": [
+      {
+        "id": "val-hw-failure",
+        "label": "Fewer hardware-failure outages on out-of-warranty equipment",
+        "kind": "risk",
+        "featureId": "claims-estate",
+        "eventsPerYear": 0.5,
+        "impactCad": 350000,
+        "reductionPct": 80,
+        "confidencePct": 60
+      }
+    ],
+    "oneOff": [
+      {
+        "id": "oo-refresh",
+        "label": "Hardware refresh avoided: host servers and SAN are out of warranty in 2028",
+        "amount": 950000,
+        "month": 10
+      },
+      {
+        "id": "oo-resale",
+        "label": "Resale and recycling of retired hardware",
+        "amount": 60000,
+        "month": 12
+      }
+    ],
+    "scorecard": [
+      {
+        "id": "sc-rto",
+        "label": "Resilience: time to recover",
+        "dimension": "compliance",
+        "measure": "Recovery time in the last DR test",
+        "unit": "hours",
+        "before": 72,
+        "after": 8,
+        "higherIsBetter": false,
+        "weightPct": 30,
+        "confidencePct": 75,
+        "featureId": "claims-estate"
+      },
+      {
+        "id": "sc-provision",
+        "label": "Agility: time to provision a server",
+        "dimension": "agility",
+        "measure": "Days from request to a working server",
+        "unit": "days",
+        "before": 45,
+        "after": 1,
+        "higherIsBetter": false,
+        "weightPct": 25,
+        "confidencePct": 80,
+        "featureId": "claims-estate"
+      },
+      {
+        "id": "sc-restore",
+        "label": "Reliability: backup restore success",
+        "dimension": "other",
+        "measure": "Test restores that succeed",
+        "unit": "%",
+        "before": 91,
+        "after": 99,
+        "higherIsBetter": true,
+        "weightPct": 25,
+        "confidencePct": 70,
+        "featureId": "claims-estate"
+      },
+      {
+        "id": "sc-exit",
+        "label": "Risk: datacentre exposure",
+        "dimension": "compliance",
+        "measure": "Open audit findings on physical sites",
+        "unit": "findings",
+        "before": 6,
+        "after": 0,
+        "higherIsBetter": false,
+        "weightPct": 20,
+        "confidencePct": 80,
+        "featureId": "claims-estate"
+      }
+    ]
+  },
+  "roi": {
+    "basis": "full",
+    "benefitPreset": "typical",
+    "devCutPct": 0,
+    "maintCutPct": 0,
+    "transitionCosts": [],
+    "growthPctPerYear": 0,
+    "rateEscalationPctPerYear": 2,
+    "discountRatePct": 8,
+    "hurdleRatePct": 10
+  },
+  "scenarios": [
+    {
+      "id": "sc-late",
+      "label": "Cutover slips three months (colo renewed for a quarter)",
+      "edits": [
+        {
+          "kind": "shiftMonths",
+          "target": "golive",
+          "by": 3
+        }
+      ]
+    },
+    {
+      "id": "sc-contract",
+      "label": "Colo contract has a six-month notice period",
+      "edits": [
+        {
+          "kind": "shiftMonths",
+          "target": "decommission",
+          "by": 6
+        }
+      ]
+    },
+    {
+      "id": "sc-rates",
+      "label": "Contractor rates 15% higher",
+      "edits": [
+        {
+          "kind": "scaleRates",
+          "factor": 1.15
+        }
+      ]
+    }
+  ],
+  "currentState": {
+    "lines": [
+      {
+        "id": "cur-colo",
+        "label": "Datacentre space, power and cooling (8 racks, leased)",
+        "category": "infrastructure",
+        "featureId": "claims-estate",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 23000
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 11
+        },
+        "decommission": {
+          "conditional": true,
+          "condition": "The colocation contract is terminated after cutover",
+          "assumed": true
+        }
+      },
+      {
+        "id": "cur-hw",
+        "label": "Server and storage hardware maintenance and support",
+        "category": "contract",
+        "featureId": "claims-estate",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 18000
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 11
+        },
+        "decommission": {
+          "conditional": true,
+          "condition": "Hardware is decommissioned and the support contract lapses",
+          "assumed": true
+        }
+      },
+      {
+        "id": "cur-vmware",
+        "label": "Virtualisation subscription (hosts, management tooling)",
+        "category": "licence",
+        "featureId": "claims-estate",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 26000
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 11
+        },
+        "decommission": {
+          "conditional": true,
+          "condition": "The subscription is not renewed",
+          "assumed": true
+        }
+      },
+      {
+        "id": "cur-dr",
+        "label": "Disaster recovery site contract and replication",
+        "category": "contract",
+        "featureId": "claims-estate",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 12000
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 11
+        },
+        "decommission": {
+          "conditional": true,
+          "condition": "The DR contract is terminated once Azure Site Recovery is proven",
+          "assumed": true
+        }
+      },
+      {
+        "id": "cur-backup",
+        "label": "Tape backup, offsite vaulting and backup software",
+        "category": "contract",
+        "featureId": "claims-estate",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 4000
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 11
+        }
+      },
+      {
+        "id": "cur-wan",
+        "label": "WAN circuits to the datacentre",
+        "category": "contract",
+        "featureId": "claims-estate",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 9000
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 60,
+          "fromMonth": 11,
+          "followsAdoption": false
+        }
+      },
+      {
+        "id": "cur-ops",
+        "label": "Infrastructure operations: system administrators and storage administrator",
+        "category": "people",
+        "featureId": "claims-estate",
+        "basis": {
+          "kind": "fte",
+          "roleId": "sysadmin",
+          "fte": 3,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 40,
+          "followsAdoption": true
+        }
+      }
+    ]
+  }
+}

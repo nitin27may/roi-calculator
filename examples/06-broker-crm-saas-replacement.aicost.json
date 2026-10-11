@@ -1,0 +1,909 @@
+{
+  "schema": "roi-calculator/project",
+  "version": 6,
+  "name": "Broker CRM replaced with SaaS",
+  "startDate": "2027-04-01",
+  "settings": {
+    "azureDeployment": "regional",
+    "language": "en",
+    "snowflake": {
+      "routing": "global",
+      "edition": "enterprise"
+    }
+  },
+  "timeline": {
+    "buildMonths": 8,
+    "horizonMonths": 60,
+    "adoptionRampMonths": 6,
+    "phases": [
+      {
+        "id": "discovery",
+        "label": "Discovery",
+        "fromMonth": 1,
+        "toMonth": 1
+      },
+      {
+        "id": "design",
+        "label": "Design",
+        "fromMonth": 2,
+        "toMonth": 2
+      },
+      {
+        "id": "build",
+        "label": "Build",
+        "fromMonth": 3,
+        "toMonth": 6
+      },
+      {
+        "id": "test",
+        "label": "Test",
+        "fromMonth": 7,
+        "toMonth": 7
+      },
+      {
+        "id": "migration",
+        "label": "Migration and cutover",
+        "fromMonth": 8,
+        "toMonth": 8
+      },
+      {
+        "id": "deploy",
+        "label": "Deploy",
+        "fromMonth": 8,
+        "toMonth": 8
+      },
+      {
+        "id": "hypercare",
+        "label": "Hypercare",
+        "fromMonth": 9,
+        "toMonth": 10
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "crm",
+      "label": "SaaS CRM and broker management",
+      "description": "Move broker, account and quote data to a hosted CRM, rebuild the integrations to the claims, policy and billing systems, and switch off the self-hosted CRM and its Oracle database.",
+      "types": [
+        "saas"
+      ]
+    }
+  ],
+  "rateCard": [
+    {
+      "id": "pm",
+      "label": "Project manager",
+      "hourlyRate": 110
+    },
+    {
+      "id": "ba",
+      "label": "Business analyst",
+      "hourlyRate": 95
+    },
+    {
+      "id": "architect",
+      "label": "Solution architect",
+      "hourlyRate": 145
+    },
+    {
+      "id": "dev",
+      "label": "Developer",
+      "hourlyRate": 105
+    },
+    {
+      "id": "qa",
+      "label": "QA / test engineer",
+      "hourlyRate": 85
+    },
+    {
+      "id": "devops",
+      "label": "DevOps / platform engineer",
+      "hourlyRate": 115
+    },
+    {
+      "id": "security",
+      "label": "Security engineer",
+      "hourlyRate": 125
+    },
+    {
+      "id": "dba",
+      "label": "Database administrator",
+      "hourlyRate": 110
+    },
+    {
+      "id": "dataEngineer",
+      "label": "Data engineer",
+      "hourlyRate": 110
+    },
+    {
+      "id": "change",
+      "label": "Change and training",
+      "hourlyRate": 85
+    },
+    {
+      "id": "sysadmin",
+      "label": "Systems administrator",
+      "hourlyRate": 78
+    },
+    {
+      "id": "legacyDev",
+      "label": "Legacy application developer",
+      "hourlyRate": 105
+    },
+    {
+      "id": "salesCoordinator",
+      "label": "Sales coordinator",
+      "hourlyRate": 40
+    }
+  ],
+  "harnesses": [],
+  "build": {
+    "team": [
+      {
+        "roleId": "pm",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Sandra Whitfield",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 8
+      },
+      {
+        "roleId": "ba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Jorge Medina (broker management process)",
+        "phase": "Discovery to Test",
+        "fromMonth": 1,
+        "toMonth": 7
+      },
+      {
+        "roleId": "ba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Aisha Khan (quote and rating rules)",
+        "phase": "Design to Test",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "architect",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Priya Raman",
+        "phase": "Discovery to Build",
+        "fromMonth": 1,
+        "toMonth": 6
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Anika Sharma (CRM configuration)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 8
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ethan Cole (integrations)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 8
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Yuki Tanaka (integrations)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 8
+      },
+      {
+        "roleId": "dataEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Diego Ramos (data migration)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 8
+      },
+      {
+        "roleId": "dba",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Tomás Silva (Oracle extracts)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 8
+      },
+      {
+        "roleId": "devops",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel (integration platform)",
+        "phase": "Build to Deploy",
+        "fromMonth": 3,
+        "toMonth": 8
+      },
+      {
+        "roleId": "security",
+        "people": 0.25,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Chloé Gagnon",
+        "phase": "Design to Test",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Grace Kim",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 8
+      },
+      {
+        "roleId": "change",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Jennifer Wu (training, 420 users)",
+        "phase": "Test to Deploy",
+        "fromMonth": 7,
+        "toMonth": 8
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Anika Sharma (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 9,
+        "toMonth": 10
+      },
+      {
+        "roleId": "dataEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Diego Ramos (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 9,
+        "toMonth": 10
+      }
+    ],
+    "includeLabour": true,
+    "workstreams": [],
+    "contingencyPct": 15,
+    "contingencyScope": "labour",
+    "activities": [],
+    "environment": [
+      {
+        "id": "sandbox",
+        "label": "SaaS full-copy sandboxes during the build",
+        "amountCad": 2400,
+        "cadence": "monthly"
+      },
+      {
+        "id": "gh",
+        "label": "GitHub Enterprise seats",
+        "unitPriceId": "github-seat-enterprise-seats",
+        "quantity": 8
+      }
+    ],
+    "deliveryCosts": [
+      {
+        "id": "d-impl",
+        "label": "SaaS vendor implementation partner: configuration, workflows, reports",
+        "amountCad": 260000,
+        "cadence": "once",
+        "month": 4,
+        "category": "vendor"
+      },
+      {
+        "id": "d-data",
+        "label": "Data cleansing and migration of 18 years of broker, account and quote history",
+        "amountCad": 110000,
+        "cadence": "once",
+        "month": 6,
+        "category": "dataMigration"
+      },
+      {
+        "id": "d-training",
+        "label": "Role-based training and floor support for 420 users",
+        "amountCad": 72000,
+        "cadence": "once",
+        "month": 7,
+        "category": "training"
+      },
+      {
+        "id": "d-comms",
+        "label": "Broker communications and new-portal guides",
+        "amountCad": 15000,
+        "cadence": "once",
+        "month": 8,
+        "category": "comms"
+      },
+      {
+        "id": "d-exit",
+        "label": "Legacy exit: archive of read-only history, decommissioning, Oracle licence true-down",
+        "amountCad": 38000,
+        "cadence": "once",
+        "month": 9,
+        "category": "other"
+      }
+    ]
+  },
+  "workloads": [
+    {
+      "kind": "seats",
+      "id": "crm-seats",
+      "label": "SaaS CRM subscriptions (420 seats)",
+      "featureId": "crm",
+      "seats": 420,
+      "cadPerSeat": 138,
+      "followsAdoption": true
+    },
+    {
+      "kind": "contract",
+      "id": "crm-support",
+      "label": "SaaS premier support (about 9% of subscription), rising 4% a year",
+      "featureId": "crm",
+      "amountCad": 62000,
+      "cadence": "yearly",
+      "escalationPct": 4
+    },
+    {
+      "kind": "contract",
+      "id": "crm-sandbox",
+      "label": "Two full-copy sandboxes",
+      "featureId": "crm",
+      "amountCad": 2400,
+      "cadence": "monthly"
+    },
+    {
+      "kind": "transactionFee",
+      "id": "esign",
+      "label": "E-signature envelopes from the CRM",
+      "featureId": "crm",
+      "volumePerMonth": 3100,
+      "cadPerTxn": 1.85
+    }
+  ],
+  "resources": [
+    {
+      "id": "apim",
+      "label": "API Management Standard (CRM, policy, claims and billing APIs)",
+      "featureId": "crm",
+      "typeId": "apim-gateway",
+      "skuId": "standard",
+      "inputs": {
+        "units": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "apim-dev",
+      "label": "API Management Developer",
+      "featureId": "crm",
+      "typeId": "apim-gateway",
+      "skuId": "developer",
+      "inputs": {
+        "units": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test"
+      ]
+    },
+    {
+      "id": "logic",
+      "label": "Logic Apps Standard WS1: integration workflows (2 instances)",
+      "featureId": "crm",
+      "typeId": "logic-apps-standard",
+      "skuId": "ws1",
+      "inputs": {
+        "instances": 2
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "sb",
+      "label": "Service Bus Standard: change events between the CRM and core systems",
+      "featureId": "crm",
+      "typeId": "service-bus",
+      "skuId": "standard",
+      "inputs": {
+        "namespaces": 1,
+        "opsM": 25
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "adf",
+      "label": "Data Factory: nightly sync and migration runs (Azure IR)",
+      "featureId": "crm",
+      "typeId": "data-factory",
+      "skuId": "azure-ir",
+      "inputs": {
+        "runsK": 12,
+        "diuHours": 120,
+        "activityHours": 400
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "blob",
+      "label": "Attachments and read-only archive of legacy history (Blob, cool, GRS, 4 TB)",
+      "featureId": "crm",
+      "typeId": "blob-storage",
+      "skuId": "cool-grs",
+      "inputs": {
+        "storageGB": 4000,
+        "writeOps10k": 60,
+        "readOps10k": 120,
+        "retrievalGB": 200
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-np",
+      "label": "Migration staging (Blob, hot, LRS)",
+      "featureId": "crm",
+      "typeId": "blob-storage",
+      "skuId": "hot-lrs",
+      "inputs": {
+        "storageGB": 1200,
+        "writeOps10k": 100,
+        "readOps10k": 200,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "kv",
+      "label": "Key Vault Standard (SaaS API credentials, certificates)",
+      "featureId": "crm",
+      "typeId": "key-vault",
+      "skuId": "standard",
+      "inputs": {
+        "ops10k": 90,
+        "advanced10k": 2,
+        "hsmKeys": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "pe",
+      "label": "Private endpoints",
+      "featureId": "crm",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 4,
+        "inGB": 300,
+        "outGB": 200
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "law",
+      "label": "Log Analytics ingestion: integration and audit logs",
+      "featureId": "crm",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 60,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "dev",
+      "label": "Development",
+      "production": false,
+      "sizeFactor": 0.25,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "test",
+      "label": "Test and performance",
+      "production": false,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "uat",
+      "label": "UAT and pre-production",
+      "production": false,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "fromMonth": 5,
+      "toMonth": 8,
+      "pricing": "payg"
+    },
+    {
+      "id": "prod",
+      "label": "Production",
+      "production": true,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    }
+  ],
+  "maintenance": {
+    "mode": "team",
+    "team": [
+      {
+        "roleId": "dev",
+        "people": 2,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "CRM administrators and integration developer"
+      }
+    ]
+  },
+  "benefits": {
+    "capabilities": [
+      {
+        "id": "cap-productivity",
+        "label": "Less time searching for broker and account history, one place for quotes",
+        "roleId": "salesCoordinator",
+        "featureId": "crm",
+        "workloadIds": [],
+        "workstreamIds": [],
+        "hoursSavedPerMonth": 0,
+        "driver": "perUserWeek",
+        "users": 420,
+        "baselineMinutes": 90,
+        "savings": {
+          "conservative": 12,
+          "typical": 22,
+          "optimistic": 32
+        },
+        "unit": "minutes",
+        "adoptionPct": 85,
+        "realisationPct": 70
+      }
+    ],
+    "avoidedCosts": [],
+    "value": [
+      {
+        "id": "val-risk",
+        "label": "Security incident on an unsupported system avoided (0.12 events a year, C$3.2M each)",
+        "kind": "risk",
+        "featureId": "crm",
+        "eventsPerYear": 0.12,
+        "impactCad": 3200000,
+        "reductionPct": 75,
+        "confidencePct": 60
+      }
+    ],
+    "oneOff": [],
+    "scorecard": [
+      {
+        "id": "sc-support",
+        "label": "Risk: vendor-supported platform",
+        "dimension": "compliance",
+        "measure": "Components past end of vendor support",
+        "unit": "components",
+        "before": 4,
+        "after": 0,
+        "higherIsBetter": false,
+        "weightPct": 30,
+        "confidencePct": 85,
+        "featureId": "crm"
+      },
+      {
+        "id": "sc-mobile",
+        "label": "Experience: brokers and sales staff can use it on a phone",
+        "dimension": "employee",
+        "measure": "Share of CRM tasks available on mobile",
+        "unit": "%",
+        "before": 10,
+        "after": 85,
+        "higherIsBetter": true,
+        "weightPct": 20,
+        "confidencePct": 60,
+        "featureId": "crm"
+      },
+      {
+        "id": "sc-release",
+        "label": "Agility: time to change a workflow",
+        "dimension": "agility",
+        "measure": "Days to change a sales workflow",
+        "unit": "days",
+        "before": 60,
+        "after": 5,
+        "higherIsBetter": false,
+        "weightPct": 25,
+        "confidencePct": 65,
+        "featureId": "crm"
+      },
+      {
+        "id": "sc-duplicates",
+        "label": "Data quality: duplicate broker and account records",
+        "dimension": "other",
+        "measure": "Duplicate records",
+        "unit": "%",
+        "before": 14,
+        "after": 2,
+        "higherIsBetter": false,
+        "weightPct": 25,
+        "confidencePct": 70,
+        "featureId": "crm"
+      }
+    ]
+  },
+  "roi": {
+    "basis": "full",
+    "benefitPreset": "typical",
+    "devCutPct": 0,
+    "maintCutPct": 0,
+    "transitionCosts": [],
+    "growthPctPerYear": 0,
+    "rateEscalationPctPerYear": 2,
+    "discountRatePct": 8,
+    "hurdleRatePct": 10
+  },
+  "scenarios": [
+    {
+      "id": "sc-seats",
+      "label": "300 seats instead of 420 (contractors and part-timers share a lighter licence)",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "workloads",
+            "crm-seats",
+            "seats"
+          ],
+          "value": 300
+        }
+      ]
+    },
+    {
+      "id": "sc-late",
+      "label": "Cutover slips three months (legacy contracts renewed for a quarter)",
+      "edits": [
+        {
+          "kind": "shiftMonths",
+          "target": "golive",
+          "by": 3
+        },
+        {
+          "kind": "shiftMonths",
+          "target": "decommission",
+          "by": 3
+        }
+      ]
+    },
+    {
+      "id": "sc-price",
+      "label": "Vendor price 15% higher at renewal",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "workloads",
+            "crm-seats",
+            "cadPerSeat"
+          ],
+          "value": 158.7
+        }
+      ]
+    }
+  ],
+  "currentState": {
+    "lines": [
+      {
+        "id": "cur-licence",
+        "label": "CRM licences and annual maintenance (vendor)",
+        "category": "licence",
+        "featureId": "crm",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 41000
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 10
+        },
+        "decommission": {
+          "conditional": true,
+          "condition": "The vendor contract is not renewed",
+          "assumed": true
+        }
+      },
+      {
+        "id": "cur-hosting",
+        "label": "Hosting for the CRM: six VMs, storage and backup",
+        "category": "infrastructure",
+        "featureId": "crm",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 14500
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 10
+        },
+        "decommission": {
+          "conditional": true,
+          "condition": "The VMs are switched off",
+          "assumed": true
+        }
+      },
+      {
+        "id": "cur-oracle",
+        "label": "Oracle database licences and support",
+        "category": "licence",
+        "featureId": "crm",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 9800
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 10
+        }
+      },
+      {
+        "id": "cur-bi",
+        "label": "Reporting add-on and CTI telephony connector",
+        "category": "licence",
+        "featureId": "crm",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 5300
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 10
+        }
+      },
+      {
+        "id": "cur-dba",
+        "label": "Database administrator time on the CRM database",
+        "category": "people",
+        "featureId": "crm",
+        "basis": {
+          "kind": "fte",
+          "roleId": "dba",
+          "fte": 1,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 10
+        }
+      },
+      {
+        "id": "cur-sysadmin",
+        "label": "System administration of the CRM servers",
+        "category": "people",
+        "featureId": "crm",
+        "basis": {
+          "kind": "fte",
+          "roleId": "sysadmin",
+          "fte": 0.5,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 10
+        }
+      },
+      {
+        "id": "cur-support-dev",
+        "label": "Sustaining developers on the CRM (customisations, upgrades, hot fixes)",
+        "category": "people",
+        "featureId": "crm",
+        "basis": {
+          "kind": "fte",
+          "roleId": "legacyDev",
+          "fte": 4,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 70,
+          "followsAdoption": true
+        }
+      }
+    ]
+  }
+}

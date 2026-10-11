@@ -1,0 +1,1319 @@
+{
+  "schema": "roi-calculator/project",
+  "version": 6,
+  "name": "Claims replatforming to AKS",
+  "startDate": "2027-01-01",
+  "settings": {
+    "azureDeployment": "regional",
+    "language": "en",
+    "snowflake": {
+      "routing": "global",
+      "edition": "enterprise"
+    }
+  },
+  "timeline": {
+    "buildMonths": 14,
+    "horizonMonths": 60,
+    "adoptionRampMonths": 6,
+    "phases": [
+      {
+        "id": "discovery",
+        "label": "Discovery",
+        "fromMonth": 1,
+        "toMonth": 2
+      },
+      {
+        "id": "design",
+        "label": "Design",
+        "fromMonth": 3,
+        "toMonth": 4
+      },
+      {
+        "id": "build",
+        "label": "Build",
+        "fromMonth": 5,
+        "toMonth": 10
+      },
+      {
+        "id": "test",
+        "label": "Test",
+        "fromMonth": 11,
+        "toMonth": 12
+      },
+      {
+        "id": "migration",
+        "label": "Migration and cutover",
+        "fromMonth": 13,
+        "toMonth": 13
+      },
+      {
+        "id": "deploy",
+        "label": "Deploy",
+        "fromMonth": 14,
+        "toMonth": 14
+      },
+      {
+        "id": "hypercare",
+        "label": "Hypercare",
+        "fromMonth": 15,
+        "toMonth": 16
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "claims-core",
+      "label": "ClaimsNext on AKS",
+      "description": "Break the claims monolith into containerised services on AKS, move its data to Azure SQL Managed Instance and Blob Storage, and switch off the Windows VM estate.",
+      "types": [
+        "replatform"
+      ]
+    }
+  ],
+  "rateCard": [
+    {
+      "id": "pm",
+      "label": "Project manager",
+      "hourlyRate": 110
+    },
+    {
+      "id": "ba",
+      "label": "Business analyst",
+      "hourlyRate": 95
+    },
+    {
+      "id": "architect",
+      "label": "Solution architect",
+      "hourlyRate": 145
+    },
+    {
+      "id": "techLead",
+      "label": "Technical lead",
+      "hourlyRate": 125
+    },
+    {
+      "id": "dev",
+      "label": "Developer",
+      "hourlyRate": 105
+    },
+    {
+      "id": "qa",
+      "label": "QA / test engineer",
+      "hourlyRate": 85
+    },
+    {
+      "id": "devops",
+      "label": "DevOps / platform engineer",
+      "hourlyRate": 115
+    },
+    {
+      "id": "security",
+      "label": "Security engineer",
+      "hourlyRate": 125
+    },
+    {
+      "id": "dba",
+      "label": "Database administrator",
+      "hourlyRate": 110
+    },
+    {
+      "id": "change",
+      "label": "Change and training",
+      "hourlyRate": 85
+    },
+    {
+      "id": "sysadmin",
+      "label": "Systems administrator",
+      "hourlyRate": 78
+    },
+    {
+      "id": "releaseEngineer",
+      "label": "Release engineer",
+      "hourlyRate": 100
+    },
+    {
+      "id": "legacyDev",
+      "label": "Legacy application developer",
+      "hourlyRate": 105
+    },
+    {
+      "id": "adjuster",
+      "label": "Claims adjuster",
+      "hourlyRate": 58
+    }
+  ],
+  "harnesses": [],
+  "build": {
+    "team": [
+      {
+        "roleId": "pm",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Marcus Tremblay",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 14
+      },
+      {
+        "roleId": "architect",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Priya Raman",
+        "phase": "Discovery to Migration and cutover",
+        "fromMonth": 1,
+        "toMonth": 13
+      },
+      {
+        "roleId": "ba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Aisha Khan",
+        "phase": "Discovery to Test",
+        "fromMonth": 1,
+        "toMonth": 12
+      },
+      {
+        "roleId": "techLead",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Daniel Okafor",
+        "phase": "Design to Deploy",
+        "fromMonth": 3,
+        "toMonth": 14
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Mei Lin Wong",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 13
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Liam O'Connor",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 13
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Sofia Alvarez",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 5,
+        "toMonth": 13
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Noah Fraser",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 5,
+        "toMonth": 13
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Hannah Brooks",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 5,
+        "toMonth": 13
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Tariq Mahmood",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 5,
+        "toMonth": 13
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel",
+        "phase": "Design to Deploy",
+        "fromMonth": 3,
+        "toMonth": 14
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Elena Petrova (AKS platform)",
+        "phase": "Build to Deploy",
+        "fromMonth": 5,
+        "toMonth": 14
+      },
+      {
+        "roleId": "security",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Chloé Gagnon",
+        "phase": "Design to Deploy",
+        "fromMonth": 3,
+        "toMonth": 14
+      },
+      {
+        "roleId": "dba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Tomás Silva",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 13
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Grace Kim",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 5,
+        "toMonth": 13
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Omar Haddad",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 5,
+        "toMonth": 13
+      },
+      {
+        "roleId": "change",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Jennifer Wu",
+        "phase": "Test to Deploy",
+        "fromMonth": 11,
+        "toMonth": 14
+      },
+      {
+        "roleId": "techLead",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Daniel Okafor (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 15,
+        "toMonth": 16
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Mei Lin Wong (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 15,
+        "toMonth": 16
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 15,
+        "toMonth": 16
+      }
+    ],
+    "includeLabour": true,
+    "workstreams": [],
+    "contingencyPct": 15,
+    "contingencyScope": "labour",
+    "activities": [],
+    "environment": [
+      {
+        "id": "gh",
+        "label": "GitHub Enterprise seats",
+        "unitPriceId": "github-seat-enterprise-seats",
+        "quantity": 22
+      },
+      {
+        "id": "copilot",
+        "label": "GitHub Copilot Business seats",
+        "unitPriceId": "copilot-business",
+        "quantity": 14
+      },
+      {
+        "id": "sast",
+        "label": "Static and dependency scanning (SAST, SCA)",
+        "amountCad": 2800,
+        "cadence": "monthly"
+      },
+      {
+        "id": "loadtest",
+        "label": "Azure Load Testing and tooling for the performance run",
+        "amountCad": 9000,
+        "cadence": "once",
+        "month": 11
+      }
+    ],
+    "deliveryCosts": [
+      {
+        "id": "d-aks",
+        "label": "AKS landing zone and GitOps enablement (Kubernetes partner)",
+        "amountCad": 140000,
+        "cadence": "once",
+        "month": 3,
+        "category": "vendor"
+      },
+      {
+        "id": "d-pentest",
+        "label": "Penetration test and security assessment",
+        "amountCad": 55000,
+        "cadence": "once",
+        "month": 12,
+        "category": "vendor"
+      },
+      {
+        "id": "d-perf",
+        "label": "Performance and resilience test services",
+        "amountCad": 38000,
+        "cadence": "once",
+        "month": 11,
+        "category": "vendor"
+      },
+      {
+        "id": "d-data",
+        "label": "Claims data migration: SQL Server to Managed Instance, three rehearsals",
+        "amountCad": 95000,
+        "cadence": "once",
+        "month": 12,
+        "category": "dataMigration"
+      },
+      {
+        "id": "d-training",
+        "label": "Kubernetes, GitOps and on-call training for engineering and operations",
+        "amountCad": 60000,
+        "cadence": "once",
+        "month": 10,
+        "category": "training"
+      },
+      {
+        "id": "d-comms",
+        "label": "Adjuster and broker communications for cutover",
+        "amountCad": 18000,
+        "cadence": "once",
+        "month": 13,
+        "category": "comms"
+      }
+    ]
+  },
+  "workloads": [
+    {
+      "kind": "contract",
+      "id": "support",
+      "label": "Azure support plan (share allocated to claims)",
+      "featureId": "claims-core",
+      "amountCad": 4200,
+      "cadence": "monthly"
+    },
+    {
+      "kind": "contract",
+      "id": "sre",
+      "label": "24x7 Kubernetes monitoring and on-call (managed service)",
+      "featureId": "claims-core",
+      "amountCad": 6500,
+      "cadence": "monthly"
+    },
+    {
+      "kind": "contract",
+      "id": "apm",
+      "label": "Observability and security tooling licences",
+      "featureId": "claims-core",
+      "amountCad": 3100,
+      "cadence": "monthly"
+    }
+  ],
+  "resources": [
+    {
+      "id": "aks-np",
+      "label": "AKS cluster, dev and test (Free tier)",
+      "featureId": "claims-core",
+      "typeId": "aks-cluster",
+      "skuId": "free",
+      "inputs": {
+        "clusters": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test"
+      ]
+    },
+    {
+      "id": "aks-cp",
+      "label": "AKS cluster control plane (Standard tier, uptime SLA)",
+      "featureId": "claims-core",
+      "typeId": "aks-cluster",
+      "skuId": "standard",
+      "inputs": {
+        "clusters": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "aks-sys",
+      "label": "AKS system node pool (3 x D4s v5)",
+      "featureId": "claims-core",
+      "typeId": "vm",
+      "skuId": "d4s-v5-linux",
+      "inputs": {
+        "count": 3
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "aks-user-prod",
+      "label": "AKS user node pool, production baseline (9 x D8s v5, 1-year reserved)",
+      "featureId": "claims-core",
+      "typeId": "vm",
+      "skuId": "d8s-v5-linux",
+      "inputs": {
+        "count": 9
+      },
+      "term": "ri1",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "aks-user-dr",
+      "label": "AKS user node pool, second region (9 x D8s v5, scaled to half)",
+      "featureId": "claims-core",
+      "typeId": "vm",
+      "skuId": "d8s-v5-linux",
+      "inputs": {
+        "count": 9
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dr"
+      ]
+    },
+    {
+      "id": "aks-user-np",
+      "label": "AKS user node pool, non-production (9 x D8s v5)",
+      "featureId": "claims-core",
+      "typeId": "vm",
+      "skuId": "d8s-v5-linux",
+      "inputs": {
+        "count": 9
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "aks-disks",
+      "label": "Node OS disks (Premium SSD P10, 128 GiB)",
+      "featureId": "claims-core",
+      "typeId": "disk-premium-ssd",
+      "skuId": "p10",
+      "inputs": {
+        "disks": 12
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "acr",
+      "label": "Azure Container Registry Premium with geo-replica",
+      "featureId": "claims-core",
+      "typeId": "container-registry",
+      "skuId": "premium",
+      "inputs": {
+        "registries": 2,
+        "extraStorageGB": 600
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "agw",
+      "label": "Application Gateway WAF v2 (broker and adjuster ingress)",
+      "featureId": "claims-core",
+      "typeId": "app-gateway",
+      "skuId": "waf-v2",
+      "inputs": {
+        "gateways": 1,
+        "cus": 12
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "mi",
+      "label": "Azure SQL Managed Instance, General Purpose, 16 vCores",
+      "featureId": "claims-core",
+      "typeId": "sql-mi",
+      "skuId": "gp-gen5",
+      "inputs": {
+        "vcores": 16,
+        "storageGB": 2048
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "redis",
+      "label": "Azure Cache for Redis Premium P1",
+      "featureId": "claims-core",
+      "typeId": "redis-cache",
+      "skuId": "premium-p1",
+      "inputs": {
+        "caches": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "sb",
+      "label": "Service Bus Premium, 1 messaging unit",
+      "featureId": "claims-core",
+      "typeId": "service-bus",
+      "skuId": "premium",
+      "inputs": {
+        "namespaces": 1,
+        "mus": 1,
+        "opsM": 120
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "sb-np",
+      "label": "Service Bus Standard",
+      "featureId": "claims-core",
+      "typeId": "service-bus",
+      "skuId": "standard",
+      "inputs": {
+        "namespaces": 1,
+        "opsM": 30
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "blob-docs",
+      "label": "Claim documents and photos (Blob, hot, GRS, 30 TB)",
+      "featureId": "claims-core",
+      "typeId": "blob-storage",
+      "skuId": "hot-grs",
+      "inputs": {
+        "storageGB": 30000,
+        "writeOps10k": 2000,
+        "readOps10k": 6000,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-archive",
+      "label": "Closed-claim archive (Blob, cool, GRS, 110 TB)",
+      "featureId": "claims-core",
+      "typeId": "blob-storage",
+      "skuId": "cool-grs",
+      "inputs": {
+        "storageGB": 110000,
+        "writeOps10k": 300,
+        "readOps10k": 500,
+        "retrievalGB": 2000
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-np",
+      "label": "Claim documents, non-production (Blob, hot, LRS)",
+      "featureId": "claims-core",
+      "typeId": "blob-storage",
+      "skuId": "hot-lrs",
+      "inputs": {
+        "storageGB": 2500,
+        "writeOps10k": 300,
+        "readOps10k": 800,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "kv",
+      "label": "Key Vault Premium (HSM-backed customer-managed keys, secrets)",
+      "featureId": "claims-core",
+      "typeId": "key-vault",
+      "skuId": "premium",
+      "inputs": {
+        "ops10k": 900,
+        "advanced10k": 25,
+        "hsmKeys": 8
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "kv-np",
+      "label": "Key Vault Standard",
+      "featureId": "claims-core",
+      "typeId": "key-vault",
+      "skuId": "standard",
+      "inputs": {
+        "ops10k": 120,
+        "advanced10k": 5,
+        "hsmKeys": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "def-containers",
+      "label": "Defender for Containers (84 vCores)",
+      "featureId": "claims-core",
+      "typeId": "defender-plan",
+      "skuId": "containers",
+      "inputs": {
+        "units": 84
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "def-sql",
+      "label": "Defender for SQL Managed Instance",
+      "featureId": "claims-core",
+      "typeId": "defender-database",
+      "skuId": "sql",
+      "inputs": {
+        "servers": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "pe",
+      "label": "Private endpoints (storage, Key Vault, registry, Service Bus, Redis)",
+      "featureId": "claims-core",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 16,
+        "inGB": 4000,
+        "outGB": 2500
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "pe-np",
+      "label": "Private endpoints, non-production",
+      "featureId": "claims-core",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 10,
+        "inGB": 300,
+        "outGB": 200
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "pip",
+      "label": "Public IP addresses (ingress, egress)",
+      "featureId": "claims-core",
+      "typeId": "public-ip",
+      "skuId": "standard-static",
+      "inputs": {
+        "ips": 4
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "law",
+      "label": "Log Analytics ingestion: container, platform and application logs",
+      "featureId": "claims-core",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 650,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law-np",
+      "label": "Log Analytics ingestion, non-production",
+      "featureId": "claims-core",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 120,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "appins",
+      "label": "Application Insights (traces, dependencies)",
+      "featureId": "claims-core",
+      "typeId": "application-insights",
+      "skuId": "workspace-based",
+      "inputs": {
+        "gb": 140,
+        "testsK": 150
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "alerts",
+      "label": "Azure Monitor log alert rules",
+      "featureId": "claims-core",
+      "typeId": "monitor-alerts",
+      "skuId": "log-5min",
+      "inputs": {
+        "rules": 80
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "bkp",
+      "label": "Backup: Managed Instance long-term retention and document vault (GRS)",
+      "featureId": "claims-core",
+      "typeId": "backup-storage",
+      "skuId": "grs",
+      "inputs": {
+        "gb": 6000
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "egress",
+      "label": "Data transfer out to brokers, partners and the internet",
+      "featureId": "claims-core",
+      "typeId": "internet-egress",
+      "skuId": "internet-100gb-10tb",
+      "inputs": {
+        "outGB": 4500
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "dev",
+      "label": "Development",
+      "production": false,
+      "sizeFactor": 0.25,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "test",
+      "label": "Test and performance",
+      "production": false,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "uat",
+      "label": "UAT and pre-production",
+      "production": false,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "fromMonth": 11,
+      "toMonth": 14,
+      "pricing": "payg"
+    },
+    {
+      "id": "prod",
+      "label": "Production",
+      "production": true,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "dr",
+      "label": "Disaster recovery (second region)",
+      "production": true,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    }
+  ],
+  "maintenance": {
+    "mode": "team",
+    "team": [
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Platform / SRE engineer"
+      },
+      {
+        "roleId": "dev",
+        "people": 1.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Sustaining developers"
+      }
+    ]
+  },
+  "benefits": {
+    "capabilities": [
+      {
+        "id": "cap-speed",
+        "label": "Faster claim screens for adjusters and clerks",
+        "roleId": "adjuster",
+        "featureId": "claims-core",
+        "workloadIds": [],
+        "workstreamIds": [],
+        "hoursSavedPerMonth": 0,
+        "driver": "perUserWeek",
+        "users": 340,
+        "baselineMinutes": 60,
+        "savings": {
+          "conservative": 8,
+          "typical": 14,
+          "optimistic": 20
+        },
+        "unit": "minutes"
+      }
+    ],
+    "avoidedCosts": [],
+    "value": [
+      {
+        "id": "val-outages",
+        "label": "Fewer major outages (unplanned claims downtime, backlog overtime, SLA penalties)",
+        "kind": "risk",
+        "featureId": "claims-core",
+        "eventsPerYear": 5,
+        "impactCad": 120000,
+        "reductionPct": 60,
+        "confidencePct": 60
+      }
+    ],
+    "oneOff": [
+      {
+        "id": "oo-hardware",
+        "label": "Hardware refresh avoided: two storage arrays and host servers due for replacement",
+        "amount": 420000,
+        "month": 17
+      }
+    ],
+    "scorecard": [
+      {
+        "id": "sc-releases",
+        "label": "Delivery: releases per year",
+        "dimension": "agility",
+        "measure": "Production releases per year",
+        "unit": "releases",
+        "before": 6,
+        "after": 52,
+        "higherIsBetter": true,
+        "weightPct": 25,
+        "confidencePct": 70,
+        "featureId": "claims-core"
+      },
+      {
+        "id": "sc-lead",
+        "label": "Delivery: lead time for a change",
+        "dimension": "speed",
+        "measure": "Days from commit to production",
+        "unit": "days",
+        "before": 56,
+        "after": 3,
+        "higherIsBetter": false,
+        "weightPct": 20,
+        "confidencePct": 70,
+        "featureId": "claims-core"
+      },
+      {
+        "id": "sc-avail",
+        "label": "Reliability: availability",
+        "dimension": "customer",
+        "measure": "Claims platform availability",
+        "unit": "%",
+        "before": 99.5,
+        "after": 99.95,
+        "higherIsBetter": true,
+        "weightPct": 20,
+        "confidencePct": 65,
+        "featureId": "claims-core"
+      },
+      {
+        "id": "sc-latency",
+        "label": "Experience: claim screen speed",
+        "dimension": "employee",
+        "measure": "95th-percentile load time of the claim screen",
+        "unit": "seconds",
+        "before": 4.2,
+        "after": 1.1,
+        "higherIsBetter": false,
+        "weightPct": 15,
+        "confidencePct": 60,
+        "featureId": "claims-core"
+      },
+      {
+        "id": "sc-recovery",
+        "label": "Resilience: time to recover",
+        "dimension": "compliance",
+        "measure": "Recovery time objective tested in a drill",
+        "unit": "hours",
+        "before": 24,
+        "after": 2,
+        "higherIsBetter": false,
+        "weightPct": 20,
+        "confidencePct": 75,
+        "featureId": "claims-core"
+      }
+    ]
+  },
+  "roi": {
+    "basis": "full",
+    "benefitPreset": "typical",
+    "devCutPct": 0,
+    "maintCutPct": 0,
+    "transitionCosts": [],
+    "growthPctPerYear": 0,
+    "rateEscalationPctPerYear": 2,
+    "discountRatePct": 8,
+    "hurdleRatePct": 12
+  },
+  "scenarios": [
+    {
+      "id": "sc-late",
+      "label": "Go-live slips three months",
+      "edits": [
+        {
+          "kind": "shiftMonths",
+          "target": "golive",
+          "by": 3
+        }
+      ]
+    },
+    {
+      "id": "sc-keep-vms",
+      "label": "VM estate stays two extra quarters (decommission +6 months)",
+      "edits": [
+        {
+          "kind": "shiftMonths",
+          "target": "decommission",
+          "by": 6
+        }
+      ]
+    },
+    {
+      "id": "sc-rates",
+      "label": "Contractor rates 15% higher",
+      "edits": [
+        {
+          "kind": "scaleRates",
+          "factor": 1.15
+        }
+      ]
+    },
+    {
+      "id": "sc-smaller",
+      "label": "Smaller footprint (next size down)",
+      "edits": [
+        {
+          "kind": "lever",
+          "leverId": "skuDown"
+        }
+      ]
+    }
+  ],
+  "currentState": {
+    "lines": [
+      {
+        "id": "cur-hosting",
+        "label": "Hosting for the claims VM estate (34 VMs: compute, storage, network, backup)",
+        "category": "infrastructure",
+        "featureId": "claims-core",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 52000
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 17
+        },
+        "decommission": {
+          "conditional": true,
+          "condition": "The Windows VM estate is switched off after the parallel run",
+          "assumed": true
+        }
+      },
+      {
+        "id": "cur-os-sql",
+        "label": "Windows Server and SQL Server Enterprise licences",
+        "category": "licence",
+        "featureId": "claims-core",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 21000
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 55,
+          "fromMonth": 17,
+          "followsAdoption": false
+        }
+      },
+      {
+        "id": "cur-middleware",
+        "label": "Application server and middleware subscription",
+        "category": "contract",
+        "featureId": "claims-core",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 19800
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 17
+        },
+        "decommission": {
+          "conditional": true,
+          "condition": "The subscription is not renewed",
+          "assumed": true
+        }
+      },
+      {
+        "id": "cur-esu",
+        "label": "Extended security updates for out-of-support Windows and .NET",
+        "category": "contract",
+        "featureId": "claims-core",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 8500
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 17
+        }
+      },
+      {
+        "id": "cur-ops",
+        "label": "Operations: system administrators and DBAs keeping the VM estate patched",
+        "category": "people",
+        "featureId": "claims-core",
+        "basis": {
+          "kind": "fte",
+          "roleId": "sysadmin",
+          "fte": 4.5,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 45,
+          "followsAdoption": true
+        }
+      },
+      {
+        "id": "cur-release",
+        "label": "Release engineering: eight-weekly manual releases and hot-fix deployments",
+        "category": "people",
+        "featureId": "claims-core",
+        "basis": {
+          "kind": "fte",
+          "roleId": "releaseEngineer",
+          "fte": 3,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 60,
+          "followsAdoption": true
+        }
+      },
+      {
+        "id": "cur-legacy-dev",
+        "label": "Sustaining engineering on the legacy monolith",
+        "category": "people",
+        "featureId": "claims-core",
+        "confidencePct": 80,
+        "basis": {
+          "kind": "fte",
+          "roleId": "legacyDev",
+          "fte": 7,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 45,
+          "followsAdoption": true
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,1245 @@
+{
+  "schema": "roi-calculator/project",
+  "version": 6,
+  "name": "Claims intake and triage agent (AI)",
+  "startDate": "2027-02-01",
+  "settings": {
+    "azureDeployment": "dataZone",
+    "language": "en",
+    "snowflake": {
+      "routing": "global",
+      "edition": "enterprise"
+    }
+  },
+  "timeline": {
+    "buildMonths": 7,
+    "horizonMonths": 60,
+    "adoptionRampMonths": 6,
+    "phases": [
+      {
+        "id": "discovery",
+        "label": "Discovery",
+        "fromMonth": 1,
+        "toMonth": 1
+      },
+      {
+        "id": "design",
+        "label": "Design",
+        "fromMonth": 2,
+        "toMonth": 2
+      },
+      {
+        "id": "build",
+        "label": "Build",
+        "fromMonth": 3,
+        "toMonth": 5
+      },
+      {
+        "id": "test",
+        "label": "Test",
+        "fromMonth": 6,
+        "toMonth": 6
+      },
+      {
+        "id": "migration",
+        "label": "Migration and cutover",
+        "fromMonth": 7,
+        "toMonth": 7
+      },
+      {
+        "id": "deploy",
+        "label": "Deploy",
+        "fromMonth": 7,
+        "toMonth": 7
+      },
+      {
+        "id": "hypercare",
+        "label": "Hypercare",
+        "fromMonth": 8,
+        "toMonth": 9
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "intake",
+      "label": "Intake and triage agent",
+      "description": "Reads claim emails and attachments, extracts the facts, checks coverage and routes the claim to the right queue.",
+      "types": [
+        "ai"
+      ]
+    },
+    {
+      "id": "assist",
+      "label": "Adjuster policy assistant",
+      "description": "Answers adjusters' questions about policy wording and claims procedures, with sources.",
+      "types": [
+        "ai"
+      ]
+    }
+  ],
+  "rateCard": [
+    {
+      "id": "pm",
+      "label": "Project manager",
+      "hourlyRate": 110
+    },
+    {
+      "id": "po",
+      "label": "Product owner",
+      "hourlyRate": 115
+    },
+    {
+      "id": "ba",
+      "label": "Business analyst",
+      "hourlyRate": 95
+    },
+    {
+      "id": "architect",
+      "label": "Solution architect",
+      "hourlyRate": 145
+    },
+    {
+      "id": "aiEngineer",
+      "label": "AI engineer",
+      "hourlyRate": 130
+    },
+    {
+      "id": "dev",
+      "label": "Developer",
+      "hourlyRate": 105
+    },
+    {
+      "id": "dataEngineer",
+      "label": "Data engineer",
+      "hourlyRate": 110
+    },
+    {
+      "id": "qa",
+      "label": "QA / test engineer",
+      "hourlyRate": 85
+    },
+    {
+      "id": "devops",
+      "label": "DevOps / platform engineer",
+      "hourlyRate": 115
+    },
+    {
+      "id": "security",
+      "label": "Security engineer",
+      "hourlyRate": 125
+    },
+    {
+      "id": "change",
+      "label": "Change and training",
+      "hourlyRate": 85
+    },
+    {
+      "id": "claimsClerk",
+      "label": "Claims clerk",
+      "hourlyRate": 42
+    },
+    {
+      "id": "adjuster",
+      "label": "Claims adjuster",
+      "hourlyRate": 58
+    }
+  ],
+  "harnesses": [
+    {
+      "id": "triage",
+      "label": "Claims triage agent",
+      "systemPromptTokens": 2200,
+      "tools": 8,
+      "tokensPerTool": 260,
+      "userInputTokens": 2600,
+      "steps": 5,
+      "toolCallsPerStep": 1.4,
+      "toolResultTokens": 1800,
+      "outputPerStep": 280,
+      "finalOutputTokens": 450,
+      "reasoning": "low",
+      "keepReasoning": false,
+      "maxTurns": 10,
+      "maxTokensPerCall": 4096,
+      "compactAtTokens": 0,
+      "compactSummaryTokens": 3000,
+      "retryRate": 0.04
+    }
+  ],
+  "build": {
+    "team": [
+      {
+        "roleId": "pm",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Marcus Tremblay",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 7
+      },
+      {
+        "roleId": "po",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Nadia Ferreira (product owner, claims)",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 7
+      },
+      {
+        "roleId": "ba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Aisha Khan (claims rules, labelling guide)",
+        "phase": "Discovery to Test",
+        "fromMonth": 1,
+        "toMonth": 6
+      },
+      {
+        "roleId": "architect",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Priya Raman",
+        "phase": "Discovery to Build",
+        "fromMonth": 1,
+        "toMonth": 5
+      },
+      {
+        "roleId": "aiEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Dr. Mateo Rossi (agent design, evaluation)",
+        "allocations": [
+          {
+            "workstreamId": "ws-intake",
+            "share": 1
+          }
+        ],
+        "phase": "Discovery to Migration and cutover",
+        "fromMonth": 1,
+        "toMonth": 7
+      },
+      {
+        "roleId": "aiEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Zainab Ali (retrieval and search)",
+        "allocations": [
+          {
+            "workstreamId": "ws-assist",
+            "share": 0.7
+          },
+          {
+            "workstreamId": "ws-shared",
+            "share": 0.3
+          }
+        ],
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "aiEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Henrik Larsen (tools and orchestration)",
+        "allocations": [
+          {
+            "workstreamId": "ws-intake",
+            "share": 0.8
+          },
+          {
+            "workstreamId": "ws-shared",
+            "share": 0.2
+          }
+        ],
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Liam O'Connor (claims core integration)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "dataEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Diego Ramos (document pipeline)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "devops",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel",
+        "phase": "Build to Deploy",
+        "fromMonth": 3,
+        "toMonth": 7
+      },
+      {
+        "roleId": "security",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Chloé Gagnon (privacy, red team)",
+        "phase": "Design to Deploy",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Grace Kim (labelled test set)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 7
+      },
+      {
+        "roleId": "change",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Jennifer Wu",
+        "phase": "Test to Deploy",
+        "fromMonth": 6,
+        "toMonth": 7
+      },
+      {
+        "roleId": "aiEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Dr. Mateo Rossi (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 8,
+        "toMonth": 9
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Liam O'Connor (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 8,
+        "toMonth": 9
+      }
+    ],
+    "includeLabour": true,
+    "workstreams": [
+      {
+        "id": "ws-intake",
+        "label": "Intake and triage agent",
+        "harnessIds": [
+          "triage"
+        ],
+        "featureId": "intake",
+        "evaluated": true
+      },
+      {
+        "id": "ws-assist",
+        "label": "Adjuster policy assistant (RAG)",
+        "harnessIds": [],
+        "featureId": "assist",
+        "evaluated": true
+      },
+      {
+        "id": "ws-shared",
+        "label": "Shared ingestion, search and guardrails",
+        "harnessIds": [],
+        "evaluated": false
+      }
+    ],
+    "contingencyPct": 15,
+    "contingencyScope": "labour",
+    "activities": [
+      {
+        "kind": "bakeoff",
+        "id": "bakeoff",
+        "label": "Model bake-off on 300 labelled claims",
+        "featureId": "intake",
+        "harnessId": "triage",
+        "candidates": [
+          {
+            "modelId": "gpt-6-sol",
+            "fromMonth": 1
+          },
+          {
+            "modelId": "claude-sonnet-5-5",
+            "fromMonth": 1,
+            "toMonth": 4
+          },
+          {
+            "modelId": "gpt-6-luna",
+            "fromMonth": 1,
+            "toMonth": 2
+          },
+          {
+            "modelId": "gpt-6.1-sol",
+            "fromMonth": 2,
+            "toMonth": 3
+          }
+        ],
+        "cases": 300,
+        "repeats": 3,
+        "sweepsPerMonth": [
+          3,
+          5,
+          4,
+          3,
+          2,
+          1,
+          1
+        ],
+        "cacheHit": 0.3,
+        "batchShare": 0
+      },
+      {
+        "kind": "iterations",
+        "id": "iterations",
+        "label": "Harness iterations",
+        "workstreamId": "ws-intake",
+        "harnessId": "triage",
+        "modelId": "gpt-6-sol",
+        "runsPerDevPerDay": 10,
+        "subsetCases": 30,
+        "workingDays": 21,
+        "cacheHit": 0.3,
+        "monthFactors": [
+          0.6,
+          0.8,
+          1,
+          1,
+          0.8,
+          0.5
+        ]
+      },
+      {
+        "kind": "regression",
+        "id": "regression",
+        "label": "Nightly regression",
+        "workstreamId": "ws-intake",
+        "harnessId": "triage",
+        "modelIds": [
+          "gpt-6-sol"
+        ],
+        "runsPerMonth": 30,
+        "cases": 300,
+        "cacheHit": 0.5,
+        "batchShare": 0,
+        "fromMonth": 3,
+        "monthFactors": [
+          1
+        ]
+      },
+      {
+        "kind": "evaluation",
+        "id": "evaluation",
+        "label": "Foundry evaluation",
+        "judgeModelId": "gpt-6-luna",
+        "evaluators": [
+          "groundedness",
+          "relevance",
+          "coherence",
+          "taskAdherence",
+          "toolCallAccuracy"
+        ],
+        "queryTokens": 200,
+        "contextTokens": 3000,
+        "responseTokens": 500,
+        "scoredShare": {
+          "bakeoff": 1,
+          "iterations": 0.3,
+          "regression": 1
+        },
+        "safetyEvaluators": 4
+      },
+      {
+        "kind": "redteam",
+        "id": "redteam",
+        "label": "AI red teaming (prompt injection through attachments, PII leakage)",
+        "targetModelId": "gpt-6-sol",
+        "scansPerMonth": 6,
+        "categories": 5,
+        "objectivesPerCategory": 10,
+        "strategies": 5,
+        "multiTurnShare": 0.2,
+        "fromMonth": 5,
+        "monthFactors": [
+          1
+        ]
+      },
+      {
+        "kind": "playground",
+        "id": "playground",
+        "label": "Playground and prompt work",
+        "modelId": "gpt-6-sol",
+        "callsPerDevPerDay": 35,
+        "inputTokens": 3000,
+        "outputTokens": 600,
+        "workingDays": 21,
+        "reasoning": "low",
+        "monthFactors": [
+          1
+        ]
+      },
+      {
+        "kind": "synthetic",
+        "id": "synthetic",
+        "label": "Synthetic claim emails and attachments for edge cases",
+        "workstreamId": "ws-intake",
+        "generatorModelId": "gpt-6-sol",
+        "acceptedPerMonth": 1500,
+        "passRate": 0.6,
+        "genInputTokens": 1500,
+        "genOutputTokens": 900,
+        "reasoning": "none",
+        "judgeModelId": "gpt-6-luna",
+        "judgeInputTokens": 1300,
+        "judgeOutputTokens": 150,
+        "batchShare": 1,
+        "monthFactors": [
+          1,
+          1,
+          0.5,
+          0
+        ]
+      },
+      {
+        "kind": "tooling",
+        "id": "tooling",
+        "label": "AI coding tools",
+        "copilotSeatsPerDev": 1,
+        "copilotPlan": "copilot-business",
+        "codingModelId": "claude-sonnet-5-5",
+        "codingTokensPerDevPerDay": {
+          "input": 400000,
+          "cachedInput": 2400000,
+          "output": 60000
+        },
+        "workingDays": 21,
+        "monthFactors": [
+          1
+        ]
+      }
+    ],
+    "environment": [],
+    "deliveryCosts": [
+      {
+        "id": "d-label",
+        "label": "Labelling 1,200 historical claims for the test set (claims SMEs, contracted)",
+        "amountCad": 36000,
+        "cadence": "once",
+        "month": 2,
+        "category": "vendor"
+      },
+      {
+        "id": "d-privacy",
+        "label": "Privacy impact assessment and model risk review",
+        "amountCad": 28000,
+        "cadence": "once",
+        "month": 4,
+        "category": "vendor"
+      },
+      {
+        "id": "d-training",
+        "label": "Training for intake clerks and adjusters on reviewing agent output",
+        "amountCad": 22000,
+        "cadence": "once",
+        "month": 7,
+        "category": "training"
+      },
+      {
+        "id": "d-comms",
+        "label": "Staff communications",
+        "amountCad": 5000,
+        "cadence": "once",
+        "month": 7,
+        "category": "comms"
+      }
+    ],
+    "aiAssist": {
+      "productivityPctByRole": {
+        "dev": 20,
+        "aiEngineer": 10,
+        "qa": 10
+      }
+    }
+  },
+  "workloads": [
+    {
+      "kind": "email",
+      "id": "mail",
+      "label": "Inbound claim emails",
+      "featureId": "intake",
+      "emailsPerMonth": 38000,
+      "bodyExtractorId": "cu-doc-minimal",
+      "attachmentExtractorId": "di-read",
+      "attachmentShare": 0.45,
+      "attachmentsPerEmail": 2.1,
+      "pagesPerAttachment": 4,
+      "dedupe": 0.7,
+      "triage": {
+        "modelId": "gpt-6-luna",
+        "outputTokens": 150,
+        "reasoning": "none"
+      }
+    },
+    {
+      "kind": "documents",
+      "id": "docs",
+      "label": "Estimates, police reports and medical forms",
+      "featureId": "intake",
+      "pagesPerMonth": 90000,
+      "pageType": "dense",
+      "route": {
+        "type": "extract",
+        "extractorId": "di-layout",
+        "addOnIds": []
+      }
+    },
+    {
+      "kind": "llm",
+      "id": "extract",
+      "label": "Field extraction and coverage check",
+      "featureId": "intake",
+      "callsPerMonth": 52000,
+      "modelId": "gpt-6-luna",
+      "inputTokens": 2400,
+      "cachedInputTokens": 600,
+      "outputTokens": 220,
+      "batchShare": 0,
+      "reasoning": "none"
+    },
+    {
+      "kind": "agent",
+      "id": "agent",
+      "label": "Claims triage agent",
+      "featureId": "intake",
+      "harnessId": "triage",
+      "modelId": "gpt-6-sol",
+      "tasksPerMonth": 10000,
+      "cacheHit": 0.8,
+      "toolFees": []
+    },
+    {
+      "kind": "embeddings",
+      "id": "embed",
+      "label": "Embeddings for policy wordings and procedures",
+      "featureId": "assist",
+      "tokensPerMonth": 6000000,
+      "modelId": "text-embedding-3-large"
+    },
+    {
+      "kind": "aiSearch",
+      "id": "search",
+      "label": "Azure AI Search",
+      "featureId": "assist",
+      "chunks": 180000,
+      "embeddingModelId": "text-embedding-3-large",
+      "bytesPerDim": 4,
+      "chunkTokens": 512,
+      "replicas": 2
+    },
+    {
+      "kind": "retrieval",
+      "id": "retrieval",
+      "label": "Retrieval",
+      "featureId": "assist",
+      "queriesPerMonth": 70000,
+      "semanticShare": 0.7
+    },
+    {
+      "kind": "chat",
+      "id": "chat",
+      "label": "Adjuster policy assistant",
+      "featureId": "assist",
+      "users": 340,
+      "conversationsPerUser": 22,
+      "turns": 4,
+      "modelId": "gpt-6-sol",
+      "systemPromptTokens": 700,
+      "userTurnTokens": 110,
+      "assistantTurnTokens": 420,
+      "topK": 5,
+      "chunkTokens": 512,
+      "cacheHit": 0.4,
+      "reasoning": "low",
+      "language": "en"
+    },
+    {
+      "kind": "continuousEval",
+      "id": "ceval",
+      "label": "Continuous evaluation of production runs",
+      "featureId": "intake",
+      "interactionsPerMonth": 48000,
+      "sampleShare": 0.05,
+      "judgeModelId": "gpt-6-luna",
+      "evaluators": [
+        "groundedness",
+        "relevance",
+        "taskAdherence"
+      ],
+      "contextTokens": 2500,
+      "responseTokens": 400,
+      "safetyEvaluators": 0
+    },
+    {
+      "kind": "contentSafety",
+      "id": "safety",
+      "label": "Content Safety and Prompt Shields on attachments",
+      "featureId": "intake",
+      "requestsPerMonth": 48000,
+      "charsPerRequest": 3000,
+      "unitPriceIds": [
+        "safety-text",
+        "safety-prompt-shields"
+      ]
+    },
+    {
+      "kind": "hosting",
+      "id": "threads",
+      "label": "Foundry Agent Service thread storage (Cosmos DB)",
+      "featureId": "intake",
+      "requestsPerMonth": 10000,
+      "items": [
+        {
+          "basis": "fixed",
+          "id": "cosmos-throughput",
+          "label": "Cosmos DB provisioned throughput",
+          "unitPriceId": "cosmos-ru-100",
+          "quantity": 30
+        },
+        {
+          "basis": "fixed",
+          "id": "cosmos-storage",
+          "label": "Cosmos DB thread storage",
+          "unitPriceId": "cosmos-storage-gb",
+          "quantity": 80
+        },
+        {
+          "basis": "fixed",
+          "id": "defender-cosmos",
+          "label": "Defender for Cosmos DB",
+          "unitPriceId": "defender-cosmos-100ru",
+          "quantity": 30
+        }
+      ]
+    },
+    {
+      "kind": "fixed",
+      "id": "platform",
+      "label": "Platform",
+      "featureId": "assist",
+      "group": "Platform",
+      "items": [
+        {
+          "id": "apim",
+          "label": "API Management Basic v2 (model gateway)",
+          "unitPriceId": "apim-basic-v2",
+          "quantity": 1
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "id": "nodes",
+      "label": "Orchestration API and workers on the shared AKS cluster (3 x D4s v5, 1-year reserved)",
+      "featureId": "intake",
+      "typeId": "vm",
+      "skuId": "d4s-v5-linux",
+      "inputs": {
+        "count": 3
+      },
+      "term": "ri1",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "nodes-np",
+      "label": "Orchestration API, non-production (3 x D4s v5)",
+      "featureId": "intake",
+      "typeId": "vm",
+      "skuId": "d4s-v5-linux",
+      "inputs": {
+        "count": 3
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "blob-intake",
+      "label": "Claim emails, attachments and extracted JSON (Blob, hot, ZRS, 9 TB)",
+      "featureId": "intake",
+      "typeId": "blob-storage",
+      "skuId": "hot-zrs",
+      "inputs": {
+        "storageGB": 9000,
+        "writeOps10k": 1500,
+        "readOps10k": 3500,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-archive",
+      "label": "Processed claim documents (Blob, cool, GRS, 20 TB)",
+      "featureId": "intake",
+      "typeId": "blob-storage",
+      "skuId": "cool-grs",
+      "inputs": {
+        "storageGB": 20000,
+        "writeOps10k": 200,
+        "readOps10k": 150,
+        "retrievalGB": 400
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-np",
+      "label": "Test documents (Blob, hot, LRS)",
+      "featureId": "intake",
+      "typeId": "blob-storage",
+      "skuId": "hot-lrs",
+      "inputs": {
+        "storageGB": 800,
+        "writeOps10k": 60,
+        "readOps10k": 120,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "kv",
+      "label": "Key Vault Premium (model and search keys, customer-managed keys)",
+      "featureId": "intake",
+      "typeId": "key-vault",
+      "skuId": "premium",
+      "inputs": {
+        "ops10k": 300,
+        "advanced10k": 10,
+        "hsmKeys": 4
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "kv-np",
+      "label": "Key Vault Standard",
+      "featureId": "intake",
+      "typeId": "key-vault",
+      "skuId": "standard",
+      "inputs": {
+        "ops10k": 60,
+        "advanced10k": 2,
+        "hsmKeys": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "pe",
+      "label": "Private endpoints (OpenAI, AI Search, Storage, Cosmos DB, Key Vault)",
+      "featureId": "intake",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 10,
+        "inGB": 1500,
+        "outGB": 900
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law",
+      "label": "Log Analytics ingestion: agent traces and audit logs",
+      "featureId": "intake",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 160,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law-np",
+      "label": "Log Analytics ingestion, non-production",
+      "featureId": "intake",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 40,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "appins",
+      "label": "Application Insights",
+      "featureId": "intake",
+      "typeId": "application-insights",
+      "skuId": "workspace-based",
+      "inputs": {
+        "gb": 45,
+        "testsK": 60
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "dev",
+      "label": "Development",
+      "production": false,
+      "sizeFactor": 0.25,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "test",
+      "label": "Test and performance",
+      "production": false,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "uat",
+      "label": "UAT and pre-production",
+      "production": false,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "fromMonth": 4,
+      "toMonth": 7,
+      "pricing": "payg"
+    },
+    {
+      "id": "prod",
+      "label": "Production",
+      "production": true,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    }
+  ],
+  "maintenance": {
+    "mode": "team",
+    "team": [
+      {
+        "roleId": "aiEngineer",
+        "people": 0.75,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "AI engineer: prompts, evaluation, model upgrades"
+      },
+      {
+        "roleId": "dev",
+        "people": 0.4,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Integration developer"
+      }
+    ]
+  },
+  "benefits": {
+    "capabilities": [
+      {
+        "id": "cap-intake",
+        "label": "Claims set up and routed without manual reading and keying",
+        "roleId": "claimsClerk",
+        "featureId": "intake",
+        "workloadIds": [
+          "mail",
+          "docs",
+          "extract",
+          "agent",
+          "ceval",
+          "safety",
+          "threads"
+        ],
+        "workstreamIds": [
+          "ws-intake",
+          "ws-shared"
+        ],
+        "hoursSavedPerMonth": 0,
+        "driver": "perVolume",
+        "volumeFrom": "agent",
+        "handledPct": 80,
+        "baselineMinutes": 22,
+        "savings": {
+          "conservative": 5,
+          "typical": 9,
+          "optimistic": 14
+        },
+        "unit": "minutes"
+      },
+      {
+        "id": "cap-assist",
+        "label": "Adjusters find policy wording and procedure answers faster",
+        "roleId": "adjuster",
+        "featureId": "assist",
+        "workloadIds": [
+          "embed",
+          "search",
+          "retrieval",
+          "chat"
+        ],
+        "workstreamIds": [
+          "ws-assist",
+          "ws-shared"
+        ],
+        "hoursSavedPerMonth": 0,
+        "driver": "perUserWeek",
+        "volumeFrom": "chat",
+        "baselineMinutes": 120,
+        "savings": {
+          "conservative": 10,
+          "typical": 18,
+          "optimistic": 25
+        },
+        "unit": "minutes"
+      }
+    ],
+    "avoidedCosts": [],
+    "value": [
+      {
+        "id": "val-misroute",
+        "label": "Fewer mis-routed claims (7.5% to 3%)",
+        "kind": "quality",
+        "capabilityId": "cap-intake",
+        "featureId": "intake",
+        "volumeFrom": "agent",
+        "errorRateBeforePct": 7.5,
+        "errorRateAfterPct": 3,
+        "costPerError": 48,
+        "confidencePct": 65
+      },
+      {
+        "id": "val-fraud",
+        "label": "Duplicate and suspicious claim patterns flagged at intake",
+        "kind": "risk",
+        "featureId": "intake",
+        "eventsPerYear": 24,
+        "impactCad": 38000,
+        "reductionPct": 25,
+        "confidencePct": 40
+      }
+    ],
+    "oneOff": [],
+    "scorecard": [
+      {
+        "id": "sc-triage",
+        "label": "Speed: claim set up and assigned",
+        "dimension": "speed",
+        "measure": "Hours from receipt to assigned adjuster",
+        "unit": "hours",
+        "before": 14,
+        "after": 1.5,
+        "higherIsBetter": false,
+        "weightPct": 35,
+        "confidencePct": 70,
+        "featureId": "intake"
+      },
+      {
+        "id": "sc-accuracy",
+        "label": "Quality: correct routing",
+        "dimension": "other",
+        "measure": "Claims routed to the right queue first time",
+        "unit": "%",
+        "before": 92.5,
+        "after": 97,
+        "higherIsBetter": true,
+        "weightPct": 25,
+        "confidencePct": 65,
+        "featureId": "intake"
+      },
+      {
+        "id": "sc-adjuster",
+        "label": "Employee: time on admin",
+        "dimension": "employee",
+        "measure": "Share of an adjuster's day on reading and re-keying",
+        "unit": "%",
+        "before": 35,
+        "after": 18,
+        "higherIsBetter": false,
+        "weightPct": 20,
+        "confidencePct": 55,
+        "featureId": "assist"
+      },
+      {
+        "id": "sc-trust",
+        "label": "Compliance: answers with a cited source",
+        "dimension": "compliance",
+        "measure": "Assistant answers that cite policy text",
+        "unit": "%",
+        "before": 0,
+        "after": 95,
+        "higherIsBetter": true,
+        "weightPct": 20,
+        "confidencePct": 70,
+        "featureId": "assist"
+      }
+    ]
+  },
+  "roi": {
+    "basis": "full",
+    "benefitPreset": "typical",
+    "devCutPct": 0,
+    "maintCutPct": 0,
+    "transitionCosts": [
+      {
+        "id": "tc-parallel",
+        "label": "Parallel running: clerks double-check agent decisions for the first months",
+        "monthly": 14000,
+        "fromMonth": 8,
+        "toMonth": 10
+      }
+    ],
+    "growthPctPerYear": 5,
+    "rateEscalationPctPerYear": 2,
+    "discountRatePct": 8,
+    "hurdleRatePct": 15
+  },
+  "scenarios": [
+    {
+      "id": "sc-mini",
+      "label": "Triage agent on the small model",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "workloads",
+            "agent",
+            "modelId"
+          ],
+          "value": "gpt-6-luna"
+        }
+      ]
+    },
+    {
+      "id": "sc-lean",
+      "label": "Lean build: narrow bake-off, Batch regression",
+      "edits": [
+        {
+          "kind": "lever",
+          "leverId": "narrowBakeoff"
+        },
+        {
+          "kind": "lever",
+          "leverId": "batchRegression"
+        }
+      ]
+    },
+    {
+      "id": "sc-volume",
+      "label": "Claim volume 25% higher",
+      "edits": [
+        {
+          "kind": "scaleUsage",
+          "factor": 1.25
+        }
+      ]
+    }
+  ],
+  "currentState": {
+    "lines": [
+      {
+        "id": "cur-keying",
+        "label": "Outsourced document indexing and keying (90,000 pages a month)",
+        "category": "transaction",
+        "featureId": "intake",
+        "basis": {
+          "kind": "perTransaction",
+          "unitCostCad": 0.38,
+          "volumePerMonth": 90000
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 70,
+          "followsAdoption": true
+        }
+      }
+    ]
+  }
+}

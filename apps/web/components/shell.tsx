@@ -7,7 +7,7 @@ import {
   ChevronDown, Server, Printer, Redo2, RotateCcw, Settings, Sparkles, TrendingUp, Undo2, Upload, X, ChartColumn, type LucideIcon,
 } from "lucide-react";
 import { exportCsv, exportXlsx } from "@/lib/export";
-import { DEPLOYMENT_LABEL, ProjectSchema, envCost, labourExcluded, labourPartialText, meetingIntelligence, migrateProject } from "@roi-calculator/engine";
+import { DEPLOYMENT_LABEL, ProjectSchema, envCost, labourExcluded, labourPartialText, meetingIntelligence, migrateProject, type Project } from "@roi-calculator/engine";
 import { useStudio } from "@/lib/store";
 import { describeIssue } from "@/lib/validation";
 import { HelpMenu } from "@/components/help-menu";
@@ -15,7 +15,7 @@ import { PageIntro } from "@/components/page-intro";
 import { ProductTour } from "@/components/product-tour";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { monthLegendText } from "@/lib/months";
-import { catalog, useLedger } from "@/lib/compute";
+import { catalog, useLedger, useProjectPricesReady } from "@/lib/compute";
 import { cad, cn, fmt } from "@/lib/format";
 import { DRAWER_CLOSE_EVENT, DRAWER_OPEN_EVENT, readProjectMenuChoice, readSidebarCollapsed, resolveProjectMenuOpen, writeProjectMenuOpen, writeSidebarCollapsed } from "@/lib/prefs";
 import { PROJECT_VIEWS, projectNavViews, projectRows, showProjectMenu, type ProjectRow } from "@/lib/nav";
@@ -28,6 +28,12 @@ const TITLES: Record<string, string> = { "/summary": "Summary", "/overview": "Ov
 const DRAWER_QUERY = "(max-width: 1023px)";
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
+/** "7 sources": every line that adds to the benefit figure (time saved, avoided costs, value items, one-off benefits, current-state savings). */
+export function benefitSourcesText(p: Project): string {
+  const n = p.benefits.capabilities.length + p.benefits.avoidedCosts.length + p.benefits.value.length + p.benefits.oneOff.length + (p.currentState?.lines ?? []).filter((l) => l.change.mode !== "keep").length;
+  return `${n} ${n === 1 ? "source" : "sources"}`;
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const path = usePathname();
   const hydrate = useStudio((s) => s.hydrate);
@@ -37,6 +43,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const library = useStudio((s) => s.library);
   const activeId = useStudio((s) => s.activeId);
   const router = useRouter();
+  const pricesReady = useProjectPricesReady(project);
   useEffect(() => hydrate(), [hydrate]);
   const canUndo = useStudio((s) => s.past.length > 0);
   const canRedo = useStudio((s) => s.future.length > 0);
@@ -184,7 +191,7 @@ export function Shell({ children }: { children: ReactNode }) {
           {problem && <div role="alert" className="mx-3 mt-2 rounded-md bg-crit-soft px-3 py-2 text-sm text-crit sm:mx-5">{problem}</div>}
           {((isProject && hasProject) || path === "/tokens") && <PageIntro path={path} />}
         </div>
-        <div className="min-h-0 px-3 pb-4 pt-3.5 sm:px-5">{isProject && !hasProject ? (hydrated ? <EmptyLibrary /> : null) : children}</div>
+        <div className="min-h-0 px-3 pb-4 pt-3.5 sm:px-5">{isProject && !hasProject ? (hydrated ? <EmptyLibrary /> : null) : isProject && !pricesReady ? <p role="status" className="p-6 text-sm text-muted">Loading prices…</p> : children}</div>
       </main>
     </div>
   );
@@ -248,7 +255,7 @@ function KpiBar() {
   const k = [
     [`Build · months 1–${B}`, cad(t.build), labourExcluded(project) ? "Build labour excluded" : labourPartialText(project) || `${cad(t.devLab)} of it engineering tools & lab${envBuild > 0 ? `, ${cad(envBuild)} environments` : ""}`],
     ["Production run-rate", `${cad(t.runRate)}/mo`, `+ ${cad(t.maintRate)} maintenance`],
-    ["Benefit at full adoption", `${cad(t.benefitRate)}/mo`, `${project.benefits.capabilities.length + project.benefits.avoidedCosts.length} sources`],
+    ["Benefit at full adoption", `${cad(t.benefitRate)}/mo`, benefitSourcesText(project)],
     ["Payback", roi.paybackMonth ? `Month ${roi.paybackMonth}` : `> ${H} months`, basis],
     [`${fmt(H / 12, H % 12 ? 1 : 0)}-year ROI`, `${fmt(roi.roi * 100)}%`, `NPV ${cad(roi.npv)} at ${project.roi.discountRatePct}%`],
   ];
