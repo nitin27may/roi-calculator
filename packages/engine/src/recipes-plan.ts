@@ -282,11 +282,16 @@ const cheques: PlanDef = {
   },
 };
 
-// ---------------------------------------------------------------- 2. RPA / automation of a manual process
+// ---------------------------------------------------------------- 2. automate a manual process
+
+/** The ways a manual process can be automated; any mix may be ticked. Only the RPA one needs a platform licence and robot machines. */
+export const AUTOMATION_HOW: [string, string][] = [["custom", "Custom-built logic (code and workflows)"], ["rpa", "RPA platform (robots)"], ["ai", "AI-assisted (a model reads or decides)"]];
+const how = (v: Values): Set<string> => new Set(str(v, "how").split(",").filter(Boolean));
+const onlyWhen = (key: string, q: Question): Question => ({ ...q, when: (v) => how(v).has(key) });
 
 const rpa: PlanDef = {
-  id: "rpa", label: "Automate a manual process (RPA)", types: ["automation"],
-  description: "Software robots do the repetitive keying and checking. Counts the staff time and rework that falls away against a platform licence, bot machines and the build.",
+  id: "rpa", label: "Automate a manual process", types: ["automation"],
+  description: "Take repetitive manual work off people. Automate it with code and workflows you build, an RPA platform, an AI model, or a mix. Counts the staff time and rework that falls away against the run costs of the approach you pick and the build.",
   benefitHint: "Staff time is in the Current state lines. The benefit here is fewer errors: items handled times the drop in error rate times what one error costs.",
   benefit: (v) => ({ type: "quality", errorRateBeforePct: num(v, "errBefore"), errorRateAfterPct: num(v, "errAfter"), costPerError: num(v, "errCost") }),
   questions: [
@@ -294,33 +299,59 @@ const rpa: PlanDef = {
     nq("fte", "People doing it today", "FTE", 4, 0, 1000, "Full-time equivalents spent on the manual steps today.", "4 FTE.", 0.5),
     nq("fteHours", "Hours a month for one FTE", "hours", 140, 1, 250, "Working hours in a month for one of those people.", "140.", 5),
     nq("opsRate", "Hourly cost of that work", "C$ per hour", OPS_ROLE.hourlyRate, 0, 1000, "Loaded hourly cost of the people doing the work.", "C$45.", 1),
-    nq("automatedPct", "Share of the work the robots take", "%", 70, 1, 100, "The part of the manual effort that the robots handle once adoption is complete. The rest stays with people (exceptions).", "70.", 5),
+    nq("automatedPct", "Share of the work that is automated", "%", 70, 1, 100, "The part of the manual effort that the automation handles once adoption is complete. The rest stays with people (exceptions).", "70.", 5),
     nq("errBefore", "Error rate today", "%", 4, 0, 100, "Share of items handled wrongly today.", "4.", 0.5),
-    nq("errAfter", "Error rate after", "%", 0.5, 0, 100, "Share of items handled wrongly once the robots run.", "0.5.", 0.5),
+    nq("errAfter", "Error rate after", "%", 0.5, 0, 100, "Share of items handled wrongly once the automation runs.", "0.5.", 0.5),
     nq("errCost", "Cost of one error", "C$", 40, 0, 1_000_000, "Rework, credit notes or lost time for one wrong item.", "C$40.", 5),
-    nq("licence", "RPA platform licence", "C$ per month", 2500, 0, 10_000_000, "Monthly licence for the automation platform and its orchestrator.", "C$2,500.", 100),
-    nq("bots", "Machines for the robots", "machines", 2, 1, 100, "Windows machines (D2s v5) that run the robots. The price comes from the catalogue.", "2 machines.", 1),
+    { kind: "multi", id: "how", label: "How it is automated", options: AUTOMATION_HOW.map(([value, label]) => ({ value, label })), default: "rpa", help: {
+      meaning: "Tick every approach you will use; the questions below follow your ticks. Automation is not always RPA: logic you build yourself needs no RPA licence, and an AI model needs per-item model cost instead. A mix is common: robots for screens with no API, code for the rules, a model for reading free text.",
+      example: "Custom-built logic alone for a process with clean APIs, or RPA plus AI for a legacy screen with scanned forms.", source: ASSUMPTION_SOURCE } },
+    onlyWhen("rpa", nq("licence", "RPA platform licence", "C$ per month", 2500, 0, 10_000_000, "Monthly licence for the automation platform and its orchestrator.", "C$2,500.", 100)),
+    onlyWhen("rpa", nq("bots", "Machines for the robots", "machines", 2, 1, 100, "Windows machines (D2s v5) that run the robots. The price comes from the catalogue.", "2 machines.", 1)),
+    onlyWhen("custom", cq("host", "Where the custom logic runs", [["functions", "Azure Functions Premium (code)"], ["logic", "Logic Apps Standard (workflows)"]], "functions", "The Azure service that runs the logic you build. The price comes from the catalogue.", "Functions for code, Logic Apps where the steps are mostly connectors.")),
+    onlyWhen("custom", nq("hostInstances", "Instances running the logic", "instances", 2, 1, 50, "Always-on instances of that plan (EP1 or WS1). Two give failover.", "2 instances.", 1)),
+    onlyWhen("ai", nq("aiShare", "Items that need the model", "%", 30, 1, 100, "The part of the items where a model reads or decides (the rest is handled by rules or robots).", "30 means 1,500 of 5,000 items.", 5)),
+    onlyWhen("ai", nq("aiUnit", "Model cost per item it handles", "C$ per item", 0.03, 0, 1000, "Average model cost of one item that goes to the model. A placeholder: for a priced estimate use an AI recipe from the AI kind of change, which counts tokens.", "C$0.03.", 0.01)),
     envQ(),
     ...buildQs("Developers", 2, 4),
-    nq("analysis", "Process analysis and set-up", "C$", 15_000, 0, 100_000_000, "A one-time cost for mapping the process and setting up the platform.", "C$15,000.", 1000),
-    nq("training", "Training", "C$", 5000, 0, 100_000_000, "A one-time cost to train the people who work with the robots.", "C$5,000.", 500),
+    nq("analysis", "Process analysis and set-up", "C$", 15_000, 0, 100_000_000, "A one-time cost for mapping the process and setting up the platform or the environments.", "C$15,000.", 1000),
+    nq("training", "Training", "C$", 5000, 0, 100_000_000, "A one-time cost to train the people who work with the automation.", "C$5,000.", 500),
   ],
   plan(a) {
     const v = a.values, { rows, add } = rowsFor(a);
-    const env = environmentsFor(a, v);
-    const licence: Workload = { kind: "contract", id: pid(a, "licence"), label: asm("RPA platform licence"), amountCad: num(v, "licence"), cadence: "monthly" } as Workload;
-    add("licence.amount", "RPA licence per month", num(v, "licence"), "C$", tgt("workloads", licence.id, "amountCad"));
+    const env = environmentsFor(a, v), mode = how(v);
+    const workloads: Workload[] = [];
+    const resources: Resource[] = [];
+    if (mode.has("rpa")) {
+      const licence: Workload = { kind: "contract", id: pid(a, "licence"), label: asm("RPA platform licence"), amountCad: num(v, "licence"), cadence: "monthly" } as Workload;
+      add("licence.amount", "RPA licence per month", num(v, "licence"), "C$", tgt("workloads", licence.id, "amountCad"));
+      workloads.push(licence);
+      resources.push(resource(a, "bots", "Robot machines (Windows VM)", "vm", "d2s-v5-windows", { count: num(v, "bots") }));
+    }
+    if (mode.has("custom")) {
+      const logic = str(v, "host") === "logic";
+      resources.push(logic
+        ? resource(a, "logic", "Automation workflows (Logic Apps Standard WS1)", "logic-apps-standard", "ws1", { instances: num(v, "hostInstances") })
+        : resource(a, "functions", "Automation code (Azure Functions Premium EP1)", "functions-premium", "ep1", { instances: num(v, "hostInstances") }));
+    }
+    if (mode.has("ai")) {
+      const volume = Math.round((num(v, "items") * num(v, "aiShare")) / 100);
+      const ai: Workload = { kind: "transactionFee", id: pid(a, "ai"), label: asm("Model cost for items that need it"), volumePerMonth: volume, cadPerTxn: num(v, "aiUnit") } as Workload;
+      add("ai.volume", "Items sent to the model a month", volume, "items", tgt("workloads", ai.id, "volumePerMonth"));
+      add("ai.unit", "Model cost per item", num(v, "aiUnit"), "C$", tgt("workloads", ai.id, "cadPerTxn"));
+      workloads.push(ai);
+    }
     const delivery = [cost(a, "analysis", "Process analysis and set-up", "vendor", num(v, "analysis")), cost(a, "training", "Training", "training", num(v, "training"))];
     delivery.forEach((d) => add(`${d.id.slice(a.featureId.length + 1)}.amount`, d.label, d.amountCad, "C$", tgt("deliveryCosts", d.id, "amountCad")));
     return {
-      workloads: [licence], assumptions: rows, volume: { monthlyItems: num(v, "items"), oneTimeItems: 0, unit: "items" },
+      workloads, assumptions: rows, volume: { monthlyItems: num(v, "items"), oneTimeItems: 0, unit: "items" },
       parts: base(a, v, {
         roles: [ROLE.pm, ROLE.ba, ROLE.dev, ROLE.qa, ROLE.devops, ROLE.change, { ...OPS_ROLE, hourlyRate: num(v, "opsRate") }],
-        team: standardTeam(a, num(v, "devs")), deliveryCosts: delivery,
-        resources: [resource(a, "bots", "Robot machines (Windows VM)", "vm", "d2s-v5-windows", { count: num(v, "bots") })],
+        team: standardTeam(a, num(v, "devs")), deliveryCosts: delivery, resources,
         currentLines: [fteLine(a, add, "manual", "Manual processing", OPS_ROLE.id, num(v, "fte"), num(v, "fteHours"), reduce(num(v, "automatedPct"), true))],
         scorecard: [score(a, "speed", "Speed: time per item", "speed", "Minutes to process one item", "minutes", 12, 2, false), score(a, "employee", "Employee: satisfaction", "employee", "Staff satisfaction score", "points", 55, 70, true)],
-        maintenance: { mode: "pctOfBuild", pctPerYear: 15 },
+        // Code you own is maintained like any application; robots break when screens change.
+        maintenance: { mode: "pctOfBuild", pctPerYear: mode.has("custom") || mode.has("ai") ? 20 : 15 },
       }, env),
     };
   },

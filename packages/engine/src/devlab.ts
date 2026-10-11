@@ -116,6 +116,8 @@ export function devLabLines(p: Project, m: number, book: PriceBook, date: string
         if (f === 0) break;
         const seats = devs * a.copilotSeatsPerDev;
         if (seats > 0) out.push(line({ id: `${a.id}:copilot`, componentId: a.id, label: book.unit(a.copilotPlan).label, stream: "devlab", behaviour: "fixed", meter: a.copilotPlan, quantity: seats, unit: "seat-month", unitPrice: book.unitPrice(a.copilotPlan), formula: `${seats} seats` }));
+        if (a.topUpPerDevPerMonthCad && devs > 0) out.push(line({ id: `${a.id}:topup`, componentId: a.id, label: "Copilot usage top-up", stream: "devlab", behaviour: "fixed", meter: "topup", quantity: devs, unit: "developer-month", unitPrice: a.topUpPerDevPerMonthCad, formula: `${devs} developers × C$${a.topUpPerDevPerMonthCad}` }));
+        if (a.noCodingTokens === true) break;
         const t = a.codingTokensPerDevPerDay;
         const tk = book.tokenizerMultiplier(a.codingModelId);
         const per = book.chatCost(a.codingModelId, { input: t.input * tk, cachedInput: t.cachedInput * tk, output: t.output * tk }, date);

@@ -22,7 +22,11 @@ export type Values = Record<string, AnswerValue>;
 export type Quality = "cost" | "balanced" | "quality";
 
 export interface QuestionHelp { meaning: string; example: string; source: string }
-interface QBase { id: string; label: string; help: QuestionHelp }
+interface QBase {
+  id: string; label: string; help: QuestionHelp;
+  /** Hides the question for answers that make it irrelevant (a licence when no platform is used). A hidden question is not asked and its answer is ignored. */
+  when?: (v: Values) => boolean;
+}
 export type Question = QBase & (
   | { kind: "number"; unit: string; default: number; min: number; max?: number; step?: number }
   | { kind: "choice"; options: { value: string; label: string }[]; default: string }

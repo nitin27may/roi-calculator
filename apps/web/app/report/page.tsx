@@ -304,7 +304,7 @@ export default function Report() {
                   <tbody>{p.timeline.phases!.map((ph) => <tr key={ph.id}><td>{ph.label}</td><td className="n">{ph.fromMonth}–{ph.toMonth}</td><td className="n">{calendarMonth(p.startDate, ph.fromMonth)} to {calendarMonth(p.startDate, ph.toMonth)}</td></tr>)}</tbody>
                 </table>
               )}
-              {(p.build.deliveryCosts ?? []).length > 0 && (
+              {(p.build.deliveryCosts ?? []).length > 0 && p.build.includeDeliveryCosts !== false && (
                 <table className="data mt-3 [&_td.n]:whitespace-normal [&_td.n]:font-sans">
                   <thead><tr><th>Delivery cost (not labour)</th><th>Kind</th><th className="n">Month</th><th className="n">Amount</th></tr></thead>
                   <tbody>{p.build.deliveryCosts!.map((d) => <tr key={d.id}><td>{d.label}</td><td>{d.category}</td><td className="n">{d.month ?? 1}</td><td className="n">{cad(d.amountCad)}</td></tr>)}</tbody>

@@ -132,13 +132,39 @@ export function AiAssistPanel({ onRemoved }: { onRemoved: () => void }) {
   ] : [];
   return (
     <>
-      <div><h2 className="text-base font-bold">AI-assisted development</h2><div className="text-xs text-muted">How many build hours AI coding tools save, by role, against what the seats and tokens cost.</div></div>
+      <div><h2 className="text-base font-bold">AI-assisted development</h2><div className="text-xs text-muted">What the AI coding tools cost (Copilot seats, a top-up per developer, coding-agent tokens), and optionally how many build hours they save.</div></div>
       <div className="font-display text-[26px] font-bold">{sum && Object.keys(pcts).length > 0 ? cad(sum.net) : "Not set"}<span className="ml-1.5 font-sans text-xs font-normal text-muted">{Object.keys(pcts).length > 0 ? "net saving over the build" : "enter a percentage for a role to start"}</span></div>
+      <div>
+        <h3 className="mb-1.5 text-sm font-semibold">Copilot seats, top-up and tokens</h3>
+        {a ? (
+          <>
+            <p className="mb-2 text-xs text-muted">{cad(toolSeries)} over {B} months. Seats, top-up and tokens are per developer: the people on Team &amp; rate card who are ticked &quot;Experiments&quot;. Only the roles on your team are listed under hours saved.</p>
+            <Fields specs={ACTIVITY_SPECS.tooling ?? []} value={a as unknown as Record<string, unknown>} locate={locate} />
+            <div className="mt-2">
+              <TrashButton label="Remove seats and tokens" onClick={() => setConfirm(true)} />
+              {confirm && (
+                <div className="mt-2 max-w-[720px]">
+                  <InlineConfirm groupLabel="Confirm remove seats and tokens" confirmLabel="Remove seats and tokens"
+                    message={`Remove ${a.label}? Its ${cad(toolSeries)} leaves build cost and the net saving above. The percentages stay.`}
+                    onConfirm={() => { edit((d) => { d.build.activities = d.build.activities.filter((y) => y.kind !== "tooling"); }); setConfirm(false); onRemoved(); }}
+                    onCancel={() => setConfirm(false)} />
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <p className="text-xs text-muted">No seat or token cost yet, so the saving above is not netted against anything. Add it to count Copilot seats and coding-agent tokens.</p>
+            <button type="button" className={btn} onClick={() => edit((d) => { d.build.activities.push(newActivity(d, "tooling")); })}><Plus size={14} />Add seats and tokens</button>
+          </div>
+        )}
+      </div>
+      <h3 className="text-sm font-semibold">Hours saved (optional)</h3>
       <div className="flex-none overflow-x-auto">
         <table className="data">
           <thead><tr><th>Role</th><th className="n">Rate</th><th className="n"><span className="inline-flex items-center gap-0.5">Hours saved<HelpTip id="aiAssistPct" label="Hours saved" /></span></th></tr></thead>
           <tbody>
-            {project.rateCard.map((r) => (
+            {project.rateCard.filter((r) => project.build.team.some((t) => t.roleId === r.id) || (pcts[r.id] ?? 0) > 0).map((r) => (
               <tr key={r.id}>
                 <td>{r.label}</td>
                 <td className="n">{cad(r.hourlyRate)}/h</td>
@@ -160,31 +186,6 @@ export function AiAssistPanel({ onRemoved }: { onRemoved: () => void }) {
           ))}
         </dl>
       )}
-      <div>
-        <h3 className="mb-1.5 text-sm font-semibold">Seats and tokens</h3>
-        {a ? (
-          <>
-            <p className="mb-2 text-xs text-muted">{cad(toolSeries)} over {B} months. Seats and tokens scale with the developers on Team &amp; rate card who are ticked &quot;Experiments&quot;.</p>
-            <Fields specs={ACTIVITY_SPECS.tooling ?? []} value={a as unknown as Record<string, unknown>} locate={locate} />
-            <div className="mt-2">
-              <TrashButton label="Remove seats and tokens" onClick={() => setConfirm(true)} />
-              {confirm && (
-                <div className="mt-2 max-w-[720px]">
-                  <InlineConfirm groupLabel="Confirm remove seats and tokens" confirmLabel="Remove seats and tokens"
-                    message={`Remove ${a.label}? Its ${cad(toolSeries)} leaves build cost and the net saving above. The percentages stay.`}
-                    onConfirm={() => { edit((d) => { d.build.activities = d.build.activities.filter((y) => y.kind !== "tooling"); }); setConfirm(false); onRemoved(); }}
-                    onCancel={() => setConfirm(false)} />
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <p className="text-xs text-muted">No seat or token cost yet, so the saving above is not netted against anything. Add it to count Copilot seats and coding-agent tokens.</p>
-            <button type="button" className={btn} onClick={() => edit((d) => { d.build.activities.push(newActivity(d, "tooling")); })}><Plus size={14} />Add seats and tokens</button>
-          </div>
-        )}
-      </div>
       <WhereFrom>the percentages above, the team lines on Team &amp; rate card and the seat and token inputs. Roles you leave empty are unchanged. The saving is an assumption, not a measurement: replace it with the result of a pilot when you have one.</WhereFrom>
     </>
   );

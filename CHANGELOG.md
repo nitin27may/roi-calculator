@@ -6,6 +6,9 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 ### Added
 
+- Automation is no longer assumed to be RPA. The "Automate a manual process" recipe asks how it is automated (custom-built logic, an RPA platform, AI-assisted, or any mix) and asks only for what that approach needs: the RPA licence and robot machines only for RPA, Azure Functions Premium or Logic Apps Standard for custom logic, a per-item model cost for AI.
+- Exclude all delivery costs: a checkbox on Build (Delivery costs) and Settings, like the one for build labour, for when training and communications sit in a department's normal budget. The items are kept.
+- AI coding tools: a flat top-up per developer per month on top of the Copilot seat, and an option to leave coding-agent tokens out. The hours-saved table now lists only the roles on the build team, below the seats and tokens.
 - One-page summary: a report copy that is one A4 page (verdict, key figures, where the money goes, what must be true, finance measures, what to watch).
 - Check your case: cross-field checks a careful reader would raise (no build team, benefit many times the cost, the same people saved twice, payback inside the build, benefits before go-live, 100% adoption, unassumed decommissions, no discount rate or contingency, very high IRR, every benefit at 100% confidence). On the Summary and under What to watch in the report. They are prompts, not errors, and change no figure.
 - Cost of delay: what one month's slip in go-live costs in NPV, next to the break-even margins.

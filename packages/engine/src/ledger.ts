@@ -105,7 +105,7 @@ export function buildLedger(p: Project, catalog: Catalog, percentile: Percentile
         } else lines.push(line({ id: `devenv:${it.id}`, componentId: "devenv", label: it.label, stream: "devenv", behaviour: "fixed", meter: it.unitPriceId, quantity: it.quantity, unit: book.unit(it.unitPriceId).unit, unitPrice: book.unitPrice(it.unitPriceId), formula: `${it.quantity} × ${book.unit(it.unitPriceId).unit}` }));
       }
       lines.push(...resourceMonthLines(p, book, m));
-      for (const d of p.build.deliveryCosts ?? []) {
+      for (const d of p.build.includeDeliveryCosts === false ? [] : p.build.deliveryCosts ?? []) {
         if (d.cadence === "monthly" || m === Math.min(B, d.month ?? 1)) lines.push({ ...cashLine(`delivery:${d.id}`, "delivery", d, "delivery"), once: d.cadence === "once" });
       }
       lines = lines.map((l) => {

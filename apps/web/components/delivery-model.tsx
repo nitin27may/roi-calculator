@@ -1,4 +1,5 @@
 "use client";
+import { DeliveryExcludeToggle } from "@/components/labour-excluded";
 import { PlanTimeline } from "@/components/plan-timeline";
 import { useState } from "react";
 import { Plus } from "lucide-react";
@@ -129,6 +130,8 @@ export function DeliveryCostsPanel() {
     <>
       <div><h2 className="text-base font-bold">Delivery costs</h2><div className="text-xs text-muted">Costs of getting live that are not people&apos;s time and not infrastructure: vendor work, training, communications, data migration.</div></div>
       <div className="font-display text-[26px] font-bold">{cad(total)}<span className="ml-1.5 font-sans text-xs font-normal text-muted">over {B} months{project.build.contingencyScope === "all" && project.build.contingencyPct > 0 ? `, with ${project.build.contingencyPct}% contingency` : ""}</span></div>
+      <DeliveryExcludeToggle />
+      {project.build.includeDeliveryCosts === false && <p className="rounded-md bg-warn-soft px-2.5 py-1.5 text-xs text-warn">Delivery costs excluded: the items below are kept but add nothing to the build, the totals or the report.</p>}
       {items.length > 0 && (
         <div className="flex-none overflow-x-auto">
           <table className="data">
