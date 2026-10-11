@@ -6,6 +6,19 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 ### Added
 
+Example projects and reports for each reader.
+
+- Seven worked example projects in `examples/` (a fictional Canadian insurer): claims datacentre migration, claims replatforming to AKS, quote funnel automation, a claims self-service portal, straight-through processing, a SaaS CRM replacement and an AI intake agent. Named contributors, phases, environments, catalogue resources (AKS, Key Vault, Blob Storage and more), current-state savings, scorecards and what-if scenarios. Open them with "Open file as new project"; `pnpm examples` regenerates them and a test keeps them in step with their source.
+- Report for each reader: choose Executive sponsor, Finance, Technology, Delivery or Business owner on the Report page. New sections: Team and delivery plan, and Infrastructure by environment.
+
+### Fixed
+
+- Opening a project that prices a build tool, seat or fee from a resource category (for example GitHub or Power Automate seats) crashed the app until the lazy price files had loaded. The pages now wait for them.
+- The "sources" count under Benefit at full adoption ignored current-state savings, value items and one-off benefits, and read "1 sources".
+- The AKS hosting preset said node VMs were not in the catalogue; they are, as VM resources.
+
+### Added (any-project work)
+
 The any-project work (phases A0 to A15): the ROI Calculator now estimates any technology project, not only AI.
 
 - Project types (#59): a feature is a new application, enhancement, automation, replatform or migration, SaaS replacement or AI, with nothing preselected. AI pages and menu entries appear only for projects that use AI.

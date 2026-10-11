@@ -83,7 +83,7 @@ pnpm typecheck
 pnpm validate       # catalogue integrity
 ```
 
-On first load you get a sample project (a meeting intelligence agent) to click through.
+On first load you get a sample project (a meeting intelligence agent) to click through. For one worked project of each type (migration, replatform to AKS, automation, new application, enhancement, SaaS replacement, AI), open the files in [examples/](examples/README.md) with "Open file as new project".
 
 ## How prices work
 
