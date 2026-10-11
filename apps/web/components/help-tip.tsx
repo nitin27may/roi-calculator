@@ -57,7 +57,7 @@ export function HelpTip({ id, label }: { id: string; label: string }) {
       <button ref={button} type="button" aria-label={`About ${label}`} aria-expanded={open} aria-controls={uid}
         onFocus={hover}
         onClick={() => { if (pinned) close(); else { setOpen(true); setPinned(true); } }}
-        className="-my-1 inline-flex h-6 w-6 flex-none items-center justify-center rounded-full text-muted hover:text-ink">
+        className="relative -my-1 inline-flex h-6 w-6 flex-none items-center justify-center rounded-full text-muted hover:text-ink max-lg:after:absolute max-lg:after:-inset-2.5 max-lg:after:content-['']">
         <CircleHelp size={14} aria-hidden />
       </button>
       <div ref={pop} id={uid} role="group" aria-label={`Help: ${label}`} aria-hidden={!open}

@@ -104,7 +104,7 @@ export default function Report() {
             <select data-testid="report-audience" className="rounded border border-line bg-surface-2 px-2 py-1.5 text-[13px] text-ink" value={audience} onChange={(e) => changeAudience(e.target.value)}>
               {REPORT_AUDIENCES.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
             </select>
-            <span className="font-normal text-muted" data-testid="report-audience-detail">{audienceInfo.detail}</span>
+            <span className="font-normal text-muted" aria-live="polite" data-testid="report-audience-detail">{audienceInfo.detail}</span>
           </label>
         </div>
         <button type="button" className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-ink" onClick={() => window.print()}>Print or save as PDF</button>
@@ -115,7 +115,7 @@ export default function Report() {
           <div>
             <div className="text-xs uppercase tracking-[0.1em] text-muted">Cost and ROI estimate</div>
             <div className="mt-24 h-1.5 w-20 rounded bg-accent print:mt-40" />
-            <h1 className="mt-5 max-w-[18ch] text-3xl sm:text-5xl font-bold leading-[1.08]">{p.name}</h1>
+            <h2 className="mt-5 max-w-[18ch] text-3xl sm:text-5xl font-bold leading-[1.08]">{p.name}</h2>
             <p className="mt-4 max-w-[52ch] text-[15px] text-ink-2">A {p.timeline.horizonMonths}-month view of what it costs to build and run, what it returns, and how sure we are.</p>
           </div>
           <dl className="grid max-w-[560px] grid-cols-1 sm:grid-cols-[150px_1fr] gap-x-4 gap-y-2 border-t border-line pt-5 text-[13.5px]">

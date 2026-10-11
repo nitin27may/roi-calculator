@@ -111,3 +111,6 @@ table.data tr.total td { font-weight: 600; border-top: 2px solid var(--line); bo
   .report h2, .report h3 { break-after: avoid; }
   @page { @bottom-center { content: "Page " counter(page); font: 9pt sans-serif; color: #566259; } }
 }
+
+/* Placeholders carry meaning (for example "inherits from the phase"), so they stay readable in both themes. */
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
