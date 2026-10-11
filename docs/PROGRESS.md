@@ -31,3 +31,4 @@ Updated in every PR and posted after every merge. Plan: [docs/plan](plan/README.
 | 25 | Demo | Seven example projects, report per reader | In review | feat/demo-projects | examples/ (one per project type, importable), `pnpm examples`, report audience switch with Team and delivery plan and Infrastructure sections; fixed a crash when a project prices items from lazily loaded resource categories |
 
 Status values: Pending, In progress, In review, Done, Deferred.
+| 26 | Automation approaches (custom, RPA, AI), exclude delivery costs, Copilot top-up and token switch | Done |
