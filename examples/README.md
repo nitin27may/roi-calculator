@@ -1,6 +1,6 @@
 # Example projects
 
-Seven worked projects for a fictional Canadian insurer (Maple Ridge Mutual), one for each kind of change the calculator supports, with named contributors, delivery phases, environments, catalogue Azure resources (AKS, Key Vault, Blob Storage and the rest), current-state savings, a benefit scorecard and what-if scenarios. Every figure in CAD is an illustrative assumption to replace with your own; Azure prices are the catalogue's list prices.
+Eight worked projects for a fictional Canadian insurer (Maple Ridge Mutual), one for each kind of change the calculator supports, with named contributors, delivery phases, environments, catalogue Azure resources (AKS, Key Vault, Blob Storage and the rest), current-state savings, a benefit scorecard and what-if scenarios. Every figure in CAD is an illustrative assumption to replace with your own; Azure prices are the catalogue's list prices.
 
 ## Use them in the demo
 
@@ -19,6 +19,7 @@ Seven worked projects for a fictional Canadian insurer (Maple Ridge Mutual), one
 | `05-claims-straight-through-processing.aicost.json` | Enhancement | Rules and automated payments added to a platform that stays in place. Only the added nodes and services are costed. |
 | `06-broker-crm-saas-replacement.aicost.json` | Replace with SaaS | SaaS seats cost more than the licences they replace, so the case rests on hosting, support staff, productivity and an unsupported-system risk. |
 | `07-claims-intake-triage-agent-ai.aicost.json` | AI | An intake agent and an adjuster assistant: models, AI Search, the full Dev Lab, Agent Service thread storage, AKS, Key Vault and storage. |
+| `08-claims-notes-snowflake-cortex-ai.aicost.json` | AI on Snowflake | Claim notes and fraud signals analysed where the data already lives: Cortex functions, AI_COMPLETE, document parsing and Cortex Search, with an Azure landing zone and the AI credit price set to an assumed contract rate. |
 
 ## Results
 
@@ -34,6 +35,7 @@ Computed by the engine with the bundled price catalogue. Regenerate with `pnpm e
 | Claims straight-through processing | enhancement | 7 | C$1.03M | C$55,545 | C$125,988 | month 26 | C$1.77M | 72% |
 | Broker CRM replaced with SaaS | saas | 8 | C$1.81M | C$104,766 | C$167,333 | month 39 | C$0.81M | 27% |
 | Claims intake and triage agent | ai | 7 | C$1.30M | C$28,416 | C$69,842 | month 42 | C$0.48M | 23% |
+| Claims notes analytics on Snowflake Cortex | ai | 6 | C$0.98M | C$23,422 | C$80,552 | month 26 | C$1.64M | 71% |
 <!-- results:end -->
 
 ## How they are made

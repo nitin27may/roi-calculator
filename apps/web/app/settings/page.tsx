@@ -59,6 +59,13 @@ export default function Settings() {
         </div>
       </Card>
       <Card>
+        <CardHead title="Negotiated pricing" sub="Move every Azure list price by a percentage" />
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3 px-3.5 pb-3.5">
+          <Field label="Azure price adjustment" help="azureAdjust"><NumberInput value={project.settings.azureAdjustPct ?? 0} min={-90} max={200} step={1} suffix="%" onChange={(v) => edit((d) => { if (v === 0) delete d.settings.azureAdjustPct; else d.settings.azureAdjustPct = v; })} /></Field>
+        </div>
+        <p className="px-3.5 pb-3.5 text-xs text-muted">Prices here are list prices. Enter a negative number for a discount you have negotiated (-12 is 12% off) or a positive one for an uplift. It applies to Azure models, speech, embeddings, resources and unit prices, including reserved prices. A price you typed in yourself is not changed, and Snowflake uses the credit prices below.</p>
+      </Card>
+      <Card>
         <CardHead title="Build labour" sub="Whether the build team's cost is counted" />
         <div className="flex flex-col gap-2 px-3.5 pb-3.5">
           <LabourExcludeToggle />

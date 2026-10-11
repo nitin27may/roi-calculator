@@ -556,6 +556,8 @@ const ProjectObject = z.object({
      * pay-as-you-go spillover. Absent means pay-as-you-go. A workload's own Capacity settings override it.
      */
     pricingModel: z.enum(["payg", "ptu"]).optional(),
+    /** Percent added to every Azure list price: negative for a negotiated discount (-12 is 12% off), positive for an uplift. Absent or 0 means list price. Manual prices and Snowflake credit prices are not adjusted. */
+    azureAdjustPct: z.number().min(-90).max(200).optional(),
     /** Default text language for token counts (heuristics.tokens.language); a workload can override it. */
     language: z.string().default("en"),
     /** Which percentile the AI Dev Lab agent runs are priced at. Absent means P50. */

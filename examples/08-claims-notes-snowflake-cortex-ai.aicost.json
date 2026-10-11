@@ -1,0 +1,882 @@
+{
+  "schema": "roi-calculator/project",
+  "version": 6,
+  "name": "Claims notes and fraud-signal analytics on Snowflake Cortex",
+  "startDate": "2027-03-01",
+  "settings": {
+    "azureDeployment": "dataZone",
+    "language": "en",
+    "snowflake": {
+      "routing": "global",
+      "edition": "enterprise",
+      "aiCreditCad": 2.55
+    }
+  },
+  "timeline": {
+    "buildMonths": 6,
+    "horizonMonths": 60,
+    "adoptionRampMonths": 5,
+    "phases": [
+      {
+        "id": "discovery",
+        "label": "Discovery",
+        "fromMonth": 1,
+        "toMonth": 1
+      },
+      {
+        "id": "design",
+        "label": "Design",
+        "fromMonth": 2,
+        "toMonth": 2
+      },
+      {
+        "id": "build",
+        "label": "Build",
+        "fromMonth": 3,
+        "toMonth": 4
+      },
+      {
+        "id": "test",
+        "label": "Test",
+        "fromMonth": 5,
+        "toMonth": 5
+      },
+      {
+        "id": "migration",
+        "label": "Migration and cutover",
+        "fromMonth": 6,
+        "toMonth": 6
+      },
+      {
+        "id": "deploy",
+        "label": "Deploy",
+        "fromMonth": 6,
+        "toMonth": 6
+      },
+      {
+        "id": "hypercare",
+        "label": "Hypercare",
+        "fromMonth": 7,
+        "toMonth": 8
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "notes",
+      "label": "Claim notes intelligence",
+      "description": "Classify and extract facts from every adjuster note and uploaded document inside Snowflake, and write a claim summary for the file.",
+      "types": [
+        "ai"
+      ]
+    },
+    {
+      "id": "fraud",
+      "label": "Fraud-signal triage",
+      "description": "Score claims for suspicious patterns with a short written rationale, and answer investigators' questions over policy wording with Cortex Search.",
+      "types": [
+        "ai"
+      ]
+    }
+  ],
+  "rateCard": [
+    {
+      "id": "pm",
+      "label": "Project manager",
+      "hourlyRate": 110
+    },
+    {
+      "id": "ba",
+      "label": "Business analyst",
+      "hourlyRate": 95
+    },
+    {
+      "id": "architect",
+      "label": "Solution architect",
+      "hourlyRate": 145
+    },
+    {
+      "id": "aiEngineer",
+      "label": "AI engineer",
+      "hourlyRate": 130
+    },
+    {
+      "id": "dataEngineer",
+      "label": "Data engineer",
+      "hourlyRate": 110
+    },
+    {
+      "id": "dev",
+      "label": "Developer",
+      "hourlyRate": 105
+    },
+    {
+      "id": "qa",
+      "label": "QA / test engineer",
+      "hourlyRate": 85
+    },
+    {
+      "id": "devops",
+      "label": "DevOps / platform engineer",
+      "hourlyRate": 115
+    },
+    {
+      "id": "security",
+      "label": "Security engineer",
+      "hourlyRate": 125
+    },
+    {
+      "id": "change",
+      "label": "Change and training",
+      "hourlyRate": 85
+    },
+    {
+      "id": "siuAnalyst",
+      "label": "Special investigations analyst",
+      "hourlyRate": 68
+    },
+    {
+      "id": "claimsClerk",
+      "label": "Claims clerk",
+      "hourlyRate": 42
+    }
+  ],
+  "harnesses": [],
+  "build": {
+    "team": [
+      {
+        "roleId": "pm",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Marcus Tremblay",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 6
+      },
+      {
+        "roleId": "ba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Aisha Khan (note coding rules)",
+        "phase": "Discovery to Test",
+        "fromMonth": 1,
+        "toMonth": 5
+      },
+      {
+        "roleId": "architect",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Priya Raman",
+        "phase": "Discovery to Build",
+        "fromMonth": 1,
+        "toMonth": 4
+      },
+      {
+        "roleId": "dataEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Diego Ramos (Snowflake pipelines, streams and tasks)",
+        "phase": "Discovery to Migration and cutover",
+        "fromMonth": 1,
+        "toMonth": 6
+      },
+      {
+        "roleId": "dataEngineer",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Amara Okoye (Snowflake security and roles)",
+        "phase": "Design to Test",
+        "fromMonth": 2,
+        "toMonth": 5
+      },
+      {
+        "roleId": "aiEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Dr. Mateo Rossi (prompts, evaluation)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 6
+      },
+      {
+        "roleId": "aiEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Zainab Ali (Cortex Search)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 6
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Liam O'Connor (investigator app)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 6
+      },
+      {
+        "roleId": "devops",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel (Azure landing zone)",
+        "phase": "Build to Deploy",
+        "fromMonth": 3,
+        "toMonth": 6
+      },
+      {
+        "roleId": "security",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Chloé Gagnon (privacy, data masking)",
+        "phase": "Design to Deploy",
+        "fromMonth": 2,
+        "toMonth": 6
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Grace Kim (labelled test set)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 6
+      },
+      {
+        "roleId": "change",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Jennifer Wu",
+        "phase": "Test to Deploy",
+        "fromMonth": 5,
+        "toMonth": 6
+      },
+      {
+        "roleId": "aiEngineer",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": true,
+        "name": "Dr. Mateo Rossi (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 7,
+        "toMonth": 8
+      }
+    ],
+    "includeLabour": true,
+    "workstreams": [],
+    "contingencyPct": 15,
+    "contingencyScope": "labour",
+    "activities": [
+      {
+        "kind": "playground",
+        "id": "playground",
+        "label": "Prompt work in Cortex Playground",
+        "modelId": "sf:claude-sonnet-5-5",
+        "callsPerDevPerDay": 30,
+        "inputTokens": 3000,
+        "outputTokens": 500,
+        "workingDays": 21,
+        "reasoning": "none",
+        "monthFactors": [
+          1
+        ]
+      },
+      {
+        "kind": "tooling",
+        "id": "tooling",
+        "label": "AI coding tools",
+        "copilotSeatsPerDev": 1,
+        "copilotPlan": "copilot-business",
+        "codingModelId": "claude-sonnet-5-5",
+        "codingTokensPerDevPerDay": {
+          "input": 300000,
+          "cachedInput": 1800000,
+          "output": 45000
+        },
+        "workingDays": 21,
+        "monthFactors": [
+          1
+        ]
+      }
+    ],
+    "environment": [
+      {
+        "id": "gh",
+        "label": "GitHub Enterprise seats",
+        "unitPriceId": "github-seat-enterprise-seats",
+        "quantity": 8
+      },
+      {
+        "id": "sf-dev",
+        "label": "Snowflake development account: warehouse and storage during the build",
+        "amountCad": 3200,
+        "cadence": "monthly"
+      }
+    ],
+    "deliveryCosts": [
+      {
+        "id": "d-label",
+        "label": "Labelling 2,000 historical claim notes for the test set (SIU analysts, contracted)",
+        "amountCad": 30000,
+        "cadence": "once",
+        "month": 2,
+        "category": "vendor"
+      },
+      {
+        "id": "d-backfill",
+        "label": "One-time back-fill: classify and extract 4.1 million historical notes (Cortex credits and warehouse)",
+        "amountCad": 38000,
+        "cadence": "once",
+        "month": 5,
+        "category": "dataMigration"
+      },
+      {
+        "id": "d-privacy",
+        "label": "Privacy impact assessment and model risk review",
+        "amountCad": 24000,
+        "cadence": "once",
+        "month": 4,
+        "category": "vendor"
+      },
+      {
+        "id": "d-training",
+        "label": "Training for investigators and claims analysts",
+        "amountCad": 14000,
+        "cadence": "once",
+        "month": 6,
+        "category": "training"
+      }
+    ]
+  },
+  "workloads": [
+    {
+      "kind": "snowflakeFunction",
+      "id": "classify",
+      "label": "AI_CLASSIFY on every adjuster note (coverage topic, injury, liability)",
+      "featureId": "notes",
+      "functionId": "sf-ai-classify",
+      "rowsPerMonth": 160000,
+      "tokensPerRow": 350,
+      "hiddenPromptTokens": 150,
+      "outputTokensPerRow": 10,
+      "warehouse": {
+        "size": "m",
+        "hoursPerMonth": 12
+      }
+    },
+    {
+      "kind": "snowflakeFunction",
+      "id": "extract",
+      "label": "AI_EXTRACT: parties, dates, amounts and vehicles from notes",
+      "featureId": "notes",
+      "functionId": "sf-ai-extract",
+      "rowsPerMonth": 38000,
+      "tokensPerRow": 1200,
+      "hiddenPromptTokens": 200,
+      "outputTokensPerRow": 160,
+      "warehouse": {
+        "size": "m",
+        "hoursPerMonth": 14
+      }
+    },
+    {
+      "kind": "documents",
+      "id": "parse",
+      "label": "Parse uploaded PDFs: police reports, estimates, medical forms",
+      "featureId": "notes",
+      "pagesPerMonth": 60000,
+      "pageType": "dense",
+      "route": {
+        "type": "extract",
+        "extractorId": "sf-parse-layout",
+        "addOnIds": []
+      },
+      "warehouse": {
+        "size": "s",
+        "hoursPerMonth": 10
+      }
+    },
+    {
+      "kind": "snowflakeComplete",
+      "id": "summary",
+      "label": "AI_COMPLETE: claim summary for each new file",
+      "featureId": "notes",
+      "modelId": "sf:claude-sonnet-5-5",
+      "rowsPerMonth": 10000,
+      "inputTokens": 3500,
+      "outputTokens": 400,
+      "warehouse": {
+        "size": "m",
+        "hoursPerMonth": 20
+      }
+    },
+    {
+      "kind": "snowflakeComplete",
+      "id": "rationale",
+      "label": "AI_COMPLETE: fraud-signal rationale on flagged claims",
+      "featureId": "fraud",
+      "modelId": "sf:openai-gpt-5-mini",
+      "rowsPerMonth": 25000,
+      "inputTokens": 1200,
+      "outputTokens": 200,
+      "warehouse": {
+        "size": "s",
+        "hoursPerMonth": 16
+      }
+    },
+    {
+      "kind": "cortexSearch",
+      "id": "search",
+      "label": "Cortex Search over policy wording and past investigations",
+      "featureId": "fraud",
+      "rows": 450000,
+      "vectorColumns": 1,
+      "embeddingModelId": "sf:snowflake-arctic-embed-l-v2.0",
+      "avgRowBytes": 2400,
+      "tokensPerRow": 512,
+      "changedShareMonthly": 0.04,
+      "warehouse": {
+        "size": "xs",
+        "hoursPerMonth": 6
+      }
+    },
+    {
+      "kind": "seats",
+      "id": "bi",
+      "label": "Power BI Pro for investigators and claims analysts",
+      "featureId": "fraud",
+      "seats": 60,
+      "unitPriceId": "microsoft-seat-power-bi-pro-users",
+      "followsAdoption": false
+    },
+    {
+      "kind": "contract",
+      "id": "support",
+      "label": "Azure support plan (share allocated)",
+      "featureId": "notes",
+      "amountCad": 1800,
+      "cadence": "monthly"
+    }
+  ],
+  "resources": [
+    {
+      "id": "blob-landing",
+      "label": "Claim files landing zone before the Snowflake stage (Blob, hot, ZRS, 6 TB)",
+      "featureId": "notes",
+      "typeId": "blob-storage",
+      "skuId": "hot-zrs",
+      "inputs": {
+        "storageGB": 6000,
+        "writeOps10k": 900,
+        "readOps10k": 1800,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-np",
+      "label": "Test files (Blob, hot, LRS)",
+      "featureId": "notes",
+      "typeId": "blob-storage",
+      "skuId": "hot-lrs",
+      "inputs": {
+        "storageGB": 400,
+        "writeOps10k": 30,
+        "readOps10k": 60,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "adf",
+      "label": "Data Factory pipelines into Snowflake (Azure IR)",
+      "featureId": "notes",
+      "typeId": "data-factory",
+      "skuId": "azure-ir",
+      "inputs": {
+        "runsK": 18,
+        "diuHours": 200,
+        "activityHours": 600
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "kv",
+      "label": "Key Vault Standard (Snowflake keys, key-pair auth, API secrets)",
+      "featureId": "notes",
+      "typeId": "key-vault",
+      "skuId": "standard",
+      "inputs": {
+        "ops10k": 70,
+        "advanced10k": 2,
+        "hsmKeys": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "pe",
+      "label": "Private endpoints (storage, Key Vault, Data Factory; Snowflake Private Link)",
+      "featureId": "notes",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 6,
+        "inGB": 700,
+        "outGB": 500
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law",
+      "label": "Log Analytics ingestion: pipeline and audit logs",
+      "featureId": "notes",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 45,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "appsvc",
+      "label": "Investigator web app (App Service, 2 x P1v3 Linux)",
+      "featureId": "fraud",
+      "typeId": "app-service-plan",
+      "skuId": "p1v3-linux",
+      "inputs": {
+        "instances": 2
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "appsvc-np",
+      "label": "Investigator web app, non-production",
+      "featureId": "fraud",
+      "typeId": "app-service-plan",
+      "skuId": "p1v3-linux",
+      "inputs": {
+        "instances": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "dev",
+      "label": "Development",
+      "production": false,
+      "sizeFactor": 0.25,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "test",
+      "label": "Test and performance",
+      "production": false,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "uat",
+      "label": "UAT and pre-production",
+      "production": false,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "fromMonth": 3,
+      "toMonth": 6,
+      "pricing": "payg"
+    },
+    {
+      "id": "prod",
+      "label": "Production",
+      "production": true,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    }
+  ],
+  "maintenance": {
+    "mode": "team",
+    "team": [
+      {
+        "roleId": "aiEngineer",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "AI engineer: prompts, evaluation, model upgrades"
+      },
+      {
+        "roleId": "dataEngineer",
+        "people": 0.4,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Snowflake data engineer"
+      }
+    ]
+  },
+  "benefits": {
+    "capabilities": [
+      {
+        "id": "cap-summary",
+        "label": "Investigators read a written summary instead of the whole file",
+        "roleId": "siuAnalyst",
+        "featureId": "fraud",
+        "workloadIds": [
+          "summary",
+          "rationale",
+          "search"
+        ],
+        "workstreamIds": [],
+        "hoursSavedPerMonth": 0,
+        "driver": "perVolume",
+        "volumeFrom": "summary",
+        "handledPct": 60,
+        "baselineMinutes": 35,
+        "savings": {
+          "conservative": 8,
+          "typical": 14,
+          "optimistic": 20
+        },
+        "unit": "minutes"
+      }
+    ],
+    "avoidedCosts": [],
+    "value": [
+      {
+        "id": "val-coding",
+        "label": "Fewer wrongly coded notes in loss reporting (9% to 3%)",
+        "kind": "quality",
+        "featureId": "notes",
+        "volumeFrom": "extract",
+        "errorRateBeforePct": 9,
+        "errorRateAfterPct": 3,
+        "costPerError": 7,
+        "confidencePct": 70
+      },
+      {
+        "id": "val-fraud",
+        "label": "Suspicious claims reach an investigator earlier (18 events a year, C$52,000 each, 20% prevented)",
+        "kind": "risk",
+        "featureId": "fraud",
+        "eventsPerYear": 18,
+        "impactCad": 52000,
+        "reductionPct": 20,
+        "confidencePct": 35
+      }
+    ],
+    "oneOff": [],
+    "scorecard": [
+      {
+        "id": "sc-coded",
+        "label": "Quality: notes coded consistently",
+        "dimension": "other",
+        "measure": "Notes with a correct coverage topic",
+        "unit": "%",
+        "before": 91,
+        "after": 97,
+        "higherIsBetter": true,
+        "weightPct": 30,
+        "confidencePct": 70,
+        "featureId": "notes"
+      },
+      {
+        "id": "sc-siu",
+        "label": "Speed: time to first investigator view",
+        "dimension": "speed",
+        "measure": "Days from first note to investigator review",
+        "unit": "days",
+        "before": 6,
+        "after": 1,
+        "higherIsBetter": false,
+        "weightPct": 30,
+        "confidencePct": 60,
+        "featureId": "fraud"
+      },
+      {
+        "id": "sc-data",
+        "label": "Control: data stays in Snowflake",
+        "dimension": "compliance",
+        "measure": "Claim text copied to systems outside Snowflake",
+        "unit": "systems",
+        "before": 3,
+        "after": 0,
+        "higherIsBetter": false,
+        "weightPct": 20,
+        "confidencePct": 80,
+        "featureId": "notes"
+      },
+      {
+        "id": "sc-analyst",
+        "label": "Employee: time reading files",
+        "dimension": "employee",
+        "measure": "Share of an investigator's day reading raw notes",
+        "unit": "%",
+        "before": 45,
+        "after": 20,
+        "higherIsBetter": false,
+        "weightPct": 20,
+        "confidencePct": 55,
+        "featureId": "fraud"
+      }
+    ]
+  },
+  "roi": {
+    "basis": "full",
+    "benefitPreset": "typical",
+    "devCutPct": 0,
+    "maintCutPct": 0,
+    "transitionCosts": [],
+    "growthPctPerYear": 4,
+    "rateEscalationPctPerYear": 2,
+    "discountRatePct": 8,
+    "hurdleRatePct": 15
+  },
+  "scenarios": [
+    {
+      "id": "sc-credit",
+      "label": "AI credit at the list price (no negotiated rate)",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "settings",
+            "snowflake",
+            "aiCreditCad"
+          ],
+          "value": 3.1
+        }
+      ]
+    },
+    {
+      "id": "sc-mini",
+      "label": "Summaries on the smaller model",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "workloads",
+            "summary",
+            "modelId"
+          ],
+          "value": "sf:openai-gpt-5-mini"
+        }
+      ]
+    },
+    {
+      "id": "sc-volume",
+      "label": "Note volume 30% higher",
+      "edits": [
+        {
+          "kind": "scaleUsage",
+          "factor": 1.3
+        }
+      ]
+    }
+  ],
+  "currentState": {
+    "lines": [
+      {
+        "id": "cur-vendor",
+        "label": "Third-party text-analytics and fraud-scoring subscription",
+        "category": "licence",
+        "featureId": "fraud",
+        "basis": {
+          "kind": "monthly",
+          "amountCad": 14500
+        },
+        "change": {
+          "mode": "retire",
+          "fromMonth": 8
+        }
+      },
+      {
+        "id": "cur-coding",
+        "label": "Claims clerks hand-coding adjuster notes for reporting",
+        "category": "people",
+        "featureId": "notes",
+        "basis": {
+          "kind": "fte",
+          "roleId": "claimsClerk",
+          "fte": 3,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 60,
+          "followsAdoption": true
+        }
+      }
+    ]
+  }
+}

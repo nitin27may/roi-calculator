@@ -8,7 +8,7 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 Example projects and reports for each reader.
 
-- Seven worked example projects in `examples/` (a fictional Canadian insurer): claims datacentre migration, claims replatforming to AKS, quote funnel automation, a claims self-service portal, straight-through processing, a SaaS CRM replacement and an AI intake agent. Named contributors, phases, environments, catalogue resources (AKS, Key Vault, Blob Storage and more), current-state savings, scorecards and what-if scenarios. Open them with "Open file as new project"; `pnpm examples` regenerates them and a test keeps them in step with their source.
+- Eight worked example projects in `examples/` (a fictional Canadian insurer): claims datacentre migration, claims replatforming to AKS, quote funnel automation, a claims self-service portal, straight-through processing, a SaaS CRM replacement, an AI intake agent on Azure and an AI notes analytics example on Snowflake Cortex. Named contributors, phases, environments, catalogue resources (AKS, Key Vault, Blob Storage and more), current-state savings, scorecards and what-if scenarios. Open them with "Open file as new project"; `pnpm examples` regenerates them and a test keeps them in step with their source.
 - Report for each reader: choose Executive sponsor, Finance, Technology, Delivery or Business owner on the Report page. New sections: Team and delivery plan, and Infrastructure by environment.
 
 ### Fixed

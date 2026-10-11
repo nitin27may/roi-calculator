@@ -5,6 +5,7 @@ import { claimsPortal } from "./claims-portal.js";
 import { claimsStp } from "./claims-stp.js";
 import { crmSaas } from "./crm-saas.js";
 import { claimsIntakeAi } from "./claims-intake-ai.js";
+import { claimsNotesSnowflake } from "./claims-notes-snowflake.js";
 import { claimsReplatform } from "./claims-replatform.js";
 
 /** Worked examples, one per kind of project, built from a fictional Canadian insurer. Each one is also written to examples/ as a JSON file you can open in the app. */
@@ -21,4 +22,5 @@ export const DEMO_PROJECTS: readonly DemoProject[] = [
   { id: "claims-stp", type: "enhancement", file: "05-claims-straight-through-processing", label: "Claims straight-through processing", detail: "Enhancement: rules and automated payments added to the existing claims platform on AKS, with payment keys in Key Vault", make: claimsStp },
   { id: "crm-saas", type: "saas", file: "06-broker-crm-saas-replacement", label: "Broker CRM replaced with SaaS", detail: "Replace with SaaS: retire a self-hosted CRM and Oracle database for 420 SaaS seats, with an Azure integration layer", make: crmSaas },
   { id: "claims-intake-ai", type: "ai", file: "07-claims-intake-triage-agent-ai", label: "Claims intake and triage agent", detail: "AI: an agent reads claim emails and attachments and routes claims; an adjuster policy assistant (RAG); full Dev Lab, Agent Service, AKS, Key Vault and storage", make: claimsIntakeAi },
+  { id: "claims-notes-snowflake", type: "ai", file: "08-claims-notes-snowflake-cortex-ai", label: "Claims notes analytics on Snowflake Cortex", detail: "AI on Snowflake: classify, extract, summarise and search claim notes with Cortex where the data lives, with an Azure landing zone, Key Vault and Blob Storage", make: claimsNotesSnowflake },
 ];

@@ -33,6 +33,7 @@ export const ROLES = {
   change: { id: "change", label: "Change and training", hourlyRate: 85 },
   // On the benefit and current-cost side: the people whose time the change saves.
   adjuster: { id: "adjuster", label: "Claims adjuster", hourlyRate: 58 },
+  siuAnalyst: { id: "siuAnalyst", label: "Special investigations analyst", hourlyRate: 68 },
   claimsClerk: { id: "claimsClerk", label: "Claims clerk", hourlyRate: 42 },
   agent: { id: "agent", label: "Contact-centre agent", hourlyRate: 36 },
   marketingOps: { id: "marketingOps", label: "Marketing operations analyst", hourlyRate: 62 },
