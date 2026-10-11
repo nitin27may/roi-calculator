@@ -39,6 +39,12 @@ export interface PricingSettings {
   processingTier?: ProcessingTier;
   /** Project-wide billing model for Azure chat workloads. Absent means pay-as-you-go. */
   pricingModel?: "payg" | "ptu";
+  /**
+   * Percent added to every Azure list price: a negotiated discount is negative (-12 is 12% off), an uplift positive. It moves token,
+   * embedding, speech, resource and unit prices, including reserved and Hybrid Benefit prices. A manual price is yours and is not adjusted.
+   * Snowflake has its own credit prices. Absent or 0 changes nothing.
+   */
+  azureAdjustPct?: number;
   snowflake: {
     /** Global routing (ANY_REGION / *_GLOBAL) or regional (AZURE_US / AZURE_EU / DISABLED). */
     routing: "global" | "regional";
@@ -131,8 +137,16 @@ export class PriceBook {
     return { cad: this.platformCreditCad(), defaultCad, manual: s.platformCreditCad !== undefined };
   }
 
-  /** CAD per 1M tokens for a model on a given date (ISO yyyy-mm-dd). */
+  /** The factor a price is multiplied by for the project's Azure price adjustment (1 = list price). */
+  get adjustFactor(): number { return 1 + (this.settings.azureAdjustPct ?? 0) / 100; }
+
+  /** CAD per 1M tokens for a model on a given date (ISO yyyy-mm-dd), after the project's Azure price adjustment. */
   tokenPrices(id: string, date: string, requestInputTokens = 0): TokenPrices {
+    const list = this.listTokenPrices(id, date, requestInputTokens);
+    return this.adjustFactor === 1 || this.chatModel(id).platform === "snowflake" ? list : scale(list, this.adjustFactor);
+  }
+
+  private listTokenPrices(id: string, date: string, requestInputTokens = 0): TokenPrices {
     const m = this.chatModel(id);
     this.lifecycleNote(m.id, m.label, m.lifecycle, date);
     if (m.confidence === "unverified") this.note(`unverified:${m.id}`, { kind: "unverified", message: `${m.label} price is unverified` });
@@ -238,6 +252,11 @@ export class PriceBook {
   }
 
   embeddingPer1M(id: string): number {
+    const list = this.listEmbeddingPer1M(id);
+    return this.catalog.embeddingModels.find((x) => x.id === id)?.platform === "snowflake" ? list : list * this.adjustFactor;
+  }
+
+  private listEmbeddingPer1M(id: string): number {
     const e = this.catalog.embeddingModels.find((x) => x.id === id);
     if (!e) throw new Error(`Unknown embedding model "${id}"`);
     if (e.platform === "snowflake") return (e.credits ?? 0) * this.aiCreditCad();
@@ -254,8 +273,13 @@ export class PriceBook {
     return e.dims;
   }
 
-  /** CAD per audio hour for a speech engine on a date. */
+  /** CAD per audio hour for a speech engine on a date, after the project's Azure price adjustment. */
   speechPerHour(id: string, date: string, diarize = false): number {
+    const list = this.listSpeechPerHour(id, date, diarize);
+    return this.catalog.speechEngines.find((x) => x.id === id)?.platform === "snowflake" ? list : list * this.adjustFactor;
+  }
+
+  private listSpeechPerHour(id: string, date: string, diarize = false): number {
     const e = this.catalog.speechEngines.find((x) => x.id === id);
     if (!e) throw new Error(`Unknown speech engine "${id}"`);
     this.lifecycleNote(e.id, e.label, e.lifecycle, date);
@@ -290,7 +314,7 @@ export class PriceBook {
       this.note(`manual:${u.id}`, { kind: "manual", message: `${u.label}: manual price ${u.manual.price} (${u.manual.note}, ${u.manual.retrievedAt}) replaces the refreshed price` });
       return u.manual.price;
     }
-    if (u.price !== undefined) return u.price;
+    if (u.price !== undefined) return u.platform === "snowflake" ? u.price : u.price * this.adjustFactor;
     const credit = u.creditType === "platform" ? this.platformCreditCad() : this.aiCreditCad();
     return (u.credits ?? 0) * credit;
   }
@@ -300,7 +324,9 @@ export class PriceBook {
    * when the entry has none. A manual price replaces the pay-as-you-go price only; option prices stay as refreshed.
    */
   optionPrice(id: string, option: "ri1" | "ri3" | "ahb" | "devtest"): number | undefined {
-    return this.unit(id).options?.[option]?.price;
+    const u = this.unit(id);
+    const price = u.options?.[option]?.price;
+    return price === undefined || u.platform === "snowflake" ? price : price * this.adjustFactor;
   }
 
   searchTier(id: string) {

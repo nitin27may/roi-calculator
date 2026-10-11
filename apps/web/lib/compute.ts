@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { loadCoreCatalog, loadResourceCategories } from "@roi-calculator/catalog";
 import { DEPLOYMENT_LABEL, availableIn, buildLedger, computeRoi, roiOptions, evaluateLevers, summarize, type AzureDeployment } from "@roi-calculator/engine";
 import { useStudio } from "./store";
+import type { Percentile, Project } from "@roi-calculator/engine";
 
 /**
  * The bundled CAD price catalogue (validated once). It starts without the infrastructure resource categories, which are
@@ -30,18 +31,76 @@ export function useResourcesReady(wanted = true): boolean {
   return ready;
 }
 
+/** Every catalogue price id a project points at (`unitPriceId`, `unitPriceIds`), at any depth. */
+function priceIdsIn(x: unknown, out = new Set<string>()): Set<string> {
+  if (Array.isArray(x)) x.forEach((e) => priceIdsIn(e, out));
+  else if (x && typeof x === "object") {
+    for (const [k, v] of Object.entries(x)) {
+      if (k === "unitPriceId" && typeof v === "string") out.add(v);
+      else if (k === "unitPriceIds" && Array.isArray(v)) v.forEach((i) => typeof i === "string" && out.add(i));
+      else priceIdsIn(v, out);
+    }
+  }
+  return out;
+}
+
+/**
+ * False while the project points at a price from a resource category that has not loaded yet (a build tool, a seat, a fee), and
+ * starts loading them. Pages that read the project directly (sensitivity, scenarios, levers) wait for true, so none of them
+ * meets a price the catalogue does not hold yet.
+ */
+export function useProjectPricesReady(project: Project): boolean {
+  const ready = useResourceState((s) => s.ready);
+  const missing = useMemo(() => {
+    if (ready) return false;
+    const have = new Set(catalog.unitPrices.map((u) => u.id));
+    return [...priceIdsIn(project)].some((id) => !have.has(id));
+  }, [ready, project]);
+  useEffect(() => { if (missing) ensureResources().catch(() => undefined); }, [missing]);
+  return !missing;
+}
+
 /** Changes when resource categories arrive, for memos that read `catalog.resourceTypes` or `catalog.unitPrices`. */
 export const useResourceVersion = () => useResourceState((s) => s.version);
+
+/** Removes every item that prices itself from `unitPriceId` (catalogue items, hosting lines, seats, fees), at any depth. */
+function withoutPrice<T>(x: T, id: string): T {
+  const walk = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.filter((e) => !(e && typeof e === "object" && (e as { unitPriceId?: string }).unitPriceId === id)).map(walk);
+    if (v && typeof v === "object") return Object.fromEntries(Object.entries(v).map(([k, e]) => [k, walk(e)]));
+    return v;
+  };
+  return walk(x) as T;
+}
+
+/**
+ * Builds the ledger. The resource price categories (licences, storage, network...) load lazily, and a project can price a
+ * build tool or a seat from one of them. Until they arrive, an item priced from a category that is not in yet is left out and
+ * loading starts, instead of the page failing; the ledger is built again when the categories land. Returns the project the
+ * ledger was built from, which is what every figure derived from it (summary, ranges, sensitivity) must use too.
+ */
+export function ledgerFor(project: Project, percentile?: Percentile): { project: Project; ledger: ReturnType<typeof buildLedger> } {
+  let q = project;
+  for (let i = 0; i < 100; i++) {
+    try { return { project: q, ledger: buildLedger(q, catalog, percentile) }; } catch (e) {
+      const missing = /^Unknown unit price "(.+)"$/.exec(e instanceof Error ? e.message : "")?.[1];
+      if (!missing || useResourceState.getState().ready) throw e;
+      ensureResources().catch(() => undefined);
+      q = withoutPrice(q, missing);
+    }
+  }
+  return { project: q, ledger: buildLedger(q, catalog, percentile) };
+}
 
 export function useLedger() {
   const project = useStudio((s) => s.project);
   const percentile = useStudio((s) => s.percentile);
-  useResourcesReady((project.resources?.length ?? 0) > 0);
+  useResourcesReady(true);
   const resourceVersion = useResourceVersion();
   return useMemo(() => {
-    const ledger = buildLedger(project, catalog, percentile);
-    const roi = computeRoi(ledger, project.roi.basis, project.roi.discountRatePct, roiOptions(project));
-    return { project, ledger, roi };
+    const { project: priced, ledger } = ledgerFor(project, percentile);
+    const roi = computeRoi(ledger, priced.roi.basis, priced.roi.discountRatePct, roiOptions(priced));
+    return { project: priced, ledger, roi };
   }, [project, percentile, resourceVersion]);
 }
 

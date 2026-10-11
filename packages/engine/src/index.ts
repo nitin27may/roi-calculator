@@ -42,3 +42,5 @@ export * from "./types.js";
 export * from "./delivery.js";
 export * from "./aiassist.js";
 export * from "./lab.js";
+export { DEMO_PROJECTS, demoProjectJson, type DemoProject } from "./samples/demo/index.js";
+export * from "./report-audience.js";

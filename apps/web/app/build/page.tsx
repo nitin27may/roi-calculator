@@ -137,6 +137,16 @@ function AllActivities() {
   const series = parts.map((a, i) => ({ key: a.id, label: a.label, color: COLORS[i % COLORS.length]! }));
   const runRate = ledger.totals.runRate + ledger.totals.maintRate;
   const top = [...series].sort((a, b) => rows.reduce((s, r) => s + r[b.key]!, 0) - rows.reduce((s, r) => s + r[a.key]!, 0))[0];
+  if (parts.length === 0) {
+    return (
+      <>
+        <h2 className="text-base font-bold">Engineering tools & lab by month</h2>
+        <p className="max-w-[60ch] rounded-md bg-surface-2 px-3 py-2 text-[13px] text-ink-2" data-testid="no-lab-activities">
+          This project has no AI experiments, so there is nothing to chart here. Seats and tools are listed under Tools and licences, and the team is under Team & rate card. Add experiments from the menu if the project uses AI.
+        </p>
+      </>
+    );
+  }
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">

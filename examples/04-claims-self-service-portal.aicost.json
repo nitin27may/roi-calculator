@@ -1,0 +1,1198 @@
+{
+  "schema": "roi-calculator/project",
+  "version": 6,
+  "name": "Policyholder and broker claims portal",
+  "startDate": "2027-01-01",
+  "settings": {
+    "azureDeployment": "regional",
+    "language": "en",
+    "snowflake": {
+      "routing": "global",
+      "edition": "enterprise"
+    }
+  },
+  "timeline": {
+    "buildMonths": 10,
+    "horizonMonths": 60,
+    "adoptionRampMonths": 9,
+    "phases": [
+      {
+        "id": "discovery",
+        "label": "Discovery",
+        "fromMonth": 1,
+        "toMonth": 1
+      },
+      {
+        "id": "design",
+        "label": "Design",
+        "fromMonth": 2,
+        "toMonth": 3
+      },
+      {
+        "id": "build",
+        "label": "Build",
+        "fromMonth": 4,
+        "toMonth": 7
+      },
+      {
+        "id": "test",
+        "label": "Test",
+        "fromMonth": 8,
+        "toMonth": 9
+      },
+      {
+        "id": "migration",
+        "label": "Migration and cutover",
+        "fromMonth": 10,
+        "toMonth": 10
+      },
+      {
+        "id": "deploy",
+        "label": "Deploy",
+        "fromMonth": 10,
+        "toMonth": 10
+      },
+      {
+        "id": "hypercare",
+        "label": "Hypercare",
+        "fromMonth": 11,
+        "toMonth": 12
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "portal",
+      "label": "Claims self-service portal",
+      "description": "Web and mobile portal to report a claim, upload photos and documents, see status, and message the adjuster. Replaces phone and paper for routine steps.",
+      "types": [
+        "newApp"
+      ]
+    }
+  ],
+  "rateCard": [
+    {
+      "id": "pm",
+      "label": "Project manager",
+      "hourlyRate": 110
+    },
+    {
+      "id": "po",
+      "label": "Product owner",
+      "hourlyRate": 115
+    },
+    {
+      "id": "ba",
+      "label": "Business analyst",
+      "hourlyRate": 95
+    },
+    {
+      "id": "ux",
+      "label": "UX designer",
+      "hourlyRate": 100
+    },
+    {
+      "id": "architect",
+      "label": "Solution architect",
+      "hourlyRate": 145
+    },
+    {
+      "id": "techLead",
+      "label": "Technical lead",
+      "hourlyRate": 125
+    },
+    {
+      "id": "dev",
+      "label": "Developer",
+      "hourlyRate": 105
+    },
+    {
+      "id": "qa",
+      "label": "QA / test engineer",
+      "hourlyRate": 85
+    },
+    {
+      "id": "devops",
+      "label": "DevOps / platform engineer",
+      "hourlyRate": 115
+    },
+    {
+      "id": "security",
+      "label": "Security engineer",
+      "hourlyRate": 125
+    },
+    {
+      "id": "change",
+      "label": "Change and training",
+      "hourlyRate": 85
+    },
+    {
+      "id": "agent",
+      "label": "Contact-centre agent",
+      "hourlyRate": 36
+    },
+    {
+      "id": "claimsClerk",
+      "label": "Claims clerk",
+      "hourlyRate": 42
+    }
+  ],
+  "harnesses": [],
+  "build": {
+    "team": [
+      {
+        "roleId": "pm",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Sandra Whitfield",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 10
+      },
+      {
+        "roleId": "po",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Nadia Ferreira (product owner, claims)",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 10
+      },
+      {
+        "roleId": "ba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Aisha Khan",
+        "phase": "Discovery to Test",
+        "fromMonth": 1,
+        "toMonth": 9
+      },
+      {
+        "roleId": "ux",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Olivia Park (research, design system)",
+        "phase": "Discovery to Build",
+        "fromMonth": 1,
+        "toMonth": 7
+      },
+      {
+        "roleId": "architect",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Priya Raman",
+        "phase": "Discovery to Migration and cutover",
+        "fromMonth": 1,
+        "toMonth": 10
+      },
+      {
+        "roleId": "techLead",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Daniel Okafor",
+        "phase": "Design to Deploy",
+        "fromMonth": 2,
+        "toMonth": 10
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Mei Lin Wong (back end)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 10
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Liam O'Connor (back end)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 10
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Sofia Alvarez (web)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 4,
+        "toMonth": 10
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Noah Fraser (web)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 4,
+        "toMonth": 10
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Hannah Brooks (iOS and Android)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 4,
+        "toMonth": 10
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Tariq Mahmood (integration with claims core)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 10
+      },
+      {
+        "roleId": "devops",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel",
+        "phase": "Design to Deploy",
+        "fromMonth": 2,
+        "toMonth": 10
+      },
+      {
+        "roleId": "security",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Chloé Gagnon",
+        "phase": "Design to Deploy",
+        "fromMonth": 2,
+        "toMonth": 10
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Grace Kim",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 4,
+        "toMonth": 10
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Omar Haddad (accessibility, performance)",
+        "phase": "Test to Migration and cutover",
+        "fromMonth": 8,
+        "toMonth": 10
+      },
+      {
+        "roleId": "change",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Jennifer Wu (brokers, contact centre)",
+        "phase": "Test to Deploy",
+        "fromMonth": 8,
+        "toMonth": 10
+      },
+      {
+        "roleId": "techLead",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Daniel Okafor (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 11,
+        "toMonth": 12
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Mei Lin Wong (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 11,
+        "toMonth": 12
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Sofia Alvarez (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 11,
+        "toMonth": 12
+      }
+    ],
+    "includeLabour": true,
+    "workstreams": [],
+    "contingencyPct": 15,
+    "contingencyScope": "labour",
+    "activities": [],
+    "environment": [
+      {
+        "id": "gh",
+        "label": "GitHub Enterprise seats",
+        "unitPriceId": "github-seat-enterprise-seats",
+        "quantity": 20
+      },
+      {
+        "id": "copilot",
+        "label": "GitHub Copilot Business seats",
+        "unitPriceId": "copilot-business",
+        "quantity": 11
+      },
+      {
+        "id": "devices",
+        "label": "Mobile device test farm",
+        "amountCad": 1500,
+        "cadence": "monthly"
+      },
+      {
+        "id": "a11y",
+        "label": "Accessibility and usability testing with policyholders",
+        "amountCad": 18000,
+        "cadence": "once",
+        "month": 8
+      }
+    ],
+    "deliveryCosts": [
+      {
+        "id": "d-design",
+        "label": "Brand and design-system agency",
+        "amountCad": 65000,
+        "cadence": "once",
+        "month": 2,
+        "category": "vendor"
+      },
+      {
+        "id": "d-pentest",
+        "label": "Penetration test and privacy impact assessment",
+        "amountCad": 48000,
+        "cadence": "once",
+        "month": 8,
+        "category": "vendor"
+      },
+      {
+        "id": "d-store",
+        "label": "Mobile app store setup, certificates and release management",
+        "amountCad": 6000,
+        "cadence": "once",
+        "month": 9,
+        "category": "other"
+      },
+      {
+        "id": "d-training",
+        "label": "Training for adjusters, contact-centre agents and broker support",
+        "amountCad": 28000,
+        "cadence": "once",
+        "month": 9,
+        "category": "training"
+      },
+      {
+        "id": "d-comms",
+        "label": "Launch campaign to policyholders and brokers",
+        "amountCad": 55000,
+        "cadence": "once",
+        "month": 10,
+        "category": "comms"
+      }
+    ]
+  },
+  "workloads": [
+    {
+      "kind": "transactionFee",
+      "id": "msg",
+      "label": "SMS and email: one-time codes, status updates (Azure Communication Services)",
+      "featureId": "portal",
+      "volumePerMonth": 310000,
+      "cadPerTxn": 0.011
+    },
+    {
+      "kind": "contract",
+      "id": "idp",
+      "label": "Customer identity: Microsoft Entra External ID beyond the free tier",
+      "featureId": "portal",
+      "amountCad": 1900,
+      "cadence": "monthly"
+    },
+    {
+      "kind": "contract",
+      "id": "sre",
+      "label": "24x7 monitoring and on-call (managed service)",
+      "featureId": "portal",
+      "amountCad": 4800,
+      "cadence": "monthly"
+    },
+    {
+      "kind": "contract",
+      "id": "support",
+      "label": "Azure support plan (share allocated to the portal)",
+      "featureId": "portal",
+      "amountCad": 2600,
+      "cadence": "monthly"
+    }
+  ],
+  "resources": [
+    {
+      "id": "fd",
+      "label": "Front Door Premium with WAF and bot protection",
+      "featureId": "portal",
+      "typeId": "front-door",
+      "skuId": "premium",
+      "inputs": {
+        "profiles": 1,
+        "requests10k": 9000,
+        "outGB": 5500
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "aks-np",
+      "label": "AKS cluster, dev and test (Free tier)",
+      "featureId": "portal",
+      "typeId": "aks-cluster",
+      "skuId": "free",
+      "inputs": {
+        "clusters": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test"
+      ]
+    },
+    {
+      "id": "aks-cp",
+      "label": "AKS cluster control plane (Standard tier)",
+      "featureId": "portal",
+      "typeId": "aks-cluster",
+      "skuId": "standard",
+      "inputs": {
+        "clusters": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "aks-sys",
+      "label": "AKS system node pool (3 x D4s v5)",
+      "featureId": "portal",
+      "typeId": "vm",
+      "skuId": "d4s-v5-linux",
+      "inputs": {
+        "count": 3
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "aks-user-prod",
+      "label": "AKS user node pool (6 x D4s v5, 1-year reserved)",
+      "featureId": "portal",
+      "typeId": "vm",
+      "skuId": "d4s-v5-linux",
+      "inputs": {
+        "count": 6
+      },
+      "term": "ri1",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "aks-user-dr",
+      "label": "AKS user node pool, second region (6 x D4s v5, run at half)",
+      "featureId": "portal",
+      "typeId": "vm",
+      "skuId": "d4s-v5-linux",
+      "inputs": {
+        "count": 6
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dr"
+      ]
+    },
+    {
+      "id": "aks-user-np",
+      "label": "AKS user node pool, non-production (6 x D4s v5)",
+      "featureId": "portal",
+      "typeId": "vm",
+      "skuId": "d4s-v5-linux",
+      "inputs": {
+        "count": 6
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "aks-disks",
+      "label": "Node OS disks (Premium SSD P10)",
+      "featureId": "portal",
+      "typeId": "disk-premium-ssd",
+      "skuId": "p10",
+      "inputs": {
+        "disks": 9
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "acr",
+      "label": "Azure Container Registry Standard",
+      "featureId": "portal",
+      "typeId": "container-registry",
+      "skuId": "standard",
+      "inputs": {
+        "registries": 1,
+        "extraStorageGB": 100
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "sql",
+      "label": "Azure SQL Database General Purpose, zone-redundant, 8 vCores",
+      "featureId": "portal",
+      "typeId": "sql-db-vcore",
+      "skuId": "gp-gen5-zr",
+      "inputs": {
+        "vcores": 8,
+        "storageGB": 512
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "redis",
+      "label": "Azure Cache for Redis Standard C3 (sessions, status cache)",
+      "featureId": "portal",
+      "typeId": "redis-cache",
+      "skuId": "standard-c3",
+      "inputs": {
+        "caches": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "sb",
+      "label": "Service Bus Standard (claim events, notifications)",
+      "featureId": "portal",
+      "typeId": "service-bus",
+      "skuId": "standard",
+      "inputs": {
+        "namespaces": 1,
+        "opsM": 90
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "apim",
+      "label": "API Management Standard (claims-core and broker APIs)",
+      "featureId": "portal",
+      "typeId": "apim-gateway",
+      "skuId": "standard",
+      "inputs": {
+        "units": 1
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-photos",
+      "label": "Photos, video and documents uploaded by policyholders (Blob, hot, GRS, 14 TB)",
+      "featureId": "portal",
+      "typeId": "blob-storage",
+      "skuId": "hot-grs",
+      "inputs": {
+        "storageGB": 14000,
+        "writeOps10k": 1800,
+        "readOps10k": 5200,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-cool",
+      "label": "Closed-claim media after 180 days (Blob, cool, GRS, 40 TB)",
+      "featureId": "portal",
+      "typeId": "blob-storage",
+      "skuId": "cool-grs",
+      "inputs": {
+        "storageGB": 40000,
+        "writeOps10k": 200,
+        "readOps10k": 250,
+        "retrievalGB": 800
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-np",
+      "label": "Test uploads (Blob, hot, LRS)",
+      "featureId": "portal",
+      "typeId": "blob-storage",
+      "skuId": "hot-lrs",
+      "inputs": {
+        "storageGB": 1500,
+        "writeOps10k": 100,
+        "readOps10k": 200,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "kv",
+      "label": "Key Vault Premium (signing keys, customer-managed keys)",
+      "featureId": "portal",
+      "typeId": "key-vault",
+      "skuId": "premium",
+      "inputs": {
+        "ops10k": 600,
+        "advanced10k": 20,
+        "hsmKeys": 4
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "kv-np",
+      "label": "Key Vault Standard",
+      "featureId": "portal",
+      "typeId": "key-vault",
+      "skuId": "standard",
+      "inputs": {
+        "ops10k": 80,
+        "advanced10k": 2,
+        "hsmKeys": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "def-containers",
+      "label": "Defender for Containers (42 vCores)",
+      "featureId": "portal",
+      "typeId": "defender-plan",
+      "skuId": "containers",
+      "inputs": {
+        "units": 42
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "pe",
+      "label": "Private endpoints",
+      "featureId": "portal",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 12,
+        "inGB": 3000,
+        "outGB": 1800
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod",
+        "dr"
+      ]
+    },
+    {
+      "id": "pe-np",
+      "label": "Private endpoints, non-production",
+      "featureId": "portal",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 8,
+        "inGB": 200,
+        "outGB": 150
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "law",
+      "label": "Log Analytics ingestion: containers, WAF and audit logs",
+      "featureId": "portal",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 380,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law-np",
+      "label": "Log Analytics ingestion, non-production",
+      "featureId": "portal",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 70,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "appins",
+      "label": "Application Insights (web, mobile back end)",
+      "featureId": "portal",
+      "typeId": "application-insights",
+      "skuId": "workspace-based",
+      "inputs": {
+        "gb": 110,
+        "testsK": 260
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "alerts",
+      "label": "Azure Monitor alert rules",
+      "featureId": "portal",
+      "typeId": "monitor-alerts",
+      "skuId": "log-5min",
+      "inputs": {
+        "rules": 50
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "dns",
+      "label": "Azure DNS public zones",
+      "featureId": "portal",
+      "typeId": "azure-dns",
+      "skuId": "public",
+      "inputs": {
+        "zones": 3,
+        "queriesM": 40
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "dev",
+      "label": "Development",
+      "production": false,
+      "sizeFactor": 0.25,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "test",
+      "label": "Test and performance",
+      "production": false,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "uat",
+      "label": "UAT and pre-production",
+      "production": false,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "fromMonth": 7,
+      "toMonth": 10,
+      "pricing": "payg"
+    },
+    {
+      "id": "prod",
+      "label": "Production",
+      "production": true,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "dr",
+      "label": "Disaster recovery (second region)",
+      "production": true,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    }
+  ],
+  "maintenance": {
+    "mode": "team",
+    "team": [
+      {
+        "roleId": "dev",
+        "people": 2,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Portal developers"
+      },
+      {
+        "roleId": "devops",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Platform / SRE share"
+      },
+      {
+        "roleId": "ux",
+        "people": 0.25,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Product designer"
+      }
+    ]
+  },
+  "benefits": {
+    "capabilities": [],
+    "avoidedCosts": [],
+    "value": [
+      {
+        "id": "val-fnol-quality",
+        "label": "Complete first notice of loss: fewer follow-up calls to fix missing details",
+        "kind": "quality",
+        "featureId": "portal",
+        "volumePerMonth": 9200,
+        "errorRateBeforePct": 18,
+        "errorRateAfterPct": 6,
+        "costPerError": 24,
+        "confidencePct": 70
+      },
+      {
+        "id": "val-retention",
+        "label": "Retention: policyholders who rate the claim 9 or 10 renew more often",
+        "kind": "revenue",
+        "featureId": "portal",
+        "monthlyRevenue": 120000,
+        "marginPct": 20,
+        "startMonth": 14,
+        "confidencePct": 40
+      }
+    ],
+    "oneOff": [],
+    "scorecard": [
+      {
+        "id": "sc-nps",
+        "label": "Customer: claims satisfaction",
+        "dimension": "customer",
+        "measure": "Transactional NPS after claim closure",
+        "unit": "points",
+        "before": 22,
+        "after": 41,
+        "higherIsBetter": true,
+        "weightPct": 30,
+        "confidencePct": 60,
+        "featureId": "portal"
+      },
+      {
+        "id": "sc-fnol-time",
+        "label": "Speed: reporting a claim",
+        "dimension": "speed",
+        "measure": "Minutes to report a claim",
+        "unit": "minutes",
+        "before": 22,
+        "after": 6,
+        "higherIsBetter": false,
+        "weightPct": 20,
+        "confidencePct": 75,
+        "featureId": "portal"
+      },
+      {
+        "id": "sc-cycle",
+        "label": "Speed: days to first adjuster contact",
+        "dimension": "speed",
+        "measure": "Days from loss report to first contact",
+        "unit": "days",
+        "before": 2.8,
+        "after": 0.6,
+        "higherIsBetter": false,
+        "weightPct": 20,
+        "confidencePct": 65,
+        "featureId": "portal"
+      },
+      {
+        "id": "sc-selfserve",
+        "label": "Digital: claims reported online",
+        "dimension": "agility",
+        "measure": "Share of new claims reported through the portal or app",
+        "unit": "%",
+        "before": 8,
+        "after": 55,
+        "higherIsBetter": true,
+        "weightPct": 15,
+        "confidencePct": 55,
+        "featureId": "portal"
+      },
+      {
+        "id": "sc-a11y",
+        "label": "Compliance: accessibility",
+        "dimension": "compliance",
+        "measure": "WCAG 2.2 AA success criteria met",
+        "unit": "%",
+        "before": 0,
+        "after": 100,
+        "higherIsBetter": true,
+        "weightPct": 15,
+        "confidencePct": 80,
+        "featureId": "portal"
+      }
+    ]
+  },
+  "roi": {
+    "basis": "full",
+    "benefitPreset": "typical",
+    "devCutPct": 0,
+    "maintCutPct": 0,
+    "transitionCosts": [],
+    "growthPctPerYear": 0,
+    "rateEscalationPctPerYear": 2,
+    "discountRatePct": 8,
+    "hurdleRatePct": 12
+  },
+  "scenarios": [
+    {
+      "id": "sc-slow",
+      "label": "Slow adoption: half the expected volume shifts",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "timeline",
+            "adoptionRampMonths"
+          ],
+          "value": 18
+        }
+      ]
+    },
+    {
+      "id": "sc-late",
+      "label": "Go-live slips three months",
+      "edits": [
+        {
+          "kind": "shiftMonths",
+          "target": "golive",
+          "by": 3
+        }
+      ]
+    },
+    {
+      "id": "sc-smaller",
+      "label": "Smaller footprint (next size down)",
+      "edits": [
+        {
+          "kind": "lever",
+          "leverId": "skuDown"
+        }
+      ]
+    }
+  ],
+  "currentState": {
+    "lines": [
+      {
+        "id": "cur-status-calls",
+        "label": "Contact-centre calls asking for claim status (32,000 a month)",
+        "category": "transaction",
+        "featureId": "portal",
+        "basis": {
+          "kind": "perTransaction",
+          "unitCostCad": 6.8,
+          "volumePerMonth": 32000
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 35,
+          "followsAdoption": true
+        }
+      },
+      {
+        "id": "cur-fnol-calls",
+        "label": "Reporting a claim by phone: agent intake and data entry (9,200 a month)",
+        "category": "transaction",
+        "featureId": "portal",
+        "basis": {
+          "kind": "perTransaction",
+          "unitCostCad": 11.2,
+          "volumePerMonth": 9200
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 45,
+          "followsAdoption": true
+        }
+      },
+      {
+        "id": "cur-mail",
+        "label": "Status letters, document requests and postage (24,000 a month)",
+        "category": "transaction",
+        "featureId": "portal",
+        "basis": {
+          "kind": "perTransaction",
+          "unitCostCad": 1.55,
+          "volumePerMonth": 24000
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 55,
+          "followsAdoption": true
+        }
+      },
+      {
+        "id": "cur-doc-handling",
+        "label": "Mailroom and scanning of supporting documents",
+        "category": "people",
+        "featureId": "portal",
+        "basis": {
+          "kind": "fte",
+          "roleId": "claimsClerk",
+          "fte": 4,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 50,
+          "followsAdoption": true
+        }
+      }
+    ]
+  }
+}

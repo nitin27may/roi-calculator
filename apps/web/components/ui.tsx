@@ -28,7 +28,7 @@ export function Seg<T extends string>({ value, options, onChange, label, wrap = 
     <div role="group" aria-label={label} className={cn("inline-flex max-w-full", wrap ? "flex-wrap gap-1" : "overflow-x-auto rounded-md border border-line bg-surface")}>
       {options.map((o) => (
         <button key={o.value} type="button" aria-pressed={o.value === value} onClick={() => onChange(o.value)}
-          className={cn("min-h-6 flex-none whitespace-nowrap px-2.5 py-1 text-xs font-medium", wrap ? "rounded-md border border-line" : "border-r border-line last:border-r-0", o.value === value ? "bg-accent text-accent-ink" : "text-ink-2 hover:bg-surface-2")}>
+          className={cn("min-h-6 max-lg:min-h-10 flex-none whitespace-nowrap px-2.5 py-1 text-xs font-medium", wrap ? "rounded-md border border-line" : "border-r border-line last:border-r-0", o.value === value ? "bg-accent text-accent-ink" : "text-ink-2 hover:bg-surface-2")}>
           {o.label}
         </button>
       ))}
@@ -102,6 +102,7 @@ export function NumberInput({ value, onChange, min = 0, max, step, suffix, label
             else { setDraft(null); onChange(v); }
           }}
           onBlur={() => { setDraft(null); setError(null); }} />
+        {draft === null && Math.abs(value) >= 10_000 && <span aria-hidden className="whitespace-nowrap text-xs tabular-nums text-muted" data-testid="grouped-number">{value.toLocaleString("en-CA", { maximumFractionDigits: 2 })}</span>}
         {suffix && <span className="whitespace-nowrap text-xs text-muted">{suffix}</span>}
       </span>
       {error && <span id={errId} role="alert" className="flex items-start gap-1 text-xs leading-snug text-crit"><OctagonAlert size={12} className="mt-0.5 flex-none" aria-hidden />{error}</span>}

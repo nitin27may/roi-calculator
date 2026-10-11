@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { heuristics } from "@roi-calculator/catalog";
-import { creditSummary, DEFAULT_HARNESS, FILE_TYPES, IMAGE_SIZES, PriceBook, fileTokens, fileType, simulateHarness, uniqueId, workloadLines, type FileInput, type HarnessDef, type Workload } from "@roi-calculator/engine";
+import { availableIn, creditSummary, DEFAULT_HARNESS, FILE_TYPES, IMAGE_SIZES, PriceBook, fileTokens, fileType, simulateHarness, uniqueId, workloadLines, type FileInput, type HarnessDef, type Workload } from "@roi-calculator/engine";
 import { useRouter } from "next/navigation";
 import { Bar, Card, CardHead, Field, NumberInput, Pill, Seg, Select } from "@/components/ui";
 import { catalog, modelOptions } from "@/lib/compute";
@@ -103,6 +103,12 @@ function Docs({ top }: { top: ReactNode }) {
   const [file, setFile] = useState<FileInput>({ fileType: "pdf", pages: 10, imagesPerPage: 2, sizeId: "photo", detail: "high" });
   const [summaryModel, setSummaryModel] = useState("gpt-5.4-mini");
   const [readModel, setReadModel] = useState("gpt-5.4");
+  // A model the project's deployment does not offer is never the starting choice: take the first one it does.
+  useEffect(() => {
+    const d = settings.azureDeployment;
+    const pick = (cur: string) => (availableIn(catalog.chatModels.find((m) => m.id === cur) ?? { platform: "azure" as const }, d) ? cur : catalog.chatModels.find((m) => m.platform === "azure" && m.lifecycle.status !== "retired" && availableIn(m, d))?.id ?? cur);
+    setSummaryModel(pick); setReadModel(pick);
+  }, [settings.azureDeployment]);
   const set = (p: Partial<FileInput>) => setFile((f) => ({ ...f, ...p }));
   const ft = fileType(file.fileType);
   const imageOnly = file.fileType === "image";

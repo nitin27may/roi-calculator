@@ -7,7 +7,7 @@ import {
   ChevronDown, Server, Printer, Redo2, RotateCcw, Settings, Sparkles, TrendingUp, Undo2, Upload, X, ChartColumn, type LucideIcon,
 } from "lucide-react";
 import { exportCsv, exportXlsx } from "@/lib/export";
-import { DEPLOYMENT_LABEL, ProjectSchema, envCost, labourExcluded, labourPartialText, meetingIntelligence, migrateProject } from "@roi-calculator/engine";
+import { DEPLOYMENT_LABEL, ProjectSchema, envCost, labourExcluded, labourPartialText, meetingIntelligence, migrateProject, type Project } from "@roi-calculator/engine";
 import { useStudio } from "@/lib/store";
 import { describeIssue } from "@/lib/validation";
 import { HelpMenu } from "@/components/help-menu";
@@ -15,7 +15,7 @@ import { PageIntro } from "@/components/page-intro";
 import { ProductTour } from "@/components/product-tour";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { monthLegendText } from "@/lib/months";
-import { catalog, useLedger } from "@/lib/compute";
+import { catalog, useLedger, useProjectPricesReady } from "@/lib/compute";
 import { cad, cn, fmt } from "@/lib/format";
 import { DRAWER_CLOSE_EVENT, DRAWER_OPEN_EVENT, readProjectMenuChoice, readSidebarCollapsed, resolveProjectMenuOpen, writeProjectMenuOpen, writeSidebarCollapsed } from "@/lib/prefs";
 import { PROJECT_VIEWS, projectNavViews, projectRows, showProjectMenu, type ProjectRow } from "@/lib/nav";
@@ -28,6 +28,12 @@ const TITLES: Record<string, string> = { "/summary": "Summary", "/overview": "Ov
 const DRAWER_QUERY = "(max-width: 1023px)";
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
+/** "7 sources": every line that adds to the benefit figure (time saved, avoided costs, value items, one-off benefits, current-state savings). */
+export function benefitSourcesText(p: Project): string {
+  const n = p.benefits.capabilities.length + p.benefits.avoidedCosts.length + p.benefits.value.length + p.benefits.oneOff.length + (p.currentState?.lines ?? []).filter((l) => l.change.mode !== "keep").length;
+  return `${n} ${n === 1 ? "source" : "sources"}`;
+}
+
 export function Shell({ children }: { children: ReactNode }) {
   const path = usePathname();
   const hydrate = useStudio((s) => s.hydrate);
@@ -37,6 +43,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const library = useStudio((s) => s.library);
   const activeId = useStudio((s) => s.activeId);
   const router = useRouter();
+  const pricesReady = useProjectPricesReady(project);
   useEffect(() => hydrate(), [hydrate]);
   const canUndo = useStudio((s) => s.past.length > 0);
   const canRedo = useStudio((s) => s.future.length > 0);
@@ -117,7 +124,7 @@ export function Shell({ children }: { children: ReactNode }) {
     return (
       <Link key={href} href={href} aria-current={here ? "page" : undefined} title={label} onClick={onClick}
         className={cn("flex items-center justify-between gap-2 rounded-md px-2 py-1.5 font-medium", here ? "bg-accent-soft text-ink" : "text-ink-2 hover:bg-surface-2")}>
-        <span className="flex min-w-0 items-center gap-2"><Icon size={15} aria-hidden className="flex-none" /><span className="nav-label truncate">{label}</span></span>
+        <span className="flex min-w-0 items-center gap-2"><Icon size={15} aria-hidden className="flex-none" /><span className="nav-label truncate" title={label}>{label}</span></span>
         {small && <small className="num nav-label text-xs text-muted">{small}</small>}
       </Link>
     );
@@ -155,7 +162,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="nav-label">{collapsed ? "Expand sidebar" : "Collapse sidebar"}</span>
         </button>
         <p className="nav-label border-t border-line pt-2.5 text-xs text-muted lg:mt-0">
-          <b className="text-ink-2">Local mode.</b> Saved in this browser. Prices as of {catalog.meta.asOf}; refresh with <span className="num">pnpm prices</span>.
+          <b className="text-ink-2">Local mode.</b> Saved in this browser. Prices as of {catalog.meta.asOf}; prices are updated with each release.
         </p>
       </nav>
       <main id="main-content" tabIndex={-1} className="grid min-h-0 min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)] lg:h-full lg:overflow-hidden">
@@ -164,13 +171,13 @@ export function Shell({ children }: { children: ReactNode }) {
             <button ref={menuButton} type="button" aria-label="Open menu" aria-expanded={drawerOpen} aria-controls="main-nav" onClick={() => (drawerOpen ? closeDrawer(false) : openDrawer())}
               className="grid h-9 w-9 flex-none place-items-center rounded-md border border-line bg-surface text-ink-2 hover:bg-surface-2 lg:hidden"><Menu size={18} aria-hidden /></button>
             <div className="min-w-0">
-              <div className="truncate text-xs text-muted">{isProject && hasProject ? project.name : path === "/tokens" || path === "/wizard" ? "Quick tools" : path === "/projects" ? "Library" : path === "/glossary" ? "Help" : "Data"}</div>
+              <div className="truncate text-xs text-muted" title={isProject && hasProject ? project.name : undefined}>{isProject && hasProject ? project.name : path === "/tokens" || path === "/wizard" ? "Quick tools" : path === "/projects" ? "Library" : path === "/glossary" ? "Help" : "Data"}</div>
               <h1 className="text-xl font-bold sm:text-[21px]">{TITLES[path] ?? "Overview"}</h1>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            <button type="button" aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" disabled={!canUndo} onClick={() => useStudio.getState().undo()} className="grid h-7 w-7 place-items-center rounded-md border border-line bg-surface text-ink-2 enabled:hover:bg-surface-2 disabled:opacity-40"><Undo2 size={15} aria-hidden /></button>
-            <button type="button" aria-label="Redo" title="Redo (Ctrl/Cmd+Shift+Z)" disabled={!canRedo} onClick={() => useStudio.getState().redo()} className="grid h-7 w-7 place-items-center rounded-md border border-line bg-surface text-ink-2 enabled:hover:bg-surface-2 disabled:opacity-40"><Redo2 size={15} aria-hidden /></button>
+            <button type="button" aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" disabled={!canUndo} onClick={() => useStudio.getState().undo()} className="grid h-7 w-7 place-items-center rounded-md border border-line bg-surface text-ink-2 enabled:hover:bg-surface-2 disabled:opacity-40 max-lg:h-11 max-lg:w-11"><Undo2 size={15} aria-hidden /></button>
+            <button type="button" aria-label="Redo" title="Redo (Ctrl/Cmd+Shift+Z)" disabled={!canRedo} onClick={() => useStudio.getState().redo()} className="grid h-7 w-7 place-items-center rounded-md border border-line bg-surface text-ink-2 enabled:hover:bg-surface-2 disabled:opacity-40 max-lg:h-11 max-lg:w-11"><Redo2 size={15} aria-hidden /></button>
             <ThemeToggle />
             <span className="mr-1"><HelpMenu path={path} /></span>
             {[["Currency", "CAD"], ["Azure", DEPLOYMENT_LABEL[project.settings.azureDeployment]], ["Snowflake", `${project.settings.snowflake.edition} · ${project.settings.snowflake.routing}`], ["Prices", catalog.meta.asOf]].map(([k, v]) => (
@@ -184,7 +191,7 @@ export function Shell({ children }: { children: ReactNode }) {
           {problem && <div role="alert" className="mx-3 mt-2 rounded-md bg-crit-soft px-3 py-2 text-sm text-crit sm:mx-5">{problem}</div>}
           {((isProject && hasProject) || path === "/tokens") && <PageIntro path={path} />}
         </div>
-        <div className="min-h-0 px-3 pb-4 pt-3.5 sm:px-5">{isProject && !hasProject ? (hydrated ? <EmptyLibrary /> : null) : children}</div>
+        <div className="min-h-0 px-3 pb-4 pt-3.5 sm:px-5">{isProject && !hasProject ? (hydrated ? <EmptyLibrary /> : null) : isProject && !pricesReady ? <p role="status" className="p-6 text-sm text-muted">Loading prices…</p> : children}</div>
       </main>
     </div>
   );
@@ -210,7 +217,7 @@ function ProjectNode({ row, rail, path, B, H, link }: { row: ProjectRow; rail: b
     <div className={cn("flex flex-col gap-px", !row.active && "lg:group-data-[collapsed=true]:hidden")} data-testid="project-row" data-project-id={row.id} data-active={row.active}>
       <button type="button" id={`${pid}-toggle`} aria-expanded={expanded} aria-controls={`${pid}-pages`} onClick={toggle} title={row.name}
         className="flex items-center justify-between gap-2 rounded-md px-2 py-1 text-left text-xs uppercase tracking-[0.08em] text-muted hover:bg-surface-2 lg:group-data-[collapsed=true]:hidden">
-        <span className={cn("nav-label truncate", row.active && "font-semibold text-ink-2")}>{row.name}</span>
+        <span title={row.name} className={cn("nav-label truncate", row.active && "font-semibold text-ink-2")}>{row.name}</span>
         <ChevronDown size={14} aria-hidden className={cn("flex-none transition-transform duration-200 motion-reduce:transition-none", !expanded && "-rotate-90")} />
       </button>
       <div aria-hidden className="nav-rule mx-2 hidden border-t border-line" />
@@ -246,9 +253,9 @@ function KpiBar() {
   const envBuild = ledger.months.slice(0, B).reduce((x, m) => x + envCost(m), 0);
   const basis = { run: "running cost only", runMaint: "running + maintenance", full: "full lifecycle" }[project.roi.basis];
   const k = [
-    [`Build · months 1–${B}`, cad(t.build), labourExcluded(project) ? "Build labour excluded" : labourPartialText(project) || `${cad(t.devLab)} of it engineering tools & lab${envBuild > 0 ? `, ${cad(envBuild)} environments` : ""}`],
+    [`Build · months 1–${B}`, cad(t.build), labourExcluded(project) ? "Build labour excluded" : labourPartialText(project) || [t.devLab > 0 ? `${cad(t.devLab)} of it engineering tools & lab` : "", envBuild > 0 ? `${cad(envBuild)} environments` : ""].filter(Boolean).join(", ") || "Labour, delivery and tools"],
     ["Production run-rate", `${cad(t.runRate)}/mo`, `+ ${cad(t.maintRate)} maintenance`],
-    ["Benefit at full adoption", `${cad(t.benefitRate)}/mo`, `${project.benefits.capabilities.length + project.benefits.avoidedCosts.length} sources`],
+    ["Benefit at full adoption", `${cad(t.benefitRate)}/mo`, benefitSourcesText(project)],
     ["Payback", roi.paybackMonth ? `Month ${roi.paybackMonth}` : `> ${H} months`, basis],
     [`${fmt(H / 12, H % 12 ? 1 : 0)}-year ROI`, `${fmt(roi.roi * 100)}%`, `NPV ${cad(roi.npv)} at ${project.roi.discountRatePct}%`],
   ];
@@ -261,24 +268,28 @@ function KpiBar() {
   );
   return (
     <div className="mx-3 grid grid-cols-2 overflow-hidden rounded-lg border border-line bg-surface sm:mx-5 md:grid-cols-3 xl:grid-cols-[repeat(5,minmax(0,1fr))_auto]">
-      {k.map(([l, v, d]) => (
-        <div key={l} className="-mb-px -mr-px min-w-0 border-b border-r border-line px-3.5 py-2 xl:mb-0 xl:mr-0 xl:border-b-0">
+      {k.map(([l, v, d], i) => (
+        // On a phone only the build cost and the payback show, so the page itself starts on the first screen.
+        <div key={l} className={cn("-mb-px -mr-px min-w-0 border-b border-r border-line px-3.5 py-2 xl:mb-0 xl:mr-0 xl:border-b-0", i !== 0 && i !== 3 && "max-sm:hidden")}>
           <div className="text-xs text-muted sm:truncate">{l}</div>
           <div className="font-display text-xl font-bold tabular-nums leading-tight">{v}</div>
           <div className="text-xs text-ink-2 sm:truncate">{d}</div>
         </div>
       ))}
       {/* The build / production bar stays visible at every width; below xl it takes its own row. */}
-      <div className="col-span-full flex min-w-[190px] flex-col justify-center gap-1 px-3.5 py-2 xl:col-span-1 xl:px-3">{bar}</div>
+      <div className="col-span-full flex min-w-[190px] flex-col justify-center gap-1 px-3.5 py-2 max-sm:hidden xl:col-span-1 xl:px-3">{bar}</div>
     </div>
   );
 }
 
 function ExportButtons({ btn }: { btn: string }) {
   const { project, ledger, roi } = useLedger();
+  const [busy, setBusy] = useState(false);
+  // Building the workbook takes several seconds for a large project; show that it is working and let the label paint first.
+  const makeExcel = () => { setBusy(true); setTimeout(() => { try { exportXlsx(project, ledger, roi); } finally { setBusy(false); } }, 50); };
   return (
     <>
-      <button type="button" className={btn} title="Export Excel" onClick={() => exportXlsx(project, ledger, roi)}><FileSpreadsheet size={14} aria-hidden className="flex-none" /><span className="nav-label">Export Excel</span></button>
+      <button type="button" className={btn} title="Export Excel" disabled={busy} aria-busy={busy} onClick={makeExcel}><FileSpreadsheet size={14} aria-hidden className="flex-none" /><span className="nav-label" role="status">{busy ? "Preparing Excel…" : "Export Excel"}</span></button>
       <button type="button" className={btn} title="Export CSV" onClick={() => exportCsv(project, ledger)}><FileText size={14} aria-hidden className="flex-none" /><span className="nav-label">Export CSV</span></button>
       <Link href="/report" className={btn} title="Printable report"><Printer size={14} aria-hidden className="flex-none" /><span className="nav-label">Printable report</span></Link>
     </>

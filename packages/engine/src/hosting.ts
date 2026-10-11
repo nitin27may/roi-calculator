@@ -78,9 +78,9 @@ export const HOSTING_PRESETS: readonly HostingPreset[] = [
   {
     id: "aks",
     label: "AKS cluster",
-    summary: "AKS Standard control plane and Defender for Containers. Node pool virtual machines are not in the catalogue, so they are an amount you enter.",
-    assumptions: ["One cluster with the uptime SLA", "12 vCores under Defender for Containers (three 4-vCPU nodes)", "Node pool VM cost: enter your own"],
-    items: [fixed("aks-control", "AKS Standard control plane", "aks-uptime-sla", 1), fixed("defender-containers", "Defender for Containers", "defender-containers-vcore", 12), own("aks-nodes", "AKS node pool virtual machines (monthly)", "No verified catalogue price for node VMs. Enter your own monthly amount.")],
+    summary: "AKS Standard control plane and Defender for Containers. The node pool virtual machines are priced on the Infrastructure page as VM resources (Linux sizes with reserved terms); if you use this stack instead, enter their monthly cost yourself.",
+    assumptions: ["One cluster with the uptime SLA", "12 vCores under Defender for Containers (three 4-vCPU nodes)", "Node pool VM cost: add VM resources on the Infrastructure page, or enter your own monthly amount here"],
+    items: [fixed("aks-control", "AKS Standard control plane", "aks-uptime-sla", 1), fixed("defender-containers", "Defender for Containers", "defender-containers-vcore", 12), own("aks-nodes", "AKS node pool virtual machines (monthly)", "Node VMs are priced as resources on the Infrastructure page. Enter a monthly amount here only if you keep nodes out of the resource list.")],
   },
   {
     id: "container-apps",

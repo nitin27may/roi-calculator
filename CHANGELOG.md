@@ -6,6 +6,28 @@ All notable changes to this project are recorded here. The format follows [Keep 
 
 ### Added
 
+Example projects and reports for each reader.
+
+- Eight worked example projects in `examples/` (a fictional Canadian insurer): claims datacentre migration, claims replatforming to AKS, quote funnel automation, a claims self-service portal, straight-through processing, a SaaS CRM replacement, an AI intake agent on Azure and an AI notes analytics example on Snowflake Cortex. Named contributors, phases, environments, catalogue resources (AKS, Key Vault, Blob Storage and more), current-state savings, scorecards and what-if scenarios. Open them with "Open file as new project"; `pnpm examples` regenerates them and a test keeps them in step with their source.
+- Report for each reader: choose Executive sponsor, Finance, Technology, Delivery or Business owner on the Report page. New sections: Team and delivery plan, and Infrastructure by environment.
+
+- Azure price adjustment (Settings, Negotiated pricing): move every Azure list price by a percentage, negative for a discount. A manual price and Snowflake credit prices are not adjusted.
+
+- Scenarios: two new kinds of change (labour rates, move go-live or decommission date), and a saved scenario can be renamed in place and have single changes removed.
+
+### Fixed
+
+- Infrastructure: the environments table shows Cost / month next to the name so it is never scrolled out of view; empty month fields say "default".
+- Phones: the top bar shows only build cost and payback and the page intro is hidden, so the page starts on the first screen; larger touch targets on the view switchers; Excel export shows "Preparing Excel…".
+- Number fields show a grouped copy (36,000) next to values of 10,000 or more; long project names in the sidebar have full-name tooltips.
+- Prices defaults to the project's deployment once it loads, the token calculator starts on a model that deployment offers, and the "pnpm prices" developer text is gone from the app.
+- The Build page opened on an empty "Engineering tools & lab" chart for projects with no AI experiments; it now says so. The one-time "cache writes and reasoning tokens" notice and the "engineering tools" line in the top bar no longer show for projects that have none of that. Before / after and By capability explain what they cover.
+- Opening a project that prices a build tool, seat or fee from a resource category (for example GitHub or Power Automate seats) crashed the app until the lazy price files had loaded. The pages now wait for them.
+- The "sources" count under Benefit at full adoption ignored current-state savings, value items and one-off benefits, and read "1 sources".
+- The AKS hosting preset said node VMs were not in the catalogue; they are, as VM resources.
+
+### Added (any-project work)
+
 The any-project work (phases A0 to A15): the ROI Calculator now estimates any technology project, not only AI.
 
 - Project types (#59): a feature is a new application, enhancement, automation, replatform or migration, SaaS replacement or AI, with nothing preselected. AI pages and menu entries appear only for projects that use AI.

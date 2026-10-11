@@ -37,3 +37,12 @@ describe("focus and motion", () => {
     expect(css).toMatch(/prefers-reduced-motion:\s*reduce/);
   });
 });
+
+describe("large numbers", () => {
+  it("NumberInput shows a grouped copy of values of 10,000 or more, hidden from screen readers", () => {
+    const src = readFileSync(join(__dirname, "..", "components", "ui.tsx"), "utf8");
+    expect(src).toContain('data-testid="grouped-number"');
+    expect(src).toMatch(/Math\.abs\(value\) >= 10_000/);
+    expect(src).toMatch(/aria-hidden className="whitespace-nowrap text-xs tabular-nums/);
+  });
+});

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Copy, Download, Trash2, Wand2 } from "lucide-react";
 import type { Project } from "@roi-calculator/engine";
-import { ALL_PROJECT_TEMPLATES, PROJECT_TYPE_INFO, buildLedger, compareFigures, computeRoi, costSplit, projectTypes, roiOptions, verdictFor } from "@roi-calculator/engine";
+import { ALL_PROJECT_TEMPLATES, PROJECT_TYPE_INFO, compareFigures, computeRoi, costSplit, projectTypes, roiOptions, verdictFor } from "@roi-calculator/engine";
 import { Card, CardHead, Field, TextInput } from "@/components/ui";
 import { CompareBars, COMPARE_COLORS, MiniSplit } from "@/components/charts-compare";
 import { VerdictChip } from "@/components/summary-parts";
@@ -13,7 +13,7 @@ import { PORTFOLIO_KEYS, extraFigures, filterProjects, groupProjects, portfolioL
 import type { PortfolioTotals } from "@/lib/portfolio";
 import { DEFAULT_PORTFOLIO, readPortfolio, writePortfolio, type PortfolioGroupBy, type PortfolioKey } from "@/lib/prefs";
 import { HelpTip } from "@/components/help-tip";
-import { catalog, useResourcesReady, useResourceVersion } from "@/lib/compute";
+import { catalog, ledgerFor, useResourcesReady, useResourceVersion } from "@/lib/compute";
 import { useStudio } from "@/lib/store";
 import { downloadProject } from "@/lib/project-file";
 import { EmptyLibrary } from "@/components/empty-library";
@@ -34,9 +34,9 @@ export default function Projects() {
   useResourcesReady(library.some((e) => (e.project.resources?.length ?? 0) > 0));
   const resourceVersion = useResourceVersion();
   const summaries = useMemo(() => new Map(library.map((e) => {
-    const L = buildLedger(e.project, catalog);
-    const r = computeRoi(L, e.project.roi.basis, e.project.roi.discountRatePct, roiOptions(e.project));
-    return [e.id, { L, r, split: costSplit(L), verdict: verdictFor(r), figures: compareFigures(e.project.name, L, r), extra: extraFigures(e.project, L, r) }];
+    const { project: pr, ledger: L } = ledgerFor(e.project);
+    const r = computeRoi(L, pr.roi.basis, pr.roi.discountRatePct, roiOptions(pr));
+    return [e.id, { L, r, split: costSplit(L), verdict: verdictFor(r), figures: compareFigures(pr.name, L, r), extra: extraFigures(pr, L, r) }];
   })), [library, resourceVersion]);
 
   const [groupBy, setGroupBy] = useState<PortfolioGroupBy>(DEFAULT_PORTFOLIO.groupBy);

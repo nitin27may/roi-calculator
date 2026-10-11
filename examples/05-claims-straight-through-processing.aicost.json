@@ -1,0 +1,777 @@
+{
+  "schema": "roi-calculator/project",
+  "version": 6,
+  "name": "Claims straight-through processing and automated payments",
+  "startDate": "2027-06-01",
+  "settings": {
+    "azureDeployment": "regional",
+    "language": "en",
+    "snowflake": {
+      "routing": "global",
+      "edition": "enterprise"
+    }
+  },
+  "timeline": {
+    "buildMonths": 7,
+    "horizonMonths": 60,
+    "adoptionRampMonths": 6,
+    "phases": [
+      {
+        "id": "discovery",
+        "label": "Discovery",
+        "fromMonth": 1,
+        "toMonth": 1
+      },
+      {
+        "id": "design",
+        "label": "Design",
+        "fromMonth": 2,
+        "toMonth": 2
+      },
+      {
+        "id": "build",
+        "label": "Build",
+        "fromMonth": 3,
+        "toMonth": 5
+      },
+      {
+        "id": "test",
+        "label": "Test",
+        "fromMonth": 6,
+        "toMonth": 6
+      },
+      {
+        "id": "migration",
+        "label": "Migration and cutover",
+        "fromMonth": 7,
+        "toMonth": 7
+      },
+      {
+        "id": "deploy",
+        "label": "Deploy",
+        "fromMonth": 7,
+        "toMonth": 7
+      },
+      {
+        "id": "hypercare",
+        "label": "Hypercare",
+        "fromMonth": 8,
+        "toMonth": 9
+      }
+    ]
+  },
+  "features": [
+    {
+      "id": "stp",
+      "label": "Straight-through processing and payments",
+      "description": "Rules that settle low-value auto and property claims without an adjuster, automated payment issue, and a duplicate-payment check, added to the existing claims platform.",
+      "types": [
+        "enhancement"
+      ]
+    }
+  ],
+  "rateCard": [
+    {
+      "id": "pm",
+      "label": "Project manager",
+      "hourlyRate": 110
+    },
+    {
+      "id": "ba",
+      "label": "Business analyst",
+      "hourlyRate": 95
+    },
+    {
+      "id": "architect",
+      "label": "Solution architect",
+      "hourlyRate": 145
+    },
+    {
+      "id": "techLead",
+      "label": "Technical lead",
+      "hourlyRate": 125
+    },
+    {
+      "id": "dev",
+      "label": "Developer",
+      "hourlyRate": 105
+    },
+    {
+      "id": "qa",
+      "label": "QA / test engineer",
+      "hourlyRate": 85
+    },
+    {
+      "id": "devops",
+      "label": "DevOps / platform engineer",
+      "hourlyRate": 115
+    },
+    {
+      "id": "security",
+      "label": "Security engineer",
+      "hourlyRate": 125
+    },
+    {
+      "id": "change",
+      "label": "Change and training",
+      "hourlyRate": 85
+    },
+    {
+      "id": "adjuster",
+      "label": "Claims adjuster",
+      "hourlyRate": 58
+    },
+    {
+      "id": "claimsClerk",
+      "label": "Claims clerk",
+      "hourlyRate": 42
+    }
+  ],
+  "harnesses": [],
+  "build": {
+    "team": [
+      {
+        "roleId": "pm",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Marcus Tremblay",
+        "phase": "Discovery to Deploy",
+        "fromMonth": 1,
+        "toMonth": 7
+      },
+      {
+        "roleId": "ba",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Aisha Khan",
+        "phase": "Discovery to Test",
+        "fromMonth": 1,
+        "toMonth": 6
+      },
+      {
+        "roleId": "architect",
+        "people": 0.25,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Priya Raman",
+        "phase": "Discovery to Design",
+        "fromMonth": 1,
+        "toMonth": 2
+      },
+      {
+        "roleId": "techLead",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Daniel Okafor",
+        "phase": "Design to Deploy",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Mei Lin Wong (rules service)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Liam O'Connor (payments service)",
+        "phase": "Design to Migration and cutover",
+        "fromMonth": 2,
+        "toMonth": 7
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Tariq Mahmood (claims core changes)",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 7
+      },
+      {
+        "roleId": "devops",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Ravi Patel",
+        "phase": "Build to Deploy",
+        "fromMonth": 3,
+        "toMonth": 7
+      },
+      {
+        "roleId": "security",
+        "people": 0.25,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Chloé Gagnon",
+        "phase": "Design to Test",
+        "fromMonth": 2,
+        "toMonth": 6
+      },
+      {
+        "roleId": "qa",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Grace Kim",
+        "phase": "Build to Migration and cutover",
+        "fromMonth": 3,
+        "toMonth": 7
+      },
+      {
+        "roleId": "change",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Jennifer Wu (adjusters, finance)",
+        "phase": "Test to Deploy",
+        "fromMonth": 6,
+        "toMonth": 7
+      },
+      {
+        "roleId": "dev",
+        "people": 1,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Mei Lin Wong (hypercare)",
+        "phaseId": "hypercare",
+        "fromMonth": 8,
+        "toMonth": 9
+      }
+    ],
+    "includeLabour": true,
+    "workstreams": [],
+    "contingencyPct": 15,
+    "contingencyScope": "labour",
+    "activities": [],
+    "environment": [
+      {
+        "id": "gh",
+        "label": "GitHub Enterprise seats",
+        "unitPriceId": "github-seat-enterprise-seats",
+        "quantity": 9
+      },
+      {
+        "id": "copilot",
+        "label": "GitHub Copilot Business seats",
+        "unitPriceId": "copilot-business",
+        "quantity": 6
+      },
+      {
+        "id": "sandbox",
+        "label": "Bank and payments sandbox access",
+        "amountCad": 900,
+        "cadence": "monthly"
+      }
+    ],
+    "deliveryCosts": [
+      {
+        "id": "d-rules",
+        "label": "Rules-engine vendor: implementation and rule authoring workshops",
+        "amountCad": 120000,
+        "cadence": "once",
+        "month": 3,
+        "category": "vendor"
+      },
+      {
+        "id": "d-pay",
+        "label": "Payments integration and bank certification (EFT, e-transfer)",
+        "amountCad": 45000,
+        "cadence": "once",
+        "month": 5,
+        "category": "vendor"
+      },
+      {
+        "id": "d-training",
+        "label": "Training for adjusters, claims clerks and finance",
+        "amountCad": 30000,
+        "cadence": "once",
+        "month": 6,
+        "category": "training"
+      },
+      {
+        "id": "d-comms",
+        "label": "Communication to claimants and repair partners",
+        "amountCad": 7000,
+        "cadence": "once",
+        "month": 7,
+        "category": "comms"
+      }
+    ]
+  },
+  "workloads": [
+    {
+      "kind": "transactionFee",
+      "id": "pay-fee",
+      "label": "Electronic payment fees (EFT and e-transfer)",
+      "featureId": "stp",
+      "volumePerMonth": 9800,
+      "cadPerTxn": 0.28
+    },
+    {
+      "kind": "transactionFee",
+      "id": "estimate-fee",
+      "label": "Photo-estimate service: fee per estimate",
+      "featureId": "stp",
+      "volumePerMonth": 6500,
+      "cadPerTxn": 4.2
+    },
+    {
+      "kind": "contract",
+      "id": "rules",
+      "label": "Rules engine subscription",
+      "featureId": "stp",
+      "amountCad": 3900,
+      "cadence": "monthly"
+    }
+  ],
+  "resources": [
+    {
+      "id": "nodes-prod",
+      "label": "Extra AKS user nodes for the rules and payments services (3 x D8s v5, 1-year reserved)",
+      "featureId": "stp",
+      "typeId": "vm",
+      "skuId": "d8s-v5-linux",
+      "inputs": {
+        "count": 3
+      },
+      "term": "ri1",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "nodes-np",
+      "label": "Extra AKS user nodes, non-production (3 x D8s v5)",
+      "featureId": "stp",
+      "typeId": "vm",
+      "skuId": "d8s-v5-linux",
+      "inputs": {
+        "count": 3
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "sb",
+      "label": "Service Bus Premium: extra messaging unit for settlement and payment topics",
+      "featureId": "stp",
+      "typeId": "service-bus",
+      "skuId": "premium",
+      "inputs": {
+        "namespaces": 0,
+        "mus": 1,
+        "opsM": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "sb-np",
+      "label": "Service Bus Standard",
+      "featureId": "stp",
+      "typeId": "service-bus",
+      "skuId": "standard",
+      "inputs": {
+        "namespaces": 1,
+        "opsM": 20
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "mi-storage",
+      "label": "Managed Instance: extra storage for decision logs and payment history",
+      "featureId": "stp",
+      "typeId": "sql-mi",
+      "skuId": "gp-gen5",
+      "inputs": {
+        "vcores": 0,
+        "storageGB": 512
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat",
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-est",
+      "label": "Estimate photos and settlement letters (Blob, hot, ZRS, 8 TB)",
+      "featureId": "stp",
+      "typeId": "blob-storage",
+      "skuId": "hot-zrs",
+      "inputs": {
+        "storageGB": 8000,
+        "writeOps10k": 1100,
+        "readOps10k": 2500,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "blob-np",
+      "label": "Test photos (Blob, hot, LRS)",
+      "featureId": "stp",
+      "typeId": "blob-storage",
+      "skuId": "hot-lrs",
+      "inputs": {
+        "storageGB": 600,
+        "writeOps10k": 40,
+        "readOps10k": 80,
+        "retrievalGB": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    },
+    {
+      "id": "kv",
+      "label": "Key Vault Premium: payment signing keys in an HSM",
+      "featureId": "stp",
+      "typeId": "key-vault",
+      "skuId": "premium",
+      "inputs": {
+        "ops10k": 200,
+        "advanced10k": 30,
+        "hsmKeys": 3
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "pe",
+      "label": "Private endpoints (storage, Key Vault, Service Bus)",
+      "featureId": "stp",
+      "typeId": "private-endpoint",
+      "skuId": "standard",
+      "inputs": {
+        "endpoints": 4,
+        "inGB": 600,
+        "outGB": 400
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law",
+      "label": "Log Analytics ingestion: decision and audit logs (kept for audit)",
+      "featureId": "stp",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 85,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "prod"
+      ]
+    },
+    {
+      "id": "law-np",
+      "label": "Log Analytics ingestion, non-production",
+      "featureId": "stp",
+      "typeId": "log-analytics-ingestion",
+      "skuId": "analytics-payg",
+      "inputs": {
+        "gb": 20,
+        "commitments": 0
+      },
+      "term": "payg",
+      "ahb": false,
+      "envIds": [
+        "dev",
+        "test",
+        "uat"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "dev",
+      "label": "Development",
+      "production": false,
+      "sizeFactor": 0.25,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "test",
+      "label": "Test and performance",
+      "production": false,
+      "sizeFactor": 0.5,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "pricing": "payg"
+    },
+    {
+      "id": "uat",
+      "label": "UAT and pre-production",
+      "production": false,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerDay": 10,
+        "daysPerMonth": 22
+      },
+      "fromMonth": 4,
+      "toMonth": 7,
+      "pricing": "payg"
+    },
+    {
+      "id": "prod",
+      "label": "Production",
+      "production": true,
+      "sizeFactor": 1,
+      "schedule": {
+        "hoursPerMonth": 730
+      },
+      "pricing": "payg"
+    }
+  ],
+  "maintenance": {
+    "mode": "team",
+    "team": [
+      {
+        "roleId": "dev",
+        "people": 0.75,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Rules and payments developers"
+      },
+      {
+        "roleId": "ba",
+        "people": 0.5,
+        "hoursPerMonth": 150,
+        "experiments": false,
+        "name": "Rules analyst (claims policy changes)"
+      }
+    ]
+  },
+  "benefits": {
+    "capabilities": [],
+    "avoidedCosts": [],
+    "value": [
+      {
+        "id": "val-leakage",
+        "label": "Fewer overpayments and duplicate payments caught before money leaves",
+        "kind": "quality",
+        "featureId": "stp",
+        "volumePerMonth": 9800,
+        "errorRateBeforePct": 2.6,
+        "errorRateAfterPct": 1.7,
+        "costPerError": 540,
+        "confidencePct": 60
+      }
+    ],
+    "oneOff": [],
+    "scorecard": [
+      {
+        "id": "sc-cycle",
+        "label": "Speed: small-claim settlement",
+        "dimension": "speed",
+        "measure": "Days from report to payment for claims under C$3,500",
+        "unit": "days",
+        "before": 9,
+        "after": 2,
+        "higherIsBetter": false,
+        "weightPct": 35,
+        "confidencePct": 70,
+        "featureId": "stp"
+      },
+      {
+        "id": "sc-stp",
+        "label": "Efficiency: claims settled without an adjuster",
+        "dimension": "agility",
+        "measure": "Share of eligible claims settled straight through",
+        "unit": "%",
+        "before": 0,
+        "after": 38,
+        "higherIsBetter": true,
+        "weightPct": 25,
+        "confidencePct": 60,
+        "featureId": "stp"
+      },
+      {
+        "id": "sc-sat",
+        "label": "Customer: satisfaction on small claims",
+        "dimension": "customer",
+        "measure": "Transactional NPS",
+        "unit": "points",
+        "before": 31,
+        "after": 48,
+        "higherIsBetter": true,
+        "weightPct": 25,
+        "confidencePct": 55,
+        "featureId": "stp"
+      },
+      {
+        "id": "sc-audit",
+        "label": "Control: payments with a complete audit trail",
+        "dimension": "compliance",
+        "measure": "Payments with an automatic decision log",
+        "unit": "%",
+        "before": 64,
+        "after": 100,
+        "higherIsBetter": true,
+        "weightPct": 15,
+        "confidencePct": 85,
+        "featureId": "stp"
+      }
+    ]
+  },
+  "roi": {
+    "basis": "full",
+    "benefitPreset": "typical",
+    "devCutPct": 0,
+    "maintCutPct": 0,
+    "transitionCosts": [],
+    "growthPctPerYear": 0,
+    "rateEscalationPctPerYear": 2,
+    "discountRatePct": 8,
+    "hurdleRatePct": 15
+  },
+  "scenarios": [
+    {
+      "id": "sc-stp-low",
+      "label": "Only 25% of eligible claims qualify for straight-through",
+      "edits": [
+        {
+          "kind": "set",
+          "path": [
+            "currentState",
+            "lines",
+            "cur-small-claims",
+            "change",
+            "pct"
+          ],
+          "value": 25
+        }
+      ]
+    },
+    {
+      "id": "sc-late",
+      "label": "Go-live slips two months",
+      "edits": [
+        {
+          "kind": "shiftMonths",
+          "target": "golive",
+          "by": 2
+        }
+      ]
+    },
+    {
+      "id": "sc-volume",
+      "label": "Claim volume 20% higher (storm season)",
+      "edits": [
+        {
+          "kind": "lever",
+          "leverId": "volume",
+          "amount": 120
+        }
+      ]
+    }
+  ],
+  "currentState": {
+    "lines": [
+      {
+        "id": "cur-small-claims",
+        "label": "Adjuster review of small auto and property claims (5,200 a month, about 33 minutes each)",
+        "category": "transaction",
+        "featureId": "stp",
+        "basis": {
+          "kind": "perTransaction",
+          "unitCostCad": 31.9,
+          "volumePerMonth": 5200
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 40,
+          "followsAdoption": true
+        }
+      },
+      {
+        "id": "cur-payments",
+        "label": "Manual payment set-up, second-person approval and cheque runs (9,800 a month)",
+        "category": "transaction",
+        "featureId": "stp",
+        "basis": {
+          "kind": "perTransaction",
+          "unitCostCad": 3.15,
+          "volumePerMonth": 9800
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 70,
+          "followsAdoption": true
+        }
+      },
+      {
+        "id": "cur-recon",
+        "label": "Payment reconciliation and exception chasing",
+        "category": "people",
+        "featureId": "stp",
+        "basis": {
+          "kind": "fte",
+          "roleId": "claimsClerk",
+          "fte": 3,
+          "hoursPerMonth": 150
+        },
+        "change": {
+          "mode": "reduce",
+          "pct": 50,
+          "followsAdoption": true
+        }
+      }
+    ]
+  }
+}

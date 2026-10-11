@@ -68,12 +68,12 @@ export function EnvironmentsGrid() {
         <p className="rounded-md border border-dashed border-line px-3 py-4 text-sm text-ink-2">{ENV_DEFAULT_NOTE}</p>
       ) : (
         <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Environments, scrolls sideways on a narrow screen">
-          <table className="data min-w-[1100px]">
+          <table className="data min-w-[1000px]">
             <thead>
               <tr>
-                <Th help="environmentLabel">Label</Th><Th help="environmentProduction">Production</Th><Th help="environmentSizeFactor">Size factor</Th>
+                <Th help="environmentLabel">Label</Th><th className="n whitespace-nowrap">Cost / month</th><Th help="environmentProduction">Production</Th><Th help="environmentSizeFactor">Size factor</Th>
                 <Th help="environmentSchedule">Schedule</Th><Th help="environmentMonths">First month</Th><Th help="environmentMonths">Last month</Th>
-                <Th help="environmentPricing">Pricing</Th><th className="n whitespace-nowrap">Cost / month</th><th><span className="sr-only">Remove</span></th>
+                <Th help="environmentPricing">Pricing</Th><th><span className="sr-only">Remove</span></th>
               </tr>
             </thead>
             <tbody>
@@ -85,6 +85,7 @@ export function EnvironmentsGrid() {
                   <Fragment key={e.id}>
                     <tr className="align-top">
                       <td><input className={cn(textIn, "w-32")} value={e.label} placeholder="Name" aria-label={`Name of ${nameOf(e)}`} onChange={(ev) => upd(e.id, (x) => { x.label = ev.target.value; })} /></td>
+                      <td className="n">{cad(c?.monthly ?? 0)}</td>
                       <td><input type="checkbox" className="mt-2" checked={e.production} aria-label={`${nameOf(e)} is production`} onChange={(ev) => upd(e.id, (x) => { x.production = ev.target.checked; })} /></td>
                       <td className="w-24"><NumberInput label={`Size factor of ${nameOf(e)}`} value={e.sizeFactor} step={0.1} onChange={(v) => upd(e.id, (x) => { x.sizeFactor = v; })} /></td>
                       <td>
@@ -101,10 +102,9 @@ export function EnvironmentsGrid() {
                           )}
                         </div>
                       </td>
-                      <td className="w-24"><input className={cn(inputCls, "w-full")} type="number" min={1} step={1} placeholder="Phase" aria-label={`First billed month of ${nameOf(e)}`} value={e.fromMonth ?? ""} onChange={(ev) => upd(e.id, (x) => setMonthBound(x, "fromMonth", ev.target.value))} /></td>
-                      <td className="w-24"><input className={cn(inputCls, "w-full")} type="number" min={1} step={1} placeholder="Phase" aria-label={`Last billed month of ${nameOf(e)}`} value={e.toMonth ?? ""} onChange={(ev) => upd(e.id, (x) => setMonthBound(x, "toMonth", ev.target.value))} /></td>
+                      <td className="w-24"><input className={cn(inputCls, "w-full")} type="number" min={1} step={1} placeholder="default" aria-label={`First billed month of ${nameOf(e)}`} value={e.fromMonth ?? ""} onChange={(ev) => upd(e.id, (x) => setMonthBound(x, "fromMonth", ev.target.value))} /></td>
+                      <td className="w-24"><input className={cn(inputCls, "w-full")} type="number" min={1} step={1} placeholder="default" aria-label={`Last billed month of ${nameOf(e)}`} value={e.toMonth ?? ""} onChange={(ev) => upd(e.id, (x) => setMonthBound(x, "toMonth", ev.target.value))} /></td>
                       <td className="min-w-[150px]"><Select label={`Pricing of ${nameOf(e)}`} value={e.pricing} options={[{ value: "payg", label: "Pay-as-you-go" }, { value: "devtest", label: "Dev/test" }]} onChange={(v) => upd(e.id, (x) => { x.pricing = v as Environment["pricing"]; })} /></td>
-                      <td className="n">{cad(c?.monthly ?? 0)}</td>
                       <td><TrashButton label={`Remove ${nameOf(e)}`} onClick={() => setConfirm(e.id)} /></td>
                     </tr>
                     {confirm === e.id && (
@@ -122,7 +122,7 @@ export function EnvironmentsGrid() {
                 );
               })}
             </tbody>
-            <tfoot><tr><td colSpan={7} className="font-semibold">Total</td><td className="n font-semibold">{cad(total)}</td><td /></tr></tfoot>
+            <tfoot><tr><td className="font-semibold">Total</td><td className="n font-semibold">{cad(total)}</td><td colSpan={7} /></tr></tfoot>
           </table>
         </div>
       )}
@@ -265,7 +265,7 @@ function ResourceCard({ r }: { r: Resource }) {
 
       {row && row.perEnv.length > 0 && (
         <div className="overflow-x-auto" tabIndex={0} role="region" aria-label={`Cost by environment for ${r.label || "resource"}, scrolls sideways on a narrow screen`}>
-          <table className="data min-w-[640px]">
+          <table className="data min-w-[480px]">
             <thead><tr><th>Environment</th><th className="n">Month read</th><th className="n">Cost / month</th><th>How it is calculated</th></tr></thead>
             <tbody>
               {row.perEnv.map((c) => (

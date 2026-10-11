@@ -304,7 +304,10 @@ function WorkloadRange({ w }: { w: Workload }) {
   const { project } = useLedger();
   const percentile = useStudio((s) => s.percentile);
   const r = useMemo(() => workloadRange(project, catalog, w, percentile), [project, w, percentile]);
-  if (!r.spread) return <p className="text-xs text-muted">This workload is priced per page, hour or request, so its cost has no spread.</p>;
+  if (!r.spread) {
+    const fixedPrice = w.kind === "seats" || w.kind === "contract" || w.kind === "transactionFee" || w.kind === "fixed" || w.kind === "hosting";
+    return <p className="text-xs text-muted">{fixedPrice ? "This cost is a price times a count you entered, so it has no spread between the cautious and optimistic cases." : "This workload is priced per page, hour or request, so its cost has no spread."}</p>;
+  }
   return (
     <div className="max-w-md">
       <h3 className="mb-1 text-sm font-semibold">Range per month</h3>

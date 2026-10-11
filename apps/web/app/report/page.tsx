@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { DEPLOYMENT_LABEL, LABOUR_EXCLUDED_TEXT, WIDE_RANGE_TEXT, buildLabel, compareScenarios, computeAllocation, currentStateRows, evaluateLevers, moneyBand, pricesUsedRows, scorecardRows, steadyState } from "@roi-calculator/engine";
+import { DEPLOYMENT_LABEL, LABOUR_EXCLUDED_TEXT, REPORT_AUDIENCES, infrastructureReport, isReportAudience, showsSection, teamPlan, type ReportAudience, WIDE_RANGE_TEXT, buildLabel, compareScenarios, computeAllocation, currentStateRows, evaluateLevers, moneyBand, pricesUsedRows, scorecardRows, steadyState } from "@roi-calculator/engine";
 import { CumulativeLine, Legend, RankedBars, StackedBars, Waterfall } from "@/components/charts";
 import { Field, TextInput } from "@/components/ui";
 import { AiAssistTile, CurrentVsTargetTile, FinanceMeasures, HeadlineTiles, RiskSummary, VerdictChip, WATERFALL_COST_IDS, wideDrivers } from "@/components/summary-parts";
 import { catalog, useSummary } from "@/lib/compute";
 import { cad, fmt } from "@/lib/format";
 import { useStudio } from "@/lib/store";
+import { calendarMonth } from "@/lib/months";
 
 const STREAMS = [
   { key: "labour", label: "Build labour", color: "var(--build-2)" },
@@ -22,6 +23,11 @@ import { ensureStorageMigrated } from "@/lib/storage-migrate";
 ensureStorageMigrated();
 
 const AUTHOR_KEY = "roi-calculator:reportAuthor";
+const PAGE_TITLE: Record<ReportAudience, string> = {
+  all: "Assumptions and how sure we are", finance: "Assumptions and how sure we are", sponsor: "What it is worth and how sure we are",
+  tech: "Technical assumptions and workloads", delivery: "Planning assumptions", business: "What changes for the business",
+};
+const AUDIENCE_KEY = "roi-calculator:reportAudience";
 const BASIS_WORDS = { run: "running cost only", runMaint: "running cost and maintenance", full: "the full lifecycle" };
 
 /** Long-form report: cover, executive page, assumptions, then the appendix. Use the browser's Print, then Save as PDF. */
@@ -30,11 +36,25 @@ export default function Report() {
   const percentile = useStudio((st) => st.percentile);
   const [author, setAuthor] = useState("");
   const [today, setToday] = useState("");
+  const [audience, setAudience] = useState<ReportAudience>("all");
   // Read after mount: the date and the stored author name differ between the static build and the browser.
   useEffect(() => {
     setToday(new Date().toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" }));
     try { setAuthor(localStorage.getItem(AUTHOR_KEY) ?? ""); } catch { /* storage blocked: the field still works for this visit */ }
+    // A link can carry the audience (?for=finance); otherwise the last choice is remembered.
+    const fromUrl = new URLSearchParams(location.search).get("for");
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(AUDIENCE_KEY); } catch { /* ignore */ }
+    const pick = isReportAudience(fromUrl) ? fromUrl : isReportAudience(saved) ? saved : "all";
+    setAudience(pick);
   }, []);
+  const changeAudience = (v: string) => {
+    if (!isReportAudience(v)) return;
+    setAudience(v);
+    try { localStorage.setItem(AUDIENCE_KEY, v); } catch { /* ignore */ }
+  };
+  const show = (section: Parameters<typeof showsSection>[1]) => showsSection(audience, section);
+  const audienceInfo = REPORT_AUDIENCES.find((a) => a.id === audience)!;
   const changeAuthor = (v: string) => {
     setAuthor(v);
     try { localStorage.setItem(AUTHOR_KEY, v); } catch { /* ignore */ }
@@ -45,6 +65,8 @@ export default function Report() {
     scenarios: compareScenarios(p, catalog),
     levers: evaluateLevers(p, catalog).slice(0, 5),
     prices: pricesUsedRows(ledger, catalog),
+    team: teamPlan(p, ledger),
+    infra: infrastructureReport(p, ledger, catalog),
   }), [p, ledger]);
   const t = ledger.totals, B = p.timeline.buildMonths;
   const rows = ledger.months.map((m) => ({ labour: m.byStream.labour, devlab: m.byStream.devlab + m.byStream.devenv, run: m.byStream.run, platform: m.byStream.platform, env: m.byStream.env ?? 0, delivery: m.byStream.delivery ?? 0, maint: m.byStream.maint + m.byStream.transition, benefit: m.benefit }));
@@ -76,8 +98,14 @@ export default function Report() {
     <div className="h-full overflow-auto scroll-hint print:overflow-visible">
       <div className="mb-3 flex flex-wrap items-end justify-between gap-3 print:hidden">
         <div className="flex flex-wrap items-end gap-4">
-          <p className="max-w-[46ch] text-sm text-ink-2">A report for this project: cover, one-page summary, assumptions and a detailed appendix. Choose <b>Print</b>, then <b>Save as PDF</b>.</p>
+          <p className="max-w-[46ch] text-sm text-ink-2">A report for this project, in the depth each reader needs: choose who it is for, then <b>Print</b> and <b>Save as PDF</b>. Every figure is the same in every version.</p>
           <div className="w-64"><Field label="Author on the cover" help="reportAuthor"><TextInput value={author} placeholder="Your name or team" onChange={changeAuthor} /></Field></div>
+          <label className="flex w-64 flex-col gap-1 text-xs font-medium text-ink-2">Report for
+            <select data-testid="report-audience" className="rounded border border-line bg-surface-2 px-2 py-1.5 text-[13px] text-ink" value={audience} onChange={(e) => changeAudience(e.target.value)}>
+              {REPORT_AUDIENCES.map((a) => <option key={a.id} value={a.id}>{a.label}</option>)}
+            </select>
+            <span className="font-normal text-muted" aria-live="polite" data-testid="report-audience-detail">{audienceInfo.detail}</span>
+          </label>
         </div>
         <button type="button" className="rounded-md bg-accent px-3 py-1.5 text-sm font-medium text-accent-ink" onClick={() => window.print()}>Print or save as PDF</button>
       </div>
@@ -87,11 +115,12 @@ export default function Report() {
           <div>
             <div className="text-xs uppercase tracking-[0.1em] text-muted">Cost and ROI estimate</div>
             <div className="mt-24 h-1.5 w-20 rounded bg-accent print:mt-40" />
-            <h1 className="mt-5 max-w-[18ch] text-3xl sm:text-5xl font-bold leading-[1.08]">{p.name}</h1>
+            <h2 className="mt-5 max-w-[18ch] text-3xl sm:text-5xl font-bold leading-[1.08]">{p.name}</h2>
             <p className="mt-4 max-w-[52ch] text-[15px] text-ink-2">A {p.timeline.horizonMonths}-month view of what it costs to build and run, what it returns, and how sure we are.</p>
           </div>
           <dl className="grid max-w-[560px] grid-cols-1 sm:grid-cols-[150px_1fr] gap-x-4 gap-y-2 border-t border-line pt-5 text-[13.5px]">
             <dt className="text-muted">Report date</dt><dd className="text-ink">{today || " "}</dd>
+            <dt className="text-muted">Prepared for</dt><dd className="text-ink" data-testid="report-prepared-for">{audience === "all" ? "All readers" : audienceInfo.label}</dd>
             <dt className="text-muted">Prepared by</dt><dd className="text-ink">{author.trim() || "Not stated"}</dd>
             <dt className="text-muted">Currency</dt><dd className="text-ink">Canadian dollars (C$)</dd>
             <dt className="text-muted">Prices as of</dt><dd className="text-ink">{catalog.meta.asOf}</dd>
@@ -101,7 +130,7 @@ export default function Report() {
         </section>
 
         {/* 2. Executive page */}
-        <section className="report-page report-exec flex flex-col gap-3.5 rounded-lg border border-line bg-surface p-4 sm:p-8 print:rounded-none print:border-0 print:p-0">
+        {show("exec") && <section className="report-page report-exec flex flex-col gap-3.5 rounded-lg border border-line bg-surface p-4 sm:p-8 print:rounded-none print:border-0 print:p-0">
           <header>
             <div className="text-xs uppercase tracking-[0.08em] text-muted">Executive summary · {p.name}</div>
             <div className="mt-2"><VerdictChip verdict={s.verdict} /></div>
@@ -144,13 +173,13 @@ export default function Report() {
               {s.alerts.length > 3 && <p className="mt-1 text-xs text-muted">{s.alerts.length - 3} more group{s.alerts.length - 3 === 1 ? "" : "s"} of notices are in the appendix.</p>}
             </section>
           </div>
-        </section>
+        </section>}
 
         {/* 3. Assumptions and how sure we are */}
-        <section className="report-page flex flex-col gap-4 rounded-lg border border-line bg-surface p-8 print:rounded-none print:border-0 print:p-0">
-          <h2 className="text-xl font-bold">Assumptions and how sure we are</h2>
-          <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] gap-6 [&_td.n]:whitespace-normal [&_td.n]:font-sans">
-            <section className="break-inside-avoid">
+        {(show("assumptions") || show("workloads") || show("currentState") || show("scorecard") || show("range")) && <section className="report-page flex flex-col gap-4 rounded-lg border border-line bg-surface p-8 print:rounded-none print:border-0 print:p-0">
+          <h2 className="text-xl font-bold">{PAGE_TITLE[audience]}</h2>
+          {(show("assumptions") || show("workloads")) && <div className={`grid gap-6 [&_td.n]:whitespace-normal [&_td.n]:font-sans ${show("assumptions") && show("workloads") ? "grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]" : "grid-cols-1"}`}>
+            {show("assumptions") && <section className="break-inside-avoid">
               <h3 className="mb-1.5 text-[15px] font-bold">What this estimate assumes</h3>
               <table className="data">
                 <tbody>
@@ -170,16 +199,16 @@ export default function Report() {
                   <tr><td>Price list</td><td className="n">List prices, no discounts, {catalog.meta.asOf}</td></tr>
                 </tbody>
               </table>
-            </section>
-            <section className="break-inside-avoid">
+            </section>}
+            {show("workloads") && <section className="break-inside-avoid">
               <h3 className="mb-1.5 text-[15px] font-bold">Workloads in production</h3>
               <table className="data">
                 <thead><tr><th>Workload</th><th className="n">Per month</th></tr></thead>
                 <tbody>{p.workloads.map((w) => <tr key={w.id}><td>{w.label}</td><td className="n">{cad(runById.get(w.id) ?? 0)}</td></tr>)}</tbody>
               </table>
-            </section>
-          </div>
-          {s.currentLineCount > 0 && (
+            </section>}
+          </div>}
+          {show("currentState") && s.currentLineCount > 0 && (
             <section className="break-inside-avoid">
               <h3 className="mb-1.5 text-[15px] font-bold">What the work costs today, and what changes</h3>
               <table className="data [&_td.n]:whitespace-normal [&_td.n]:font-sans">
@@ -188,7 +217,7 @@ export default function Report() {
               </table>
             </section>
           )}
-          {s.scorecard && (
+          {show("scorecard") && s.scorecard && (
             <section className="break-inside-avoid">
               <h3 className="mb-1.5 text-[15px] font-bold">Non-financial scorecard</h3>
               <p className="mb-1.5 max-w-[80ch] text-[12.5px] text-ink-2">Shown beside the financial figures. Only items marked as counted are in NPV and payback.</p>
@@ -199,7 +228,7 @@ export default function Report() {
               <p className="mt-1 text-[12.5px] text-ink-2">Composite index: {s.scorecard.composite === null ? "no weights set" : `${Math.round(s.scorecard.composite * 10) / 10}%`}. Counted in NPV: {cad(s.scorecard.monetisedMonthly)} a month at full rollout.</p>
             </section>
           )}
-          <section className="break-inside-avoid">
+          {show("range") && <section className="break-inside-avoid">
             <h3 className="mb-1 text-[15px] font-bold">How sure are we</h3>
             <p className="mb-2 max-w-[80ch] text-[12.5px] text-ink-2">
               Three cases. Cautious means heavier usage and the conservative benefit column. Expected is the project as entered. Optimistic means lighter usage and the optimistic column.
@@ -218,26 +247,66 @@ export default function Report() {
                 {drivers.length > 0 && <> The biggest drivers are {drivers.join(", ")}.</>}
               </p>
             )}
-          </section>
-        </section>
+          </section>}
+        </section>}
 
         {/* 4. Appendix */}
         <section className="report-page report-appendix flex flex-col gap-6 rounded-lg border border-line bg-surface p-8 print:gap-5 print:rounded-none print:border-0 print:p-0">
-          <h2 className="text-xl font-bold">Appendix: detail</h2>
+          <h2 className="text-xl font-bold">{audience === "all" ? "Appendix: detail" : `Appendix: ${audienceInfo.label}`}</h2>
 
-          <section className="break-inside-avoid">
+          {show("team") && (
+            <section className="break-inside-avoid" data-testid="report-team">
+              <h3 className="mb-2 text-lg font-bold">Team and delivery plan</h3>
+              <p className="mb-1.5 max-w-[80ch] text-[12.5px] text-ink-2">Who is on the build, for which months, and what each line costs including contingency{p.build.aiAssist ? " and AI assistance" : ""}. {extra.team.peopleMonths.toLocaleString("en-CA", { maximumFractionDigits: 1 })} person-months in all.</p>
+              <table className="data [&_td.n]:whitespace-normal [&_td.n]:font-sans">
+                <thead><tr><th>Person</th><th>Role</th><th className="n">FTE</th><th>Phase</th><th className="n">Months</th><th className="n">Cost</th></tr></thead>
+                <tbody>
+                  {extra.team.rows.map((r) => <tr key={r.seat}><td>{r.name}</td><td>{r.role}</td><td className="n">{r.fte}</td><td>{r.phase}</td><td className="n">{r.fromMonth}–{r.toMonth}</td><td className="n">{cad(r.cost)}</td></tr>)}
+                  <tr className="total"><td colSpan={5}>Build labour</td><td className="n">{cad(extra.team.total)}</td></tr>
+                </tbody>
+              </table>
+              {(p.timeline.phases?.length ?? 0) > 0 && (
+                <table className="data mt-3 [&_td.n]:whitespace-normal [&_td.n]:font-sans">
+                  <thead><tr><th>Delivery phase</th><th className="n">Months</th><th className="n">Dates</th></tr></thead>
+                  <tbody>{p.timeline.phases!.map((ph) => <tr key={ph.id}><td>{ph.label}</td><td className="n">{ph.fromMonth}–{ph.toMonth}</td><td className="n">{calendarMonth(p.startDate, ph.fromMonth)} to {calendarMonth(p.startDate, ph.toMonth)}</td></tr>)}</tbody>
+                </table>
+              )}
+              {(p.build.deliveryCosts ?? []).length > 0 && (
+                <table className="data mt-3 [&_td.n]:whitespace-normal [&_td.n]:font-sans">
+                  <thead><tr><th>Delivery cost (not labour)</th><th>Kind</th><th className="n">Month</th><th className="n">Amount</th></tr></thead>
+                  <tbody>{p.build.deliveryCosts!.map((d) => <tr key={d.id}><td>{d.label}</td><td>{d.category}</td><td className="n">{d.month ?? 1}</td><td className="n">{cad(d.amountCad)}</td></tr>)}</tbody>
+                </table>
+              )}
+            </section>
+          )}
+
+          {show("infrastructure") && extra.infra.rows.length > 0 && (
+            <section className="break-inside-avoid" data-testid="report-infrastructure">
+              <h3 className="mb-2 text-lg font-bold">Infrastructure by environment, per month</h3>
+              <p className="mb-1.5 max-w-[80ch] text-[12.5px] text-ink-2">Azure resources at list price, each shown in the first month it is billed in an environment. Non-production runs at a reduced size and schedule; production and the second region run all month.</p>
+              <table className="data [&_td.n]:whitespace-normal [&_td.n]:font-sans">
+                <thead><tr><th>Resource</th><th>SKU</th>{extra.infra.envs.map((e) => <th key={e.id} className="n">{e.label}</th>)}</tr></thead>
+                <tbody>
+                  {extra.infra.rows.map((r) => <tr key={r.id}><td>{r.label}</td><td>{r.sku}</td>{extra.infra.envs.map((e) => <td key={e.id} className="n">{r.perEnv[e.id] === undefined ? "–" : cad(r.perEnv[e.id]!)}</td>)}</tr>)}
+                  <tr className="total"><td colSpan={2}>Total</td>{extra.infra.envs.map((e) => <td key={e.id} className="n">{cad(extra.infra.envTotals[e.id] ?? 0)}</td>)}</tr>
+                </tbody>
+              </table>
+            </section>
+          )}
+
+          {show("monthly") && <section className="break-inside-avoid">
             <h3 className="mb-2 text-lg font-bold">Cost and benefit by month</h3>
             <Legend items={[...streams.map((x) => ({ label: x.label, color: x.color })), { label: "Benefit", color: "var(--ink)", line: true }]} />
             <StackedBars rows={rows} series={streams} line={{ key: "benefit", label: "Benefit", color: "var(--ink)" }} xLabel={(i) => `M${i + 1}`} className="relative mt-2 h-[260px] w-[688px] max-w-full" />
-          </section>
+          </section>}
 
-          <section className="break-inside-avoid">
+          {show("cumulative") && <section className="break-inside-avoid">
             <h3 className="mb-2 text-lg font-bold">Cumulative position</h3>
             <CumulativeLine values={roi.cumulative} payback={roi.paybackMonth} className="relative h-[220px] w-[688px] max-w-full" />
-          </section>
+          </section>}
 
-          <div className="grid gap-6 md:grid-cols-2 print:grid-cols-2">
-            <section className="break-inside-avoid">
+          {(show("build") || show("production")) && <div className="grid gap-6 md:grid-cols-2 print:grid-cols-2">
+            {show("build") && <section className="break-inside-avoid">
               <h3 className="mb-2 text-lg font-bold">Build, months 1 to {B}{s.labourExcluded ? " (build labour excluded)" : s.labourPartial ? ` (${s.labourPartial.toLowerCase()})` : ""}</h3>
               <table className="data">
                 <tbody>
@@ -248,8 +317,8 @@ export default function Report() {
                   <tr className="total"><td>Total</td><td className="n">{cad(t.build)}</td></tr>
                 </tbody>
               </table>
-            </section>
-            <section className="break-inside-avoid">
+            </section>}
+            {show("production") && <section className="break-inside-avoid">
               <h3 className="mb-2 text-lg font-bold">Production, per month</h3>
               <table className="data">
                 <tbody>
@@ -259,18 +328,18 @@ export default function Report() {
                   <tr className="total"><td>Total</td><td className="n">{cad(t.runRate + t.maintRate)}</td></tr>
                 </tbody>
               </table>
-            </section>
-          </div>
+            </section>}
+          </div>}
 
-          <div className="grid gap-6 md:grid-cols-2 print:grid-cols-2">
-            <section className="break-inside-avoid">
+          {(show("byYear") || show("capability")) && <div className="grid gap-6 md:grid-cols-2 print:grid-cols-2">
+            {show("byYear") && <section className="break-inside-avoid">
               <h3 className="mb-2 text-lg font-bold">By year</h3>
               <table className="data">
                 <thead><tr><th>Year</th><th className="n">Benefit</th><th className="n">Cost</th><th className="n">Net</th></tr></thead>
                 <tbody>{roi.byYear.map((y) => <tr key={y.year}><td>Year {y.year}</td><td className="n">{cad(y.benefit)}</td><td className="n">{cad(y.cost)}</td><td className="n">{cad(y.net)}</td></tr>)}</tbody>
               </table>
-            </section>
-            <section className="break-inside-avoid">
+            </section>}
+            {show("capability") && <section className="break-inside-avoid">
               <h3 className="mb-2 text-lg font-bold">ROI by capability</h3>
               <table className="data">
                 <thead><tr><th>Capability</th><th className="n">Net</th><th className="n">ROI</th></tr></thead>
@@ -279,10 +348,10 @@ export default function Report() {
                   {extra.alloc.unallocated.cost > 0 && <tr><td>Unallocated cost</td><td className="n">{cad(-extra.alloc.unallocated.cost)}</td><td /></tr>}
                 </tbody>
               </table>
-            </section>
-          </div>
+            </section>}
+          </div>}
 
-          {extra.scenarios.length > 1 && (
+          {show("scenarios") && extra.scenarios.length > 1 && (
             <section className="break-inside-avoid">
               <h3 className="mb-2 text-lg font-bold">Scenarios</h3>
               <table className="data">
@@ -292,20 +361,20 @@ export default function Report() {
             </section>
           )}
 
-          <div className="grid gap-6 md:grid-cols-2 print:grid-cols-2">
-            <section className="break-inside-avoid">
+          {(show("levers") || show("watchouts")) && <div className="grid gap-6 md:grid-cols-2 print:grid-cols-2">
+            {show("levers") && <section className="break-inside-avoid">
               <h3 className="mb-2 text-lg font-bold">Ways to spend less</h3>
               <table className="data"><tbody>{extra.levers.map((l) => <tr key={l.lever.id}><td>{l.lever.label}</td><td className="n">−{cad(l.saving)}</td></tr>)}</tbody></table>
-            </section>
-            <section className="break-inside-avoid">
+            </section>}
+            {show("watchouts") && <section className="break-inside-avoid">
               <h3 className="mb-2 text-lg font-bold">Watch-outs</h3>
               <ul className="list-disc pl-5 text-[13px] text-ink-2">
                 {ledger.notes.length === 0 && unverified.length === 0 && <li className="list-none">Nothing needs attention.</li>}
                 {ledger.notes.map((n) => <li key={n.message}>{n.message}</li>)}
                 {unverified.length > 0 && <li>{unverified.length} prices used here are single-source or unverified: {unverified.map((r) => r.Item).join(", ")}.</li>}
               </ul>
-            </section>
-          </div>
+            </section>}
+          </div>}
 
           <footer className="border-t border-line pt-3 text-xs text-muted">
             Prices in CAD from the Azure Retail Prices API, the Snowflake Credit Consumption Table and curated sources, as of {catalog.meta.asOf}.{fx && ` USD-only list prices converted at ${fx.usdToCad} CAD per USD (Azure rate, ${fx.asOf}).`} List prices, no discounts. Token volumes are estimates from documented heuristics; agent costs use the typical (P50) run.

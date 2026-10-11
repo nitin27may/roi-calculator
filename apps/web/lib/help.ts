@@ -170,6 +170,7 @@ export const HELP = {
   settingsTier: e("The default processing tier for every Azure model call. Batch costs about half but only suits work that can wait up to a day.", "Standard or Batch", "Standard for chat, Batch for overnight evaluation.", "Standard unless you change it.", { term: "processing-tiers" }),
   sfRouting: e("Whether Snowflake may run AI functions in any region (Global) or only in the regions you name. Regional costs more.", "Global or Regional", "Regional if data must stay within one region.", "Snowflake's published credit rates for each routing."),
   sfEdition: e("Your Snowflake edition. It sets the price of a credit.", "Standard, Enterprise or Business Critical", "Enterprise for most companies.", "Snowflake's published list prices."),
+  azureAdjust: e("A percentage added to every Azure list price. Enter a negative number for a discount you have negotiated.", "-12 for 12% off, 5 for a 5% uplift.", "Your enterprise agreement or reservation terms.", "Applies to models, speech, embeddings, resources and unit prices, including reserved prices. A price you typed in yourself is not changed."),
   sfAiCredit: e("What one Snowflake AI credit costs you, in Canadian dollars.", "C$ per credit", "C$2.60.", "Starts from Snowflake's list price for your edition. Replace it with your contract rate."),
   sfPlatformCredit: e("What one Snowflake platform credit (warehouse time) costs you, in Canadian dollars.", "C$ per credit", "C$3.90.", "Starts from Snowflake's list price for your edition. Replace it with your contract rate."),
 
