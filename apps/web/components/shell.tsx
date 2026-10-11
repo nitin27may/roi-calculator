@@ -162,7 +162,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <span className="nav-label">{collapsed ? "Expand sidebar" : "Collapse sidebar"}</span>
         </button>
         <p className="nav-label border-t border-line pt-2.5 text-xs text-muted lg:mt-0">
-          <b className="text-ink-2">Local mode.</b> Saved in this browser. Prices as of {catalog.meta.asOf}; refresh with <span className="num">pnpm prices</span>.
+          <b className="text-ink-2">Local mode.</b> Saved in this browser. Prices as of {catalog.meta.asOf}; prices are updated with each release.
         </p>
       </nav>
       <main id="main-content" tabIndex={-1} className="grid min-h-0 min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[auto_auto_minmax(0,1fr)] lg:h-full lg:overflow-hidden">
@@ -268,24 +268,28 @@ function KpiBar() {
   );
   return (
     <div className="mx-3 grid grid-cols-2 overflow-hidden rounded-lg border border-line bg-surface sm:mx-5 md:grid-cols-3 xl:grid-cols-[repeat(5,minmax(0,1fr))_auto]">
-      {k.map(([l, v, d]) => (
-        <div key={l} className="-mb-px -mr-px min-w-0 border-b border-r border-line px-3.5 py-2 xl:mb-0 xl:mr-0 xl:border-b-0">
+      {k.map(([l, v, d], i) => (
+        // On a phone only the build cost and the payback show, so the page itself starts on the first screen.
+        <div key={l} className={cn("-mb-px -mr-px min-w-0 border-b border-r border-line px-3.5 py-2 xl:mb-0 xl:mr-0 xl:border-b-0", i !== 0 && i !== 3 && "max-sm:hidden")}>
           <div className="text-xs text-muted sm:truncate">{l}</div>
           <div className="font-display text-xl font-bold tabular-nums leading-tight">{v}</div>
           <div className="text-xs text-ink-2 sm:truncate">{d}</div>
         </div>
       ))}
       {/* The build / production bar stays visible at every width; below xl it takes its own row. */}
-      <div className="col-span-full flex min-w-[190px] flex-col justify-center gap-1 px-3.5 py-2 xl:col-span-1 xl:px-3">{bar}</div>
+      <div className="col-span-full flex min-w-[190px] flex-col justify-center gap-1 px-3.5 py-2 max-sm:hidden xl:col-span-1 xl:px-3">{bar}</div>
     </div>
   );
 }
 
 function ExportButtons({ btn }: { btn: string }) {
   const { project, ledger, roi } = useLedger();
+  const [busy, setBusy] = useState(false);
+  // Building the workbook takes several seconds for a large project; show that it is working and let the label paint first.
+  const makeExcel = () => { setBusy(true); setTimeout(() => { try { exportXlsx(project, ledger, roi); } finally { setBusy(false); } }, 50); };
   return (
     <>
-      <button type="button" className={btn} title="Export Excel" onClick={() => exportXlsx(project, ledger, roi)}><FileSpreadsheet size={14} aria-hidden className="flex-none" /><span className="nav-label">Export Excel</span></button>
+      <button type="button" className={btn} title="Export Excel" disabled={busy} aria-busy={busy} onClick={makeExcel}><FileSpreadsheet size={14} aria-hidden className="flex-none" /><span className="nav-label" role="status">{busy ? "Preparing Excel…" : "Export Excel"}</span></button>
       <button type="button" className={btn} title="Export CSV" onClick={() => exportCsv(project, ledger)}><FileText size={14} aria-hidden className="flex-none" /><span className="nav-label">Export CSV</span></button>
       <Link href="/report" className={btn} title="Printable report"><Printer size={14} aria-hidden className="flex-none" /><span className="nav-label">Printable report</span></Link>
     </>

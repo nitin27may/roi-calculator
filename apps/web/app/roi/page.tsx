@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
-import { COST_BASES, applicableLevers, leverEffect, applyScenario, buildLabel, avoidedMonthly, beforeAfter, capabilityFromBenchmark, capabilityVolume, workloadVolume, sensitivity, capabilityHours, compareScenarios, computeAllocation, linkCapabilityToFeature, ensureBenchmarkRole, roiAssumptions, type Capability, type ScenarioEdit } from "@roi-calculator/engine";
+import { COST_BASES, applicableLevers, LEVERS, leverEffect, applyScenario, buildLabel, avoidedMonthly, beforeAfter, capabilityFromBenchmark, capabilityVolume, workloadVolume, sensitivity, capabilityHours, compareScenarios, computeAllocation, linkCapabilityToFeature, ensureBenchmarkRole, roiAssumptions, type Capability, type ScenarioEdit } from "@roi-calculator/engine";
 import { Card, CardHead, Field, NumberInput, Pill, Seg, Select, TextInput, TrashButton } from "@/components/ui";
 import type { HelpId } from "@/lib/help";
 import { CumulativeLine, Legend } from "@/components/charts";
@@ -464,7 +464,46 @@ function Capabilities() {
   );
 }
 
-type EditKind = "model" | "scale" | "buildMonths" | "developers" | "lever" | "preset";
+type EditKind = "model" | "scale" | "buildMonths" | "developers" | "lever" | "preset" | "rates" | "shift";
+
+const monthsText = (n: number) => `${Math.abs(n)} month${Math.abs(n) === 1 ? "" : "s"} ${n < 0 ? "earlier" : "later"}`;
+
+/** One sentence for a scenario change, so a saved scenario can be read and a single change removed. */
+function describeEdit(e: ScenarioEdit, names: Map<string, string> = new Map()): string {
+  switch (e.kind) {
+    case "scaleUsage": return `Usage at ${Math.round(e.factor * 100)}%`;
+    case "scaleRates": return `Labour rates at ${Math.round(e.factor * 100)}%${e.scope === "all" ? " (including the value of time saved)" : ""}`;
+    case "shiftMonths": return e.target === "golive" ? `Go-live ${monthsText(e.by)}` : `Decommission ${monthsText(e.by)}`;
+    case "lever": return LEVERS.find((l) => l.id === e.leverId)?.label ?? e.leverId;
+    case "set": return `Set ${e.path.map((x) => names.get(String(x)) ?? String(x)).join(" › ")} to ${typeof e.value === "object" ? JSON.stringify(e.value) : String(e.value)}`;
+  }
+}
+
+/** The saved scenario's name, editable in place. */
+function ScenarioName({ id }: { id: string }) {
+  const label = useStudio((s) => s.project.scenarios.find((x) => x.id === id)?.label ?? "");
+  const edit = useStudio((s) => s.edit);
+  return <input aria-label="Scenario name" className="w-full min-w-[180px] rounded border border-transparent bg-transparent px-1 py-0.5 text-[13px] hover:border-line focus:border-line focus:bg-surface-2" value={label} onChange={(e) => edit((d) => { const x = d.scenarios.find((y) => y.id === id); if (x) x.label = e.target.value; })} />;
+}
+
+/** The changes a saved scenario makes, each removable. The last one is kept: delete the scenario instead. */
+function ScenarioChanges({ id }: { id: string }) {
+  const project = useStudio((s) => s.project);
+  const edits = project.scenarios.find((x) => x.id === id)?.edits ?? [];
+  // Item ids in a path read as the item's name: "SaaS CRM subscriptions" rather than "crm-seats".
+  const names = new Map<string, string>([...project.workloads, ...(project.currentState?.lines ?? []), ...project.benefits.value, ...project.benefits.capabilities].map((x) => [x.id, x.label] as [string, string]));
+  const edit = useStudio((s) => s.edit);
+  return (
+    <ul className="mt-0.5 flex flex-wrap gap-1" aria-label="Changes in this scenario">
+      {edits.map((e, k) => (
+        <li key={k} className="inline-flex items-center gap-1 rounded-full bg-surface-2 px-2 py-0.5 text-xs text-ink-2">
+          {describeEdit(e, names)}
+          {edits.length > 1 && <button type="button" aria-label={`Remove change: ${describeEdit(e, names)}`} className="rounded-full px-1 text-muted hover:text-crit max-lg:min-h-8 max-lg:min-w-8" onClick={() => edit((d) => { const x = d.scenarios.find((y) => y.id === id); if (x && x.edits.length > 1) x.edits.splice(k, 1); })}>×</button>}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 function Scenarios() {
   const project = useStudio((s) => s.project);
@@ -480,6 +519,7 @@ function Scenarios() {
   const [wid, setWid] = useState(llmWorkloads[0]?.id ?? "");
   const [model, setModel] = useState("gpt-5.4-mini");
   const [num, setNum] = useState(50);
+  const [shiftTarget, setShiftTarget] = useState<"golive" | "decommission">("golive");
   const levers = useMemo(() => applicableLevers(project, catalog), [project]);
   // Nothing is preselected: the lever and its setting start empty until the user picks a lever.
   const [lever, setLever] = useState("");
@@ -498,6 +538,8 @@ function Scenarios() {
       : kind === "buildMonths" ? { edit: { kind: "set", path: ["timeline", "buildMonths"], value: Math.round(num) }, text: `Build for ${Math.round(num)} months` }
       : kind === "developers" && devIdx >= 0 ? { edit: { kind: "set", path: ["build", "team", devIdx, "people"], value: num }, text: `${num} experimenting developers` }
       : kind === "lever" && picked ? { edit: { kind: "lever", leverId: picked.id, ...(leverSetting !== undefined ? { amount: leverSetting } : {}) }, text: leverText }
+      : kind === "rates" ? { edit: { kind: "scaleRates", factor: num / 100 }, text: `Labour rates at ${num}%` }
+      : kind === "shift" ? { edit: { kind: "shiftMonths", target: shiftTarget, by: Math.round(num) }, text: `${shiftTarget === "golive" ? "Go-live" : "Decommission"} ${monthsText(Math.round(num))}` }
       : kind === "preset" ? { edit: { kind: "set", path: ["roi", "benefitPreset"], value: preset }, text: `${preset} benefits` }
       : null;
     if (e) setDraft([...draft, e]);
@@ -521,7 +563,11 @@ function Scenarios() {
           <tbody>
             {results.map((r, i) => (
               <tr key={r.id} style={i === 0 ? { background: "var(--surface-2)" } : undefined}>
-                <td>{r.label}{r.error && <div className="text-xs text-crit">{r.error}</div>}</td>
+                <td>
+                  {i === 0 ? r.label : <ScenarioName id={r.id} />}
+                  {r.error && <div className="text-xs text-crit">{r.error}</div>}
+                  {i > 0 && <ScenarioChanges id={r.id} />}
+                </td>
                 <td className="n">{cad(r.ledger.totals.build)}{i > 0 && delta(r.ledger.totals.build, base.ledger.totals.build, true)}</td>
                 <td className="n">{cad(r.ledger.totals.runRate)}{i > 0 && delta(r.ledger.totals.runRate, base.ledger.totals.runRate, true)}</td>
                 <td className="n">{r.roi.paybackMonth ? `M${r.roi.paybackMonth}` : "–"}</td>
@@ -540,9 +586,11 @@ function Scenarios() {
       <div className="rounded-md border border-line p-3">
         <h3 className="mb-2 text-sm font-semibold">New scenario</h3>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] items-end gap-2.5">
-          <Field label="Change" help="scnChange"><Select value={kind} onChange={(v) => setKind(v as EditKind)} options={[{ value: "model", label: "Model for a workload" }, { value: "scale", label: "Usage volume (%)" }, { value: "buildMonths", label: "Build months" }, { value: "developers", label: "Experimenting developers" }, { value: "lever", label: "Apply a savings lever" }, { value: "preset", label: "Benefit preset" }]} /></Field>
+          <Field label="Change" help="scnChange"><Select value={kind} onChange={(v) => setKind(v as EditKind)} options={[{ value: "model", label: "Model for a workload" }, { value: "scale", label: "Usage volume (%)" }, { value: "buildMonths", label: "Build months" }, { value: "developers", label: "Experimenting developers" }, { value: "lever", label: "Apply a savings lever" }, { value: "rates", label: "Labour rates (%)" }, { value: "shift", label: "Move go-live or decommission date" }, { value: "preset", label: "Benefit preset" }]} /></Field>
           {kind === "model" && <><Field label="Workload" help="scnWorkload"><Select value={wid} onChange={(v) => { setWid(v); setModel(modelChoices(v)[0]?.value ?? ""); }} options={llmWorkloads.map((w) => ({ value: w.id, label: w.label }))} /></Field><Field label="Model" help="scnModel"><Select value={modelChoices(wid).some((o) => o.value === model) ? model : (modelChoices(wid)[0]?.value ?? "")} onChange={setModel} options={modelChoices(wid)} /></Field></>}
           {(kind === "scale" || kind === "buildMonths" || kind === "developers") && <Field label={kind === "scale" ? "Percent of baseline" : kind === "buildMonths" ? "Months" : "People"} help="scnValue"><NumberInput value={num} min={kind === "scale" ? 1 : 1} max={kind === "scale" ? 1000 : 24} onChange={setNum} /></Field>}
+          {kind === "rates" && <Field label="Percent of today's rates" help="scnValue"><NumberInput value={num} min={10} max={300} onChange={setNum} suffix="%" /></Field>}
+          {kind === "shift" && <><Field label="Date to move" help="scnValue"><Select value={shiftTarget} onChange={(v) => setShiftTarget(v as typeof shiftTarget)} options={[{ value: "golive", label: "Go-live (and what follows it)" }, { value: "decommission", label: "Decommission of current costs" }]} /></Field><Field label="Months later (negative is earlier)" help="scnValue"><NumberInput value={num} min={-12} max={24} onChange={setNum} suffix="months" /></Field></>}
           {kind === "lever" && <Field label="Lever" help="scnLever"><Select value={lever} onChange={(v) => { setLever(v); setLeverNum(null); }} options={[{ value: "", label: levers.length ? "Choose a lever" : "No lever applies to this project" }, ...levers.map((l) => ({ value: l.id, label: l.label }))]} /></Field>}
           {kind === "lever" && picked?.param && <Field label={picked.param.label} help="scnLeverAmount"><NumberInput value={leverSetting!} min={picked.param.min} max={picked.param.max} step={picked.param.step} suffix={picked.param.unit === "%" ? "%" : "months"} onChange={setLeverNum} /></Field>}
           {kind === "preset" && <Field label="Preset" help="scnPreset"><Select value={preset} onChange={(v) => setPreset(v as typeof preset)} options={[{ value: "conservative", label: "Conservative" }, { value: "typical", label: "Typical" }, { value: "optimistic", label: "Optimistic" }]} /></Field>}

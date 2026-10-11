@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardHead, Pill, Seg, Select } from "@/components/ui";
 import { availableIn, DEPLOYMENT_LABEL, type AzureDeployment } from "@roi-calculator/engine";
 import { catalog, useResourcesReady, useResourceVersion } from "@/lib/compute";
@@ -34,6 +34,8 @@ export default function Prices() {
   const deployment = useStudio((s) => s.project.settings.azureDeployment);
   const [q, setQ] = useState("");
   const [offered, setOffered] = useState<"all" | AzureDeployment>(deployment);
+  // The project loads after the first render, so follow its deployment rather than keep the first value.
+  useEffect(() => setOffered(deployment), [deployment]);
   const [kind, setKind] = useState("all");
   const [vendor, setVendor] = useState("all");
   const [status, setStatus] = useState("all");
@@ -83,7 +85,7 @@ export default function Prices() {
   return (
     <div className="grid h-full min-h-0 gap-3.5 lg:grid-cols-[minmax(0,1fr)_330px]">
       <Card>
-        <CardHead title={`${shown.length} of ${rows.length} prices in CAD`} sub={<>As of {catalog.meta.asOf}.{catalog.meta.fx && <> USD-only list prices converted at <span className="num">1 USD = {catalog.meta.fx.usdToCad} CAD</span>, Azure&apos;s own rate on {catalog.meta.fx.asOf}.</>} This project uses {DEPLOYMENT_LABEL[deployment]}. Refresh on your machine with <span className="num">pnpm prices</span>; the app never calls the network.</>}>
+        <CardHead title={`${shown.length} of ${rows.length} prices in CAD`} sub={<>As of {catalog.meta.asOf}.{catalog.meta.fx && <> USD-only list prices converted at <span className="num">1 USD = {catalog.meta.fx.usdToCad} CAD</span>, Azure&apos;s own rate on {catalog.meta.fx.asOf}.</>} This project uses {DEPLOYMENT_LABEL[deployment]}. Prices are updated with each release (the README explains how to refresh them yourself); the app never calls the network.</>}>
           <div className="flex flex-wrap items-center gap-2">
             <input aria-label="Search prices" placeholder="Search" className="rounded-md border border-line bg-surface-2 px-2 py-1 text-[13px]" value={q} onChange={(e) => setQ(e.target.value)} />
             <Seg label="Offered in" value={offered} onChange={setOffered} options={[{ value: "all", label: "Any deployment" }, { value: "global", label: "Global" }, { value: "regional", label: "Canada Regional" }, { value: "dataZone", label: "US Data Zone" }]} />

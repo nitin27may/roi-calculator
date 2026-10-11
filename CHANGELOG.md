@@ -13,8 +13,13 @@ Example projects and reports for each reader.
 
 - Azure price adjustment (Settings, Negotiated pricing): move every Azure list price by a percentage, negative for a discount. A manual price and Snowflake credit prices are not adjusted.
 
+- Scenarios: two new kinds of change (labour rates, move go-live or decommission date), and a saved scenario can be renamed in place and have single changes removed.
+
 ### Fixed
 
+- Infrastructure: the environments table shows Cost / month next to the name so it is never scrolled out of view; empty month fields say "default".
+- Phones: the top bar shows only build cost and payback and the page intro is hidden, so the page starts on the first screen; larger touch targets on the view switchers; Excel export shows "Preparing Excel…".
+- Prices defaults to the project's deployment once it loads, the token calculator starts on a model that deployment offers, and the "pnpm prices" developer text is gone from the app.
 - The Build page opened on an empty "Engineering tools & lab" chart for projects with no AI experiments; it now says so. The one-time "cache writes and reasoning tokens" notice and the "engineering tools" line in the top bar no longer show for projects that have none of that. Before / after and By capability explain what they cover.
 - Opening a project that prices a build tool, seat or fee from a resource category (for example GitHub or Power Automate seats) crashed the app until the lazy price files had loaded. The pages now wait for them.
 - The "sources" count under Benefit at full adoption ignored current-state savings, value items and one-off benefits, and read "1 sources".
