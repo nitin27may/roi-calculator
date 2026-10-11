@@ -176,8 +176,8 @@ export function Shell({ children }: { children: ReactNode }) {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            <button type="button" aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" disabled={!canUndo} onClick={() => useStudio.getState().undo()} className="grid h-7 w-7 place-items-center rounded-md border border-line bg-surface text-ink-2 enabled:hover:bg-surface-2 disabled:opacity-40"><Undo2 size={15} aria-hidden /></button>
-            <button type="button" aria-label="Redo" title="Redo (Ctrl/Cmd+Shift+Z)" disabled={!canRedo} onClick={() => useStudio.getState().redo()} className="grid h-7 w-7 place-items-center rounded-md border border-line bg-surface text-ink-2 enabled:hover:bg-surface-2 disabled:opacity-40"><Redo2 size={15} aria-hidden /></button>
+            <button type="button" aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" disabled={!canUndo} onClick={() => useStudio.getState().undo()} className="grid h-7 w-7 place-items-center rounded-md border border-line bg-surface text-ink-2 enabled:hover:bg-surface-2 disabled:opacity-40 max-lg:h-11 max-lg:w-11"><Undo2 size={15} aria-hidden /></button>
+            <button type="button" aria-label="Redo" title="Redo (Ctrl/Cmd+Shift+Z)" disabled={!canRedo} onClick={() => useStudio.getState().redo()} className="grid h-7 w-7 place-items-center rounded-md border border-line bg-surface text-ink-2 enabled:hover:bg-surface-2 disabled:opacity-40 max-lg:h-11 max-lg:w-11"><Redo2 size={15} aria-hidden /></button>
             <ThemeToggle />
             <span className="mr-1"><HelpMenu path={path} /></span>
             {[["Currency", "CAD"], ["Azure", DEPLOYMENT_LABEL[project.settings.azureDeployment]], ["Snowflake", `${project.settings.snowflake.edition} · ${project.settings.snowflake.routing}`], ["Prices", catalog.meta.asOf]].map(([k, v]) => (
@@ -253,7 +253,7 @@ function KpiBar() {
   const envBuild = ledger.months.slice(0, B).reduce((x, m) => x + envCost(m), 0);
   const basis = { run: "running cost only", runMaint: "running + maintenance", full: "full lifecycle" }[project.roi.basis];
   const k = [
-    [`Build · months 1–${B}`, cad(t.build), labourExcluded(project) ? "Build labour excluded" : labourPartialText(project) || `${cad(t.devLab)} of it engineering tools & lab${envBuild > 0 ? `, ${cad(envBuild)} environments` : ""}`],
+    [`Build · months 1–${B}`, cad(t.build), labourExcluded(project) ? "Build labour excluded" : labourPartialText(project) || [t.devLab > 0 ? `${cad(t.devLab)} of it engineering tools & lab` : "", envBuild > 0 ? `${cad(envBuild)} environments` : ""].filter(Boolean).join(", ") || "Labour, delivery and tools"],
     ["Production run-rate", `${cad(t.runRate)}/mo`, `+ ${cad(t.maintRate)} maintenance`],
     ["Benefit at full adoption", `${cad(t.benefitRate)}/mo`, benefitSourcesText(project)],
     ["Payback", roi.paybackMonth ? `Month ${roi.paybackMonth}` : `> ${H} months`, basis],

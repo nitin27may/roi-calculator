@@ -11,8 +11,11 @@ Example projects and reports for each reader.
 - Eight worked example projects in `examples/` (a fictional Canadian insurer): claims datacentre migration, claims replatforming to AKS, quote funnel automation, a claims self-service portal, straight-through processing, a SaaS CRM replacement, an AI intake agent on Azure and an AI notes analytics example on Snowflake Cortex. Named contributors, phases, environments, catalogue resources (AKS, Key Vault, Blob Storage and more), current-state savings, scorecards and what-if scenarios. Open them with "Open file as new project"; `pnpm examples` regenerates them and a test keeps them in step with their source.
 - Report for each reader: choose Executive sponsor, Finance, Technology, Delivery or Business owner on the Report page. New sections: Team and delivery plan, and Infrastructure by environment.
 
+- Azure price adjustment (Settings, Negotiated pricing): move every Azure list price by a percentage, negative for a discount. A manual price and Snowflake credit prices are not adjusted.
+
 ### Fixed
 
+- The Build page opened on an empty "Engineering tools & lab" chart for projects with no AI experiments; it now says so. The one-time "cache writes and reasoning tokens" notice and the "engineering tools" line in the top bar no longer show for projects that have none of that. Before / after and By capability explain what they cover.
 - Opening a project that prices a build tool, seat or fee from a resource category (for example GitHub or Power Automate seats) crashed the app until the lazy price files had loaded. The pages now wait for them.
 - The "sources" count under Benefit at full adoption ignored current-state savings, value items and one-off benefits, and read "1 sources".
 - The AKS hosting preset said node VMs were not in the catalogue; they are, as VM resources.

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { envCost, showsAiExperiments, type Month } from "@roi-calculator/engine";
+import { envCost, showsAiExperiments, usesAi, type Month } from "@roi-calculator/engine";
 import { Card, CardHead, Pill, Seg } from "@/components/ui";
 import { Legend, useSize } from "@/components/charts";
 import { Story } from "@/components/story";
@@ -18,8 +18,9 @@ const P3_NOTICE_KEY = "roi-calculator:notice.p3";
 /** One-time notice for the P3 token-accuracy fixes; dismissal persists in localStorage so it shows once per browser. */
 function P3Notice() {
   const [dismissed, setDismissed] = useState(true);
+  const ai = useStudio((s) => usesAi(s.project));
   useEffect(() => { setDismissed(localStorage.getItem(P3_NOTICE_KEY) === "1"); }, []);
-  if (dismissed) return null;
+  if (dismissed || !ai) return null;
   const dismiss = () => { localStorage.setItem(P3_NOTICE_KEY, "1"); setDismissed(true); };
   return (
     <div className="flex items-center gap-3 rounded-lg border border-line bg-surface-2 px-3.5 py-2 text-[13px] text-ink-2">

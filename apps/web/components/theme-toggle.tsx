@@ -38,7 +38,7 @@ export function ThemeToggle() {
         const { label, Icon } = OPTIONS[c];
         return (
           <button key={c} type="button" aria-pressed={choice === c} aria-label={label} title={label} onClick={() => pick(c)}
-            className={cn("grid h-7 w-7 place-items-center border-r border-line last:border-r-0", choice === c ? "bg-accent text-accent-ink" : "text-ink-2 hover:bg-surface-2")}>
+            className={cn("grid h-7 w-7 max-lg:h-11 max-lg:w-11 place-items-center border-r border-line last:border-r-0", choice === c ? "bg-accent text-accent-ink" : "text-ink-2 hover:bg-surface-2")}>
             <Icon size={14} aria-hidden />
           </button>
         );

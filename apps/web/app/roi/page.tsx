@@ -208,6 +208,7 @@ function BeforeAfterView() {
     <div className="flex flex-col gap-4">
       <div className="rounded-r-md border-l-[3px] border-accent bg-accent-soft px-3 py-2 text-[12.5px]">
         At full rollout the work costs <b>{cad(ba.before)}/month today</b> and <b>{cad(ba.after)}/month after the change</b>{ba.before > 0 ? <> ({change <= 0 ? "" : "+"}{fmt(change * 100)}%)</> : null}, usage and maintenance included. Build cost is not in this view; the Cash tab pays it back.
+        {(project.currentState?.lines.length ?? 0) > 0 && <> This view covers time-saved capabilities, usage and maintenance only. What the work costs today in full, including licences, hosting and contracts, is on the Current state tab and the Summary.</>}
       </div>
       <div className="grid grid-cols-[90px_1fr_auto] items-center gap-x-3 gap-y-2 text-[12.5px]">
         <span className="text-muted">Today</span>
@@ -442,7 +443,7 @@ function Capabilities() {
         <tbody>
           {a.capabilities.map((c) => <tr key={c.id}><td>{c.label}</td><td className="n">{cad(c.benefit)}</td><td className="n">{cad(c.direct)}</td><td className="n">{cad(c.shared)}</td><td className="n">{cad(c.net)}</td><td className="n">{c.roi === null ? "–" : `${fmt(c.roi * 100)}%`}</td></tr>)}
           <tr><td>Project-level benefits <span className="text-xs text-muted">(avoided costs, one-offs)</span></td><td className="n">{cad(a.projectBenefit)}</td><td colSpan={4} /></tr>
-          {a.unallocated.cost > 0 && <tr><td>Unallocated cost</td><td /><td className="n" colSpan={2}>{cad(a.unallocated.cost)}</td><td colSpan={2} /></tr>}
+          {a.unallocated.cost > 0 && <tr><td>Unallocated cost <span className="text-xs text-muted">(not linked to a capability)</span></td><td /><td className="n" colSpan={2}>{cad(a.unallocated.cost)}</td><td colSpan={2} /></tr>}
         </tbody>
       </table>
       <div className="rounded-r-md border-l-[3px] border-accent bg-accent-soft px-3 py-2 text-[12.5px]">
