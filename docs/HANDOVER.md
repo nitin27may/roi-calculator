@@ -14,7 +14,7 @@ The ROI Calculator estimates cost, benefit and payback for any technology projec
 **Requirements**
 
 - **Node.js 26** (built and tested on 26.13).
-- **pnpm 10.** It is pinned in `package.json` as `pnpm@10.28.0`; `corepack enable` picks the pinned version up.
+- **pnpm 10.** It is pinned in `package.json` as `pnpm@10.33.0`; `corepack enable` picks the pinned version up.
 - **Git.**
 
 ```bash
