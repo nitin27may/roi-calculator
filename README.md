@@ -67,7 +67,7 @@ The Build page: team, workstreams and the engineering tools & lab by month. The 
 
 ## Quick start
 
-Prerequisites: Node.js 22 and pnpm 10 (`corepack enable` picks up the pinned version).
+Prerequisites: Node.js 26 and pnpm 10.33 (`corepack enable` picks up the pinned version).
 
 ```bash
 git clone https://github.com/nitin27may/roi-calculator.git
@@ -116,7 +116,7 @@ flowchart LR
 
 | Path | What it holds |
 | --- | --- |
-| `apps/web` | Next.js 15 app, static export, Tailwind, Zustand store |
+| `apps/web` | Next.js 16 app, static export, Tailwind, Zustand store |
 | `packages/engine` | Pure TypeScript calculation: workloads, Dev Lab, monthly ledger, ROI, levers, project schema and migrations |
 | `packages/catalog` | Price and benchmark data (JSON), Zod schemas, token heuristics |
 | `scripts/prices` | Price refresh scripts for Azure and Snowflake |

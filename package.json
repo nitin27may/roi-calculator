@@ -5,7 +5,7 @@
   "license": "MIT",
   "description": "Local, offline AI cost and ROI calculator for Azure and Snowflake workloads (CAD). Includes a token calculator for quick estimates.",
   "type": "module",
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "pnpm --filter @roi-calculator/web dev",
     "build": "pnpm -r build",
@@ -23,11 +23,12 @@
   "devDependencies": {
     "@roi-calculator/catalog": "workspace:*",
     "@roi-calculator/engine": "workspace:*",
-    "@types/node": "^22.10.0",
-    "pdfjs-dist": "^4.10.38",
-    "tsx": "^4.19.0",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0",
-    "zod": "^3.25.76"
+    "@types/node": "^26.6.6",
+    "pdfjs-dist": "^6.5.438",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1",
+    "zod": "3.25.76"
   }
 }
