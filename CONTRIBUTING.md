@@ -6,7 +6,7 @@ By taking part you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Prerequisites
 
-- Node.js 22 (CI runs 22).
+- Node.js 26 (CI runs 26).
 - pnpm 10.28.0. The version is pinned in the `packageManager` field of `package.json`; with Corepack enabled (`corepack enable`) the right one is picked up automatically.
 
 ## Install and run

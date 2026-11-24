@@ -13,7 +13,7 @@ The ROI Calculator estimates cost, benefit and payback for any technology projec
 
 **Requirements**
 
-- **Node.js 22** (built and tested on 22.22).
+- **Node.js 26** (built and tested on 26.13).
 - **pnpm 10.** It is pinned in `package.json` as `pnpm@10.28.0`; `corepack enable` picks the pinned version up.
 - **Git.**
 
@@ -133,7 +133,7 @@ git push -u origin HEAD && gh pr create --fill --base main
 ## 3. How the code is organised
 
 ```
-apps/web                 Next.js 15 app (App Router, Tailwind v4, Zustand)
+apps/web                 Next.js 16 app (App Router, Tailwind v4, Zustand)
   app/<page>/page.tsx    overview, build, run, roi, capacity, tokens, prices, settings, projects, report
   components/            shell (nav, KPI bar, undo/redo), charts, fields (form specs), add-menu, explain
   lib/                   store (project library, undo), compute (ledger hooks), export (xlsx/csv), format
